@@ -53,11 +53,11 @@ export class Specs {
 	public static ListCategory:number = 12;
 	public static ExtensionsCategory:number = 20;
 
-	public static VariableColor:number = 0xEE7D16; // Scratch 1.4: 0xF3761D
-	public static ListColor:number = 0xCC5B22; // Scratch 1.4: 0xD94D11
-	public static ProcedureColor:number = 0x632D99; // 0x531E99;
-	public static ParameterColor:number = 0x5947B1;
-	public static ExtensionsColor:number = 0x4B4A60; // 0x72228C; // 0x672D79;
+	public static VariableColor:string = "#EE7D16"; // Scratch 1.4: 0xF3761D
+	public static ListColor:string = "#CC5B22"; // Scratch 1.4: 0xD94D11
+	public static ProcedureColor:string = "#632D99"; // 0x531E99;
+	public static ParameterColor:string = "#5947B1";
+	public static ExtensionsColor:string = "#4B4A60"; // 0x72228C; // 0x672D79;
 
 	private static undefinedColor:number = 0xD42828;
 

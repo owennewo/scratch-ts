@@ -5,14 +5,16 @@ export class SpecModel
 {
     static SPECS: SpecModel[] = [];
     
-    opCode: string;
+    code: string;
+    description: string;
     category: SpecCategoryModel;
     _type: string;
     defaultArgs: any[];
     
-    constructor(opCode: string, category: SpecCategoryModel, type: string, defaultArgs: any[]) {
-        this.opCode = opCode;
+    constructor(code: string, description: string, category: SpecCategoryModel, type: string, defaultArgs: any[]) {
+        this.code = code;
         this.category = category;
+        this.description = description;
         this._type = type;
         this.defaultArgs = defaultArgs;
         //this.shape = new BlockShapeModel()
@@ -51,28 +53,28 @@ export class SpecModel
 		SpecModel.add("say %s for %n secs",					" ", SpecCategoryModel.LOOKS, "say:duration:elapsed:from:",	["Hello!", 2]);
 		SpecModel.add("say %s",								" ", SpecCategoryModel.LOOKS, "say:",							["Hello!"]);
 		SpecModel.add("think %s for %n secs",				" ", SpecCategoryModel.LOOKS, "think:duration:elapsed:from:", ["Hmm...", 2]);
-		SpecModel.add("think %s",							" ", SpecCategoryModel.MOTION, "think:",						["Hmm..."]);
+		SpecModel.add("think %s",							" ", SpecCategoryModel.LOOKS, "think:",						["Hmm..."]);
 		SpecModel.addSpacer(SpecCategoryModel.LOOKS,1);
-		SpecModel.add("show",								" ", SpecCategoryModel.MOTION, "show");
-		SpecModel.add("hide",								" ", SpecCategoryModel.MOTION, "hide");
+		SpecModel.add("show",								" ", SpecCategoryModel.LOOKS, "show");
+		SpecModel.add("hide",								" ", SpecCategoryModel.LOOKS, "hide");
 		SpecModel.addSpacer(SpecCategoryModel.LOOKS,1);;
-		SpecModel.add("switch costume to %m.costume",		" ", SpecCategoryModel.MOTION, "lookLike:",				["costume1"]);
-		SpecModel.add("next costume",						" ", SpecCategoryModel.MOTION, "nextCostume");
-		SpecModel.add("switch backdrop to %m.backdrop",		" ", SpecCategoryModel.MOTION, "startScene", 				["backdrop1"]);
+		SpecModel.add("switch costume to %m.costume",		" ", SpecCategoryModel.LOOKS, "lookLike:",				["costume1"]);
+		SpecModel.add("next costume",						" ", SpecCategoryModel.LOOKS, "nextCostume");
+		SpecModel.add("switch backdrop to %m.backdrop",		" ", SpecCategoryModel.LOOKS, "startScene", 				["backdrop1"]);
 		SpecModel.addSpacer(SpecCategoryModel.LOOKS,1);
-		SpecModel.add("change %m.effect effect by %n",		" ", SpecCategoryModel.MOTION, "changeGraphicEffect:by:",	["color", 25]);
-		SpecModel.add("set %m.effect effect to %n",			" ", SpecCategoryModel.MOTION, "setGraphicEffect:to:",		["color", 0]);
-		SpecModel.add("clear graphic effects",				" ", SpecCategoryModel.MOTION, "filterReset");
+		SpecModel.add("change %m.effect effect by %n",		" ", SpecCategoryModel.LOOKS, "changeGraphicEffect:by:",	["color", 25]);
+		SpecModel.add("set %m.effect effect to %n",			" ", SpecCategoryModel.LOOKS, "setGraphicEffect:to:",		["color", 0]);
+		SpecModel.add("clear graphic effects",				" ", SpecCategoryModel.LOOKS, "filterReset");
 		SpecModel.addSpacer(SpecCategoryModel.LOOKS,1);
-		SpecModel.add("change size by %n",					" ", SpecCategoryModel.MOTION, "changeSizeBy:",	 		[10]);
-		SpecModel.add("set size to %n%",						" ", SpecCategoryModel.MOTION, "setSizeTo:", 				[100]);
+		SpecModel.add("change size by %n",					" ", SpecCategoryModel.LOOKS, "changeSizeBy:",	 		[10]);
+		SpecModel.add("set size to %n%",						" ", SpecCategoryModel.LOOKS, "setSizeTo:", 				[100]);
 		SpecModel.addSpacer(SpecCategoryModel.LOOKS,1);
-		SpecModel.add("go to front",							" ", SpecCategoryModel.MOTION, "comeToFront");
-		SpecModel.add("go back %n layers",					" ", SpecCategoryModel.MOTION, "goBackByLayers:", 			[1]);
+		SpecModel.add("go to front",							" ", SpecCategoryModel.LOOKS, "comeToFront");
+		SpecModel.add("go back %n layers",					" ", SpecCategoryModel.LOOKS, "goBackByLayers:", 			[1]);
 		SpecModel.addSpacer(SpecCategoryModel.LOOKS,1);
-		SpecModel.add("costume #",							"r", SpecCategoryModel.MOTION, "costumeIndex");
-		SpecModel.add("backdrop name",						"r", SpecCategoryModel.MOTION, "sceneName");
-		SpecModel.add("size",								"r", SpecCategoryModel.MOTION, "scale");
+		SpecModel.add("costume #",							"r", SpecCategoryModel.LOOKS, "costumeIndex");
+		SpecModel.add("backdrop name",						"r", SpecCategoryModel.LOOKS, "sceneName");
+		SpecModel.add("size",								"r", SpecCategoryModel.LOOKS, "scale");
 
 		// stage looks
 		SpecModel.add("switch backdrop to %m.backdrop",			" ", SpecCategoryModel.LOOKS_STAGE, "startScene", 			["backdrop1"]);
@@ -308,9 +310,9 @@ export class SpecModel
     }
     
     
-	static add(blockSpecification: string, type: string, category: SpecCategoryModel, opCode, defaultArgs?: any[])
+	static add(description: string, type: string, category: SpecCategoryModel, code, defaultArgs?: any[])
     {
-        let spec = new SpecModel(opCode,category, type, defaultArgs);
+        let spec = new SpecModel(code, description, category, type, defaultArgs);
         //spec.prepareShape(spec, type);
         category.addSpec(spec);
         SpecModel.SPECS.push(spec);
@@ -332,7 +334,7 @@ export class SpecModel
 export class SpecSpacerModel extends SpecModel{
     constructor(category: SpecCategoryModel, spaces: number)
     {
-        super("spacer",category,"this will be used as spacer between real specs",[spaces]);
+        super("spacer","this will be used as spacer between real specs", category, "",[spaces]);
     }
 }
 

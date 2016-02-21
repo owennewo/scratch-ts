@@ -10,9 +10,9 @@ export class Graphics
         Graphics.PAPER = Snap("#svg-script-pane");
     }
     
-    static builder(): GraphicsBuilder
+    static newGroup(id: string, x: number, y: number): GraphicsBuilder
     {
-        return new GraphicsBuilder();
+        return new GraphicsBuilder(id, x, y);
     }
 }
     
@@ -21,13 +21,31 @@ export class GraphicsBuilder
     
     color: string;
     path: string = "";
+    group: any;
     
-    xCurrent: number = 10;
-    yCurrent: number = 10;
+    moveGroup(x: number, y: number)
+    {
+        this.group.attr({
+            transform: "translate(" + x + "," + y + ")"
+        })
+    }
 	
+    constructor(id: string, x: number, y: number)
+    {
+        this.group = Graphics.PAPER.group();
+        if (id)
+        {
+            this.group.attr({
+                id: id,
+                transform: "translate(" + x + "," + y + ")"
+            });    
+        }
+    }
+    
 	clear(): GraphicsBuilder
 	{
 		this.path = "";
+        
         return this;
 	}
 
@@ -38,6 +56,7 @@ export class GraphicsBuilder
         {
              p.attr("fill", this.color);
         }
+        this.group.add(p);
         return this;
 	}
 	
@@ -56,43 +75,45 @@ export class GraphicsBuilder
         rect.attr({
             fill: this.color
         });
+        this.group.add(rect);
         return this;
 	}
     
-    drawText(x: number, y: number, text: string)
+    drawText(x: number, y: number, text: string, color: string)
     {
         let t = Graphics.PAPER.text(x, y, text);
         t.attr({
-            fill: this.color
+            fill: color
         });
+        this.group.add(t);
     }
 	
 	moveTo(x: number,y: number): GraphicsBuilder
 	{
-        if (!x) x = 5;
-        if (!y) y = 5;
-        this.xCurrent = x;
-        this.yCurrent = y;
+        //if (!x) x = 5;
+        //if (!y) y = 5;
+       // this.xCurrent = x;
+        //this.yCurrent = y;
 		this.appendPath("M" + x + "," + y );
         return this;        
 	}
 	lineTo(x: number, y: number): GraphicsBuilder
 	{
-        if (!x) x = 5;
-        if (!y) y = 5;
-        this.xCurrent = x;
-        this.yCurrent = y;
+        //if (!x) x = 5;
+        //if (!y) y = 5;
+        //this.xCurrent = x;
+        //this.yCurrent = y;
 		this.appendPath("L" + x + "," + y );
         return this;
 	}
 	
-	lineStyle(thickness?: number, color?: number, alpha?: number, pixelHinting?: boolean): GraphicsBuilder
+	lineStyle(thickness?: number, color?: string, alpha?: number, pixelHinting?: boolean): GraphicsBuilder
 	{
 		console.log("todo: Graphics");
         return this;
 	}
 	
-	beginFill(color: number, alpha?: number): GraphicsBuilder
+	beginFill(color: string, alpha?: number): GraphicsBuilder
 	{
 		this.color = color;
         return this;
@@ -114,10 +135,15 @@ export class GraphicsBuilder
         return this;
     }
     
-    draw()
+    fill(color: string): GraphicsBuilder
     {
-        console.log("drawing:" + this.path);
-        Graphics.PAPER.path(this.path);
+        var path = Graphics.PAPER.path(this.path);
+        path.attr({
+            fill: color
+        });
+        this.path = "";
+        this.group.add(path);
+        return this;
     }
     
     drawTop(w: number): GraphicsBuilder {
@@ -159,9 +185,9 @@ export class GraphicsBuilder
 			[3, 0], [-4, -5], [-4, 5], [3, 0],
 			[0, 3], [-8, 0], [0, 2]];
         
-        this.beginFill(0, 0.3)
+        this.beginFill("#000", 0.3)
         this.drawPath(w - 15, h - 3, arrow) // shadow
-		this.beginFill(0xFFFFFF, 0.9);
+		this.beginFill("#FFFFFF", 0.9);
         this.drawPath(w - 16, h - 4, arrow); // white arrow
 		this.endFill();
         return this;

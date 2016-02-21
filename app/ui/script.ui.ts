@@ -2,12 +2,13 @@ import {ScriptModel} from '../model/script.model'
 import {BlockModel} from '../model/block.model'
 import {Graphics} from '../utils/graphics';
 import {SpecCategoryModel} from '../model/spec.category.model';
+import {ShapeFactory} from '../shapes/shape.factory';
 
 export class ScriptUI
 {
     static drawCategories()
     {
-        let graphics = Graphics.builder();
+        let group = Graphics.newGroup("categories_group", 10, 10);
         
         let index = 0;
         
@@ -21,18 +22,30 @@ export class ScriptUI
             var col = Math.floor(index / rows);
             var x = 20 + col * 100;
             var y = 20 + row * 25;
-            graphics.color = category.color;
-            graphics.drawRect(x, y, 90, 20);
-            graphics.color = "#FFF";
-            graphics.drawText(x + 5, y + 15, category.name);
-                
-            category.specs.forEach(spec => {
-                console.log("   - " + spec.opCode);
-            });
+            group.color = category.color;
+            group.drawRect(x, y, 90, 20);
+            group.color = "#FFF";
+            group.drawText(x + 5, y + 15, category.name);
+            
             index++; 
             
-            
         });
+        
+        this.drawCategory(SpecCategoryModel.CATEGORIES.get(2));
+    }
+    
+    static drawCategory(category: SpecCategoryModel)
+    {
+        console.log ("drawing " + category.name );
+        
+        var index = 0;
+        category.specs.forEach(spec => {
+            
+            let shape = ShapeFactory.createShape(category, spec, 20, 200 + 30 * index);
+
+            shape.draw();
+            index++;
+         });
     }
     
     

@@ -1,11 +1,14 @@
 import {BaseShape} from './base.shape';
 import {Graphics} from '../utils/graphics';
+import {SpecCategoryModel} from '../model/spec.category.model';
+import {SpecModel} from '../model/spec.model';
+
 
 export class NumberShape extends BaseShape
 {
-    constructor(color: number, type: string)
+    constructor(category: SpecCategoryModel, spec: SpecModel, x: number, y: number)
     {
-        super(color);
+        super(category, spec, x, y);
         this.indentTop = 2;
         // this.indentBottom = 2;
         // this.indentLeft = 6;
@@ -21,17 +24,17 @@ export class NumberShape extends BaseShape
     }
     
     draw() {
-        
+        super.draw();
         var centerY:number = this.topH / 2;
         
-        Graphics.builder()
+        this.g
                 .moveTo(centerY, this.topH)
                 .curve(centerY, this.topH, 0, centerY)
 		        .curve(0, centerY, centerY, 0)
 		        .lineTo(this.w - centerY, 0)
 		        .curve(this.w - centerY, 0, this.w, centerY)
 		        .curve(this.w, centerY, this.w - centerY, this.topH)
-                .draw();
+                .fill(this.color);
 	}
     
 }
