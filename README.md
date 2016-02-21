@@ -25,6 +25,6 @@ At v0.3 I'll formally reach out to scratch foundation to see if they want me to 
 ## Personal motivation
 My kids love scratch and I'd like to improve my client side skills.
 
-elp welcome.
+Help welcome.
 
 
