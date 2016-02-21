@@ -14,4 +14,17 @@ This port will aim to port the 'scratch project editor and runtime' onto non fla
  - npm to download dependencies and compile typescript to javascript
  - Visual Studio Code for IDE.  It's lightweight yet has a decent typescript debugger.
 
+## timelines
+Here is some targets to keep me motivated
+ - v0.1 read only sprite script editor (i.e. displays scripts but can't edit) - March 16
+ - v0.2 working runtime with subset of primitives (e.g. no sound) - April 16
+ - v0.3 read write sprite script editor - May 16 
+
+At v0.3 I'll formally reach out to scratch foundation to see if they want me to continue in a more official capacity.
+
+## Personal motivation
+My kids love scratch and I'd like to improve my client side skills.
+
+elp welcome.
+
 
