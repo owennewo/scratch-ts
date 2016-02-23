@@ -1,3 +1,4 @@
+import {PathBuilder} from "../utils/path.builder";
 import {BaseShape} from "./base.shape";
 import {LoopShape} from "./loop.shape";
 import {Graphics} from "../utils/graphics";
@@ -18,13 +19,14 @@ export class IfElseShape extends LoopShape {
         let h1: number = this.topH + this.substack1H - Geometry.NotchDepth;
         let h2: number = h1 + Geometry.DividerH + this.substack2H - Geometry.NotchDepth;
 
-        this.g
+        let path = PathBuilder.create()
             .drawTop(this.w)
             .drawRightAndBottom(this.topH, this.w, true, Geometry.SubstackInset)
             .drawArm(h1, this.w)
             .drawRightAndBottom(h1 + Geometry.DividerH, this.w, true, Geometry.SubstackInset)
             .drawArm(h2, this.w)
             .drawRightAndBottom(h2 + Geometry.BottomBarH, this.w, true)
-            .fill(this.color);
+            .build();
+            this.group.append(Graphics.ScriptPane.drawPath(path, this.color));
     }
 }

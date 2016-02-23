@@ -1,3 +1,4 @@
+import {PathBuilder} from "../utils/path.builder";
 import {BaseShape} from "./base.shape";
 import {Graphics} from "../utils/graphics";
 import {Geometry} from "./geometry";
@@ -17,15 +18,16 @@ export class LoopShape extends BaseShape {
         super.draw();
         let h1: number = this.topH + this.substack1H - Geometry.NotchDepth;
 
-        this.g
+        let builder = PathBuilder.create()
             .drawTop(this.w)
             .drawRightAndBottom(this.topH, this.w, true, Geometry.SubstackInset)
             .drawArm(h1, this.w)
             .drawRightAndBottom(h1 + Geometry.BottomBarH, this.w, true);
         if (this.hasLoopArrow) {
-            this.g.drawLoopArrow(this.w, h1 + Geometry.BottomBarH);
+            builder.drawLoopArrow(this.w, h1 + Geometry.BottomBarH);
         }
-        this.g.fill(this.color);
+        let path = builder.build();
+        this.group.append(Graphics.ScriptPane.drawPath(path, this.color));
     }
 
 }

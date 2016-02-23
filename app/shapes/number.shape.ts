@@ -1,3 +1,4 @@
+import {PathBuilder} from "../utils/path.builder";
 import {BaseShape} from "./base.shape";
 import {Graphics} from "../utils/graphics";
 import {SpecCategoryModel} from "../model/spec.category.model";
@@ -25,14 +26,15 @@ export class NumberShape extends BaseShape {
         super.draw();
         let centerY: number = this.topH / 2;
 
-        this.g
+        let path = PathBuilder.create()
             .moveTo(centerY, this.topH)
             .curve(centerY, this.topH, 0, centerY)
             .curve(0, centerY, centerY, 0)
             .lineTo(this.w - centerY, 0)
             .curve(this.w - centerY, 0, this.w, centerY)
             .curve(this.w, centerY, this.w - centerY, this.topH)
-            .fill(this.color);
+            .build();
+            this.group.append(Graphics.ScriptPane.drawPath(path, this.color));
     }
 
 }

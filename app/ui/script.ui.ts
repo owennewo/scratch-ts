@@ -6,7 +6,7 @@ import {ShapeFactory} from "../shapes/shape.factory";
 
 export class ScriptUI {
     static drawCategories() {
-        let group = Graphics.newGroup("categories_group", 10, 10);
+        let group = Graphics.ScriptPane.group("categories_group", 10, 10);
 
         let index = 0;
 
@@ -18,10 +18,9 @@ export class ScriptUI {
             let col = Math.floor(index / rows);
             let x = 20 + col * 100;
             let y = 20 + row * 25;
-            group.color = category.color;
-            group.drawRect(x, y, 90, 20);
-            group.color = "#FFF";
-            group.drawText(x + 5, y + 15, category.name, category.color);
+            
+            group.append(Graphics.ScriptPane.drawRect(x, y, 90, 20, category.color));
+            group.append(Graphics.ScriptPane.drawText(x + 5, y + 15, category.name, "#FFF"));
 
             index++;
 

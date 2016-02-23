@@ -1,3 +1,4 @@
+import {PathBuilder} from "../utils/path.builder";
 import {BaseShape} from "./base.shape";
 import {Graphics} from "../utils/graphics";
 import {SpecCategoryModel} from "../model/spec.category.model";
@@ -11,9 +12,7 @@ export class RectangleShape extends BaseShape {
 
     draw() {
         super.draw();
-        this.g
-            .drawRect(0, 0, this.w, this.topH)
-            .fill(this.color);
+        this.group.append(Graphics.ScriptPane.drawRect(0, 0, this.w, this.topH, this.color));
     }
 
 }

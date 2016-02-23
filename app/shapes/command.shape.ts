@@ -1,3 +1,4 @@
+import {PathBuilder} from "../utils/path.builder";
 import {BaseShape} from "./base.shape";
 import {Graphics} from "../utils/graphics";
 import {SpecCategoryModel} from "../model/spec.category.model";
@@ -15,11 +16,16 @@ export class CommandShape extends BaseShape {
 
     draw() {
         super.draw();
-        this.g
+        let text = Graphics.ScriptPane.drawText(5, 18, this.title, "#EEE")
+
+        this.w = text.getBBox().width + 20;
+
+        let path = PathBuilder.create()
             .drawTop(this.w)
             .drawRightAndBottom(this.topH, this.w, this.hasNotch)
-            .fill(this.color)
-            .drawText(5, 18, this.title, "#EEE");
+            .build();
+            this.group.append(Graphics.ScriptPane.drawPath(path, this.color));
+            this.group.append(text);
     }
 
 }

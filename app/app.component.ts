@@ -22,7 +22,7 @@ import {Graphics} from "./utils/graphics";
 export class AppComponent {
 
     constructor(@Inject(ScratchRestIO) private scratchRest: ScratchRestIO) {
-        Graphics.initialize();
+
         SpecCategoryModel.initialize();
         SpecModel.initialize();
        scratchRest.load();

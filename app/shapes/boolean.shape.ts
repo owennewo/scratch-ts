@@ -1,3 +1,4 @@
+import {PathBuilder} from "../utils/path.builder";
 import {BaseShape} from "./base.shape";
 import {Graphics} from "../utils/graphics";
 import {SpecCategoryModel} from "../model/spec.category.model";
@@ -16,14 +17,18 @@ export class BooleanShape extends BaseShape {
         super.draw();
         let centerY: number = this.topH / 2;
 
-        this.g
+
+        let path = PathBuilder.create()
             .moveTo(this.centerY, this.topH)
             .lineTo(this.x, this.centerY)
             .lineTo(centerY, this.y)
             .lineTo(this.w - this.centerY, this.y)
             .lineTo(this.w, this.centerY)
             .lineTo(this.w - this.centerY, this.topH)
-            .fill(this.color);
+            .build();
+        this.group.append(Graphics.ScriptPane.drawPath(path, this.color));
+
+
     }
 
 

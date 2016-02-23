@@ -1,3 +1,4 @@
+import {PathBuilder} from "../utils/path.builder";
 import {BaseShape} from "./base.shape";
 import {Graphics} from "../utils/graphics";
 import {Geometry} from "./geometry";
@@ -16,13 +17,14 @@ export class CommandOutlineShape extends BaseShape {
 
     draw() {
         super.draw();
-        this.g
-            .endFill() // do not fill
-            .lineStyle(2, "#FFFFFF", 0.2)
+
+        let path = PathBuilder.create()
             .drawTop(this.w)
             .drawRightAndBottom(this.topH, this.w, this.hasNotch)
             .lineTo(0, Geometry.CornerInset)
-            .fill(this.color);
+            .build();
+
+            this.group.append(Graphics.ScriptPane.drawPath(path, this.color));
     }
 
 }

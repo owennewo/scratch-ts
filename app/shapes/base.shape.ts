@@ -1,5 +1,6 @@
+import {PathBuilder} from "../utils/path.builder";
 import {Shape} from "./shape";
-import {Graphics, GraphicsBuilder} from "../utils/graphics";
+import {Graphics} from "../utils/graphics";
 import {SpecCategoryModel} from "../model/spec.category.model";
 import {SpecModel} from "../model/spec.model";
 
@@ -16,7 +17,7 @@ export abstract class BaseShape implements Shape {
     topH: number = 25;  // this is the height of the top bar.  most shape only have top bar but things like loops are more complex
     indentTop: number = 0;
     centerY: number;
-    g: GraphicsBuilder;
+    // g: PathBuilder;
     group: any; // svg group
 
     constructor(category: SpecCategoryModel, spec: SpecModel, x?: number, y?: number) {
@@ -25,7 +26,7 @@ export abstract class BaseShape implements Shape {
         this.title = spec.description;
         this.x = x;
         this.y = y;
-        this.g = Graphics.newGroup(this.id, x, y);
+        this.group = Graphics.ScriptPane.group(this.id, x, y);
     }
 
     // move(x: number, y: number)
