@@ -1,5 +1,4 @@
-export interface Shape
-{
+export interface Shape {
     draw();
     move(x: number, y: number);
 }

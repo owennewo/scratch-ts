@@ -1,28 +1,8 @@
-/*
- * Scratch Project Editor and Player
- * Copyright (C) 2014 Massachusetts Institute of Technology
+/**
+ * Color utility methods, such as HSV/RGB conversions.
  *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * John Maloney, August 2009
  */
-
-// Color.as
-// John Maloney, August 2009
-//
-// Color utility methods, such as HSV/RGB conversions.
-
-//module util {
 export class Color {
 
 	// // Convert hue (0-360), saturation (0-1), and brightness (0-1) to RGB.
@@ -49,10 +29,10 @@ export class Color {
 	// 	b = Math.floor(b * 255);
 	// 	return (r << 16) | (g << 8) | b;
 	// }
-    
+
     static decimalToHex(d) {
-        var hex = Number(d).toString(16);
-        hex = "#000000".substr(0, 7 - hex.length) + hex; 
+        let hex = Number(d).toString(16);
+        hex = "#000000".substr(0, 7 - hex.length) + hex;
         return hex;
     }
 
@@ -94,13 +74,12 @@ export class Color {
 	// 	return (r << 16) | (g << 8) | b;
 	// }
 
-	public static random():number {
-		// return a random color
-		var h:number = 360 * Math.random();
-		var s:number = 0.7 + (0.3 * Math.random());
-		var v:number = 0.6 + (0.4 * Math.random());
-		return Color.fromHSV(h, s, v);
-	}
+	// public static random():number {
+	// 	// return a random color
+	// 	let h:number = 360 * Math.random();
+	// 	let s:number = 0.7 + (0.3 * Math.random());
+	// 	let v:number = 0.6 + (0.4 * Math.random());
+	// 	return Color.fromHSV(h, s, v);
+	// }
 
 }
-

@@ -1,15 +1,15 @@
-import {BaseShape} from './base.shape';
-import {Graphics} from '../utils/graphics';
-import {Geometry} from './geometry';
-import {SpecCategoryModel} from '../model/spec.category.model';
-import {SpecModel} from '../model/spec.model';
+import {BaseShape} from "./base.shape";
+import {Graphics} from "../utils/graphics";
+import {Geometry} from "./geometry";
+import {SpecCategoryModel} from "../model/spec.category.model";
+import {SpecModel} from "../model/spec.model";
 
 
 export class HatShape extends BaseShape {
 
     constructor(category: SpecCategoryModel, spec: SpecModel, x: number, y: number) {
         super(category, spec, x, y);
-        //this.isHat = true;
+        // this.isHat = true;
         this.indentTop = 12;
     }
 
