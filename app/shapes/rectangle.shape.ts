@@ -12,7 +12,7 @@ export class RectangleShape extends BaseShape {
 
     draw() {
         super.draw();
-        this.group.append(Graphics.ScriptPane.drawRect(0, 0, this.w, this.topH, this.color));
+        this.group.append(Graphics.ScriptPane.drawRect(0, 0, this.w, this.topH, this.category.name.toLowerCase()));
     }
 
 }

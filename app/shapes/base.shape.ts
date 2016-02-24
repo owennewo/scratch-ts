@@ -7,50 +7,39 @@ import {SpecModel} from "../model/spec.model";
 
 export abstract class BaseShape implements Shape {
     id: string;
+    category: SpecCategoryModel;
+    spec: SpecModel;
+
+    group: any; // svg group
+
+    /* dimensio attributes */
     x: number;
     y: number;
-    color: string;
-    // h: number = 20;
     w: number = 100;
-    title: string;
-
     topH: number = 25;  // this is the height of the top bar.  most shape only have top bar but things like loops are more complex
     indentTop: number = 0;
     centerY: number;
-    // g: PathBuilder;
-    group: any; // svg group
 
     constructor(category: SpecCategoryModel, spec: SpecModel, x?: number, y?: number) {
         this.id = category.name + "_" + spec.code.replace(new RegExp(":", "g"), "_");
-        this.color = category.color;
-        this.title = spec.description;
+        this.category = category;
+        this.spec = spec;
         this.x = x;
         this.y = y;
-        this.group = Graphics.ScriptPane.group(this.id, x, y);
+        this.group = Graphics.ScriptPane.group(this.id, x, y, true);
     }
-
-    // move(x: number, y: number)
-    // {
-    //     this.x = x;
-    //     this.y = y;
-
-    //     this.centerY = y + this.h / 2;
-    // }
 
     move(x: number, y: number) {
         console.log("to do move");
     }
 
+    getGroup(): any {
+      return this.group
+    }
+
+
     draw() {
-        /*
-        this.group = Graphics.PAPER.g(); //an svg group
-        this.group.attr(
-            {
-                id: this.id,
-                transform: "translate(" + this.x + "," + this.y + ")"
-            }
-        )
-        */
+
     }
 
 }

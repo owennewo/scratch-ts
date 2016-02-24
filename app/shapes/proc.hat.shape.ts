@@ -31,7 +31,7 @@ export class ProcHatShape extends BaseShape {
             .curve(this.w, 16, 0, 16, -archRoundness)
             .curve(0, 16, -1, 13, 0.6)
             .build();
-        this.group.append(Graphics.ScriptPane.drawPath(path, this.color));
+        this.group.append(Graphics.ScriptPane.drawPath(path, this.category.name.toLowerCase()));
     }
 
 }

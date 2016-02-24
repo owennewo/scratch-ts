@@ -26,7 +26,7 @@ export class BooleanShape extends BaseShape {
             .lineTo(this.w, this.centerY)
             .lineTo(this.w - this.centerY, this.topH)
             .build();
-        this.group.append(Graphics.ScriptPane.drawPath(path, this.color));
+        this.group.append(Graphics.ScriptPane.drawPath(path, this.category.name.toLowerCase()));
 
 
     }

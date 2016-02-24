@@ -6,7 +6,7 @@ import {ShapeFactory} from "../shapes/shape.factory";
 
 export class ScriptUI {
     static drawCategories() {
-        let group = Graphics.ScriptPane.group("categories_group", 10, 10);
+        let group = Graphics.ScriptPane.group("script-pane-categories", 10, 10);
 
         let index = 0;
 
@@ -18,13 +18,17 @@ export class ScriptUI {
             let col = Math.floor(index / rows);
             let x = 20 + col * 100;
             let y = 20 + row * 25;
-            
-            group.append(Graphics.ScriptPane.drawRect(x, y, 90, 20, category.color));
+            let rect = Graphics.ScriptPane.drawRect(x, y, 90, 20, category.name.toLowerCase());
+
+            rect.click((event: MouseEvent) => this.drawCategory(category));
+
+            group.append(rect);
             group.append(Graphics.ScriptPane.drawText(x + 5, y + 15, category.name, "#FFF"));
 
             index++;
 
         });
+
 
         this.drawCategory(SpecCategoryModel.CATEGORIES.get(2));
     }
@@ -32,12 +36,19 @@ export class ScriptUI {
     static drawCategory(category: SpecCategoryModel) {
         console.log("drawing " + category.name);
 
+        let oldCategoryBlocks = Graphics.ScriptPane.paper.select("#script-pane-categories-blocks");
+        if (oldCategoryBlocks) {
+          oldCategoryBlocks.remove();
+        }
+
+        let newCcategoryBlocks = Graphics.ScriptPane.group("script-pane-categories-blocks", 10, 200);
+
         let index = 0;
         category.specs.forEach(spec => {
 
-            let shape = ShapeFactory.createShape(category, spec, 20, 200 + 30 * index);
-
+            let shape = ShapeFactory.createShape(category, spec, 20, 30 * index);
             shape.draw();
+            newCcategoryBlocks.append(shape.getGroup());
             index++;
         });
     }

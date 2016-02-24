@@ -27,7 +27,7 @@ export class LoopShape extends BaseShape {
             builder.drawLoopArrow(this.w, h1 + Geometry.BottomBarH);
         }
         let path = builder.build();
-        this.group.append(Graphics.ScriptPane.drawPath(path, this.color));
+        this.group.append(Graphics.ScriptPane.drawPath(path, this.category.name.toLowerCase()));
     }
 
 }

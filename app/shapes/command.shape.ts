@@ -16,7 +16,7 @@ export class CommandShape extends BaseShape {
 
     draw() {
         super.draw();
-        let text = Graphics.ScriptPane.drawText(5, 18, this.title, "#EEE")
+        let text = Graphics.ScriptPane.drawText(5, 18, this.spec.description);
 
         this.w = text.getBBox().width + 20;
 
@@ -24,7 +24,7 @@ export class CommandShape extends BaseShape {
             .drawTop(this.w)
             .drawRightAndBottom(this.topH, this.w, this.hasNotch)
             .build();
-            this.group.append(Graphics.ScriptPane.drawPath(path, this.color));
+            this.group.append(Graphics.ScriptPane.drawPath(path, this.category.name.toLowerCase()));
             this.group.append(text);
     }
 

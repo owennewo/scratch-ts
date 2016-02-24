@@ -1,3 +1,4 @@
+import {PathBuilder} from "../utils/path.builder";
 import {BaseShape} from "./base.shape";
 import {Graphics} from "../utils/graphics";
 import {Geometry} from "./geometry";
@@ -15,14 +16,16 @@ export class HatShape extends BaseShape {
 
     draw() {
         super.draw();
-        this.g
+        let path = PathBuilder.create()
             .moveTo(0, 12)
             .curve(0, 12, 40, 0, 0.15)
             .curve(40, 0, 80, 10, 0.12)
             .lineTo(this.w - Geometry.CornerInset, 10)
             .lineTo(this.w, 10 + Geometry.CornerInset)
             .drawRightAndBottom(this.topH, this.w, true)
-            .fill(this.color);
+            .build();
+        this.group.append(Graphics.ScriptPane.drawPath(path, this.category.name.toLowerCase()));
+
     }
 
 }

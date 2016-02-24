@@ -27,6 +27,6 @@ export class IfElseShape extends LoopShape {
             .drawArm(h2, this.w)
             .drawRightAndBottom(h2 + Geometry.BottomBarH, this.w, true)
             .build();
-            this.group.append(Graphics.ScriptPane.drawPath(path, this.color));
+            this.group.append(Graphics.ScriptPane.drawPath(path, this.category.name.toLowerCase()));
     }
 }

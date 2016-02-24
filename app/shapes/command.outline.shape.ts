@@ -24,7 +24,7 @@ export class CommandOutlineShape extends BaseShape {
             .lineTo(0, Geometry.CornerInset)
             .build();
 
-            this.group.append(Graphics.ScriptPane.drawPath(path, this.color));
+            this.group.append(Graphics.ScriptPane.drawPath(path, this.category.name.toLowerCase()));
     }
 
 }

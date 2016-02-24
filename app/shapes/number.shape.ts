@@ -34,7 +34,7 @@ export class NumberShape extends BaseShape {
             .curve(this.w - centerY, 0, this.w, centerY)
             .curve(this.w, centerY, this.w - centerY, this.topH)
             .build();
-            this.group.append(Graphics.ScriptPane.drawPath(path, this.color));
+            this.group.append(Graphics.ScriptPane.drawPath(path, this.category.name.toLowerCase()));
     }
 
 }
