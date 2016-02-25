@@ -5,6 +5,7 @@
     "tsc": "tsc",
     "tsc:w": "tsc -w",
     "lite": "lite-server",
+    "start-no-compile": "npm run lite",
     "start": "concurrent \"npm run tsc:w\" \"npm run lite\" "
   },
   "dependencies": {

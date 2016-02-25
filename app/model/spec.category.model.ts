@@ -1,3 +1,4 @@
+/// <reference path="../definitelytyped/snapsvg.d.ts" />
 import {SpecModel} from "./spec.model";
 
 export class SpecCategoryModel {
@@ -42,6 +43,7 @@ export class SpecCategoryModel {
     name: string;
     color: string;
     specs: SpecModel[];
+    svg: Snap.Element;
 
     constructor(id: number, name: string, color: string) {
         this.id = id;

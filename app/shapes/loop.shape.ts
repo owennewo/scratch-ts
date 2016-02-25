@@ -18,6 +18,10 @@ export class LoopShape extends BaseShape {
         super.draw();
         let h1: number = this.topH + this.substack1H - Geometry.NotchDepth;
 
+        let text = Graphics.ScriptPane.drawText(5, 18, this.spec.description);
+
+        this.w = text.getBBox().width + 20;
+
         let builder = PathBuilder.create()
             .drawTop(this.w)
             .drawRightAndBottom(this.topH, this.w, true, Geometry.SubstackInset)
@@ -28,6 +32,8 @@ export class LoopShape extends BaseShape {
         }
         let path = builder.build();
         this.group.append(Graphics.ScriptPane.drawPath(path, this.category.name.toLowerCase()));
+        this.group.append(text);
+
     }
 
 }

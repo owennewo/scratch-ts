@@ -24,17 +24,22 @@ export class NumberShape extends BaseShape {
 
     draw() {
         super.draw();
-        let centerY: number = this.topH / 2;
+        this.centerY = this.topH / 2;
+
+        let text = Graphics.ScriptPane.drawText(5, 18, this.spec.description);
+
+        this.w = text.getBBox().width + 20;
 
         let path = PathBuilder.create()
-            .moveTo(centerY, this.topH)
-            .curve(centerY, this.topH, 0, centerY)
-            .curve(0, centerY, centerY, 0)
-            .lineTo(this.w - centerY, 0)
-            .curve(this.w - centerY, 0, this.w, centerY)
-            .curve(this.w, centerY, this.w - centerY, this.topH)
+            .moveTo(this.centerY, this.topH)
+            .curve(this.centerY, this.topH, 0, this.centerY)
+            .curve(0, this.centerY, this.centerY, 0)
+            .lineTo(this.w - this.centerY, 0)
+            .curve(this.w - this.centerY, 0, this.w, this.centerY)
+            .curve(this.w, this.centerY, this.w - this.centerY, this.topH)
             .build();
-            this.group.append(Graphics.ScriptPane.drawPath(path, this.category.name.toLowerCase()));
+        this.group.append(Graphics.ScriptPane.drawPath(path, this.category.name.toLowerCase()));
+        this.group.append(text);
     }
 
 }

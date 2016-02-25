@@ -1,39 +1,54 @@
+/// <reference path="../definitelytyped/snapsvg.d.ts" />
 import {ScriptModel} from "../model/script.model";
 import {BlockModel} from "../model/block.model";
 import {Graphics} from "../utils/graphics";
 import {SpecCategoryModel} from "../model/spec.category.model";
 import {ShapeFactory} from "../shapes/shape.factory";
+import {SpecSpacerModel} from "../model/spec.model";
 
 export class ScriptUI {
     static drawCategories() {
-        let group = Graphics.ScriptPane.group("script-pane-categories", 10, 10);
+        let groupCategories = Graphics.ScriptPane.group("script-pane-categories", 10, 10);
 
         let index = 0;
 
         let rows = Math.ceil(SpecCategoryModel.CATEGORIES.size / 2);
 
         SpecCategoryModel.CATEGORIES.forEach(category => {
+
             console.log(" + " + category.name);
             let row = index % rows;
             let col = Math.floor(index / rows);
-            let x = 20 + col * 100;
+            let x = 20 + col * 110;
             let y = 20 + row * 25;
-            let rect = Graphics.ScriptPane.drawRect(x, y, 90, 20, category.name.toLowerCase());
 
-            rect.click((event: MouseEvent) => this.drawCategory(category));
+            let groupCategory = Graphics.ScriptPane.group(category.name + "-categories", x, y, false, category.name.toLowerCase());
 
-            group.append(rect);
-            group.append(Graphics.ScriptPane.drawText(x + 5, y + 15, category.name, "#FFF"));
+            let rectStub = Graphics.ScriptPane.drawRect(0, 0, 10, 20, "stub");
+            let rectMain = Graphics.ScriptPane.drawRect(10, 0, 90, 20, "main");
+
+            groupCategory.click((event: MouseEvent) => {
+              let categorySvgs: Snap.Element[] = Snap.selectAll("#script-pane-categories g");
+              categorySvgs.forEach (categorySvg => { categorySvg.removeClass("active"); });
+              this.drawCategory(category);
+            });
+
+            groupCategory.append(rectStub);
+            groupCategory.append(rectMain);
+            groupCategory.append(Graphics.ScriptPane.drawText(15, 15, category.name, "#FFF"));
+            category.svg = groupCategory;
+            groupCategories.append(groupCategory);
 
             index++;
 
         });
 
 
-        this.drawCategory(SpecCategoryModel.CATEGORIES.get(2));
+        this.drawCategory(SpecCategoryModel.CATEGORIES.get(1));
     }
 
     static drawCategory(category: SpecCategoryModel) {
+        category.svg.addClass("active");
         console.log("drawing " + category.name);
 
         let oldCategoryBlocks = Graphics.ScriptPane.paper.select("#script-pane-categories-blocks");
@@ -43,13 +58,17 @@ export class ScriptUI {
 
         let newCcategoryBlocks = Graphics.ScriptPane.group("script-pane-categories-blocks", 10, 200);
 
-        let index = 0;
+        let yPos = 0;
         category.specs.forEach(spec => {
-
-            let shape = ShapeFactory.createShape(category, spec, 20, 30 * index);
+          if (spec instanceof SpecSpacerModel) {
+            yPos += 10;
+            return;
+          }
+            let shape = ShapeFactory.createShape(category, spec, 20, yPos);
             shape.draw();
+            let shapeHeight = shape.getGroup().getBBox().h;
             newCcategoryBlocks.append(shape.getGroup());
-            index++;
+            yPos += shapeHeight + 5;
         });
     }
 

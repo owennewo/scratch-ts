@@ -1,5 +1,13 @@
 #script-pane-categories {}
 
+#script-pane-categories text { pointer-events: none; }
+#script-pane-categories g text { fill: black; }
+#script-pane-categories g.active text  { fill: white; }
+#script-pane-categories g rect.main { opacity: 0; }
+#script-pane-categories g.active rect.main { opacity: 1; }
+#script-pane-categories g rect.main:hover { opacity: 0.75; }
+#script-pane-categories rect { cursor: pointer; }
+
 svg text { fill: white; }
 
 .draggable { cursor: move; }

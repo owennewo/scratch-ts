@@ -19,6 +19,10 @@ export class IfElseShape extends LoopShape {
         let h1: number = this.topH + this.substack1H - Geometry.NotchDepth;
         let h2: number = h1 + Geometry.DividerH + this.substack2H - Geometry.NotchDepth;
 
+        let text = Graphics.ScriptPane.drawText(5, 18, this.spec.description);
+
+        this.w = text.getBBox().width + 20;
+
         let path = PathBuilder.create()
             .drawTop(this.w)
             .drawRightAndBottom(this.topH, this.w, true, Geometry.SubstackInset)
@@ -28,5 +32,6 @@ export class IfElseShape extends LoopShape {
             .drawRightAndBottom(h2 + Geometry.BottomBarH, this.w, true)
             .build();
             this.group.append(Graphics.ScriptPane.drawPath(path, this.category.name.toLowerCase()));
+            this.group.append(text);
     }
 }

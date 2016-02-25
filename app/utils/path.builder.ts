@@ -25,15 +25,6 @@ export class PathBuilder {
       return this;
   }
 
-  curveTo(cx, cy, p2x, p2y): PathBuilder {
-      if (!cx) cx = 5;
-      if (!cy) cy = 5;
-      if (!p2x) p2x = 5;
-      if (!p2y) p2y = 5;
-      this.appendPath("C" + cx + "," + cy + "," + p2x + "," + p2y);
-      return this;
-  }
-
   private appendPath(extra: string): PathBuilder {
       this.path = this.path + extra;
       return this;
@@ -112,13 +103,31 @@ export class PathBuilder {
       // of the line between p1 and p2 scaled by roundness * dist(p1, p2). The default roundness
       // approximates a circular arc. Negative roundness gives a concave curve.
 
+      // this.appendPath("Q" + p1x + "," + p1y + "," + p2x + "," + p2y);
+
       let midX: number = (p1x + p2x) / 2.0;
       let midY: number = (p1y + p2y) / 2.0;
       let cx: number = midX + (roundness * (p2y - p1y));
       let cy: number = midY - (roundness * (p2x - p1x));
-      this.curveTo(cx, cy, p2x, p2y);
+       this.curveTo(cx, cy, p2x, p2y);
       return this;
   }
+
+
+    curveTo(cx, cy, p2x, p2y): PathBuilder {
+        this.appendPath("R" + cx + "," + cy + "," + p2x + "," + p2y);
+        return this;
+    }
+
+    curveBezier(...coords: string[]): PathBuilder {
+      let path = "R";
+      coords.forEach  (coord => {
+        path = path + coord + ",";
+      });
+      path = path.substring(0, path.length - 1);
+        this.appendPath(path);
+        return this;
+    }
 
 
   build(): string {

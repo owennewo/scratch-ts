@@ -15,19 +15,22 @@ export class BooleanShape extends BaseShape {
 
     draw() {
         super.draw();
-        let centerY: number = this.topH / 2;
+        this.centerY = this.topH / 2;
 
+        let text = Graphics.ScriptPane.drawText(10, 18, this.spec.description);
+        this.w = text.getBBox().width + 20;
 
         let path = PathBuilder.create()
-            .moveTo(this.centerY, this.topH)
-            .lineTo(this.x, this.centerY)
-            .lineTo(centerY, this.y)
-            .lineTo(this.w - this.centerY, this.y)
-            .lineTo(this.w, this.centerY)
+            .moveTo(0, this.centerY)
+            .lineTo(this.centerY, 0)
+            .lineTo(this.w - this.centerY, 0)
+            .lineTo(this.w , this.centerY)
             .lineTo(this.w - this.centerY, this.topH)
+            .lineTo(this.centerY, this.topH)
+            .lineTo(0, this.centerY)
             .build();
         this.group.append(Graphics.ScriptPane.drawPath(path, this.category.name.toLowerCase()));
-
+        this.group.append(text);
 
     }
 
