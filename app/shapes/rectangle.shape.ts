@@ -6,13 +6,13 @@ import {SpecModel} from "../model/spec.model";
 
 
 export class RectangleShape extends BaseShape {
-    constructor(category: SpecCategoryModel, spec: SpecModel, x: number, y: number) {
-        super(category, spec, x, y);
+    constructor(spec: SpecModel) {
+        super(spec);
     }
 
     draw() {
         super.draw();
-        this.group.append(Graphics.ScriptPane.drawRect(0, 0, this.w, this.topH, this.category.name.toLowerCase()));
+        this.group.append(Graphics.ScriptPane.drawRect(0, 0, this.w, this.topH, this.spec.category.name.toLowerCase()));
     }
 
 }

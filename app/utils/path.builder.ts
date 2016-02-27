@@ -119,7 +119,7 @@ export class PathBuilder {
         return this;
     }
 
-    curveBezier(...coords: string[]): PathBuilder {
+    curveBezier(...coords: number[]): PathBuilder {
       let path = "R";
       coords.forEach  (coord => {
         path = path + coord + ",";

@@ -6,11 +6,11 @@ import {SpecModel} from "../model/spec.model";
 
 
 export class CommandShape extends BaseShape {
-    w: number;
+
     hasNotch: boolean = true;
 
-    constructor(category: SpecCategoryModel, spec: SpecModel, x: number, y: number) {
-        super(category, spec, x, y);
+    constructor(spec: SpecModel) {
+        super(spec);
         this.indentTop = 3;
     }
 
@@ -24,7 +24,7 @@ export class CommandShape extends BaseShape {
             .drawTop(this.w)
             .drawRightAndBottom(this.topH, this.w, this.hasNotch)
             .build();
-            this.group.append(Graphics.ScriptPane.drawPath(path, this.category.name.toLowerCase()));
+            this.group.append(Graphics.ScriptPane.drawPath(path, this.spec.category.name.toLowerCase()));
             this.group.append(text);
     }
 

@@ -6,8 +6,8 @@ import {SpecModel} from "../model/spec.model";
 
 
 export class BooleanShape extends BaseShape {
-    constructor(category: SpecCategoryModel, spec: SpecModel, x: number, y: number) {
-        super(category, spec, x, y);
+    constructor(spec: SpecModel) {
+        super(spec);
         // this.isReporter = true;
         // this.indentLeft = 9;
         // this.indentRight = 7;
@@ -29,7 +29,7 @@ export class BooleanShape extends BaseShape {
             .lineTo(this.centerY, this.topH)
             .lineTo(0, this.centerY)
             .build();
-        this.group.append(Graphics.ScriptPane.drawPath(path, this.category.name.toLowerCase()));
+        this.group.append(Graphics.ScriptPane.drawPath(path, this.spec.category.name.toLowerCase()));
         this.group.append(text);
 
     }

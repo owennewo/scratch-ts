@@ -6,8 +6,8 @@ import {SpecModel} from "../model/spec.model";
 
 
 export class NumberShape extends BaseShape {
-    constructor(category: SpecCategoryModel, spec: SpecModel, x: number, y: number) {
-        super(category, spec, x, y);
+    constructor(spec: SpecModel) {
+        super(spec);
         this.indentTop = 2;
         // this.indentBottom = 2;
         // this.indentLeft = 6;
@@ -38,7 +38,7 @@ export class NumberShape extends BaseShape {
             .curve(this.w - this.centerY, 0, this.w, this.centerY)
             .curve(this.w, this.centerY, this.w - this.centerY, this.topH)
             .build();
-        this.group.append(Graphics.ScriptPane.drawPath(path, this.category.name.toLowerCase()));
+        this.group.append(Graphics.ScriptPane.drawPath(path, this.spec.category.name.toLowerCase()));
         this.group.append(text);
     }
 

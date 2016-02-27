@@ -1,11 +1,15 @@
+import {DoubleStackShape} from "../shapes/double.stack.shape";
+import {StackShape} from "../shapes/stack.shape";
+import {Shape} from "../shapes/shape";
 import {SpecModel} from "./spec.model";
+import {SpecOperation} from "./spec.model";
 import {SpecCategoryModel} from "./spec.category.model";
 import {ShapeFactory} from "../shapes/shape.factory";
 import {Geometry} from "../shapes/geometry";
-import {BlockShapeModel} from "./block.shape.model";
 import {BlockArgModel} from "./blockarg.model";
 import {Translator} from "../utils/translator";
 import {BlockIO} from "../io/block.io";
+import {ReadStream} from "../utils/read.stream";
 
 export class BlockModel {
 
@@ -18,44 +22,45 @@ export class BlockModel {
     private minHatWidth: number = 80;
     private minLoopWidth: number = 80;
 
-    // public static argTextFormat:TextFormat;
-    // public static blockLabelFormat:TextFormat;
+    // static argTextFormat:TextFormat;
+    // static blockLabelFormat:TextFormat;
     private static vOffset: number;
 
     // private static const blockLabelFormat:TextFormat = new TextFormat('LucidaBoldEmbedded', 10, 0xFFFFFF, true);
     private static useEmbeddedFont: boolean = false;
 
-    public static MenuHandlerFunction: Function;	// optional function to handle block and blockArg menus
+    static MenuHandlerFunction: Function;	// optional function to handle block and blockArg menus
 
-    public spec: string;
-    public type: string;
-    public op: string = "";
-    public opFunction: Function;
-    public args: any[] = [];
-    public defaultArgValues: any[] = [];
-    public parameterIndex: number = -1;	// cache of parameter index, used by GET_PARAM block
-    public parameterNames: any[];	// used by procedure definition hats; null for other blocks
-    public warpProcFlag: boolean;	// used by procedure definition hats to indicate warp speed
-    public rightToLeft: boolean;
+    spec: SpecModel;
+    type: string;
+    svg: Snap.Element;
+    // op: SpecOperation;
+    opFunction: Function;
+    args: any[] = [];
+    defaultArgValues: any[] = [];
+    parameterIndex: number = -1;	// cache of parameter index, used by GET_PARAM block
+    parameterNames: any[];	// used by procedure definition hats; null for other blocks
+    warpProcFlag: boolean;	// used by procedure definition hats to indicate warp speed
+    rightToLeft: boolean;
 
-    public isHat: boolean = false;
-    public isReporter: boolean = false;
-    public isTerminal: boolean = false;	// blocks that end a stack like "stop" or "forever"
+    isHat: boolean = false;
+    isReporter: boolean = false;
+    isTerminal: boolean = false;	// blocks that end a stack like "stop" or "forever"
 
     // Blocking operations
-    public isRequester: boolean = false;
-    public forcedRequester: boolean = false;	// We've forced requester-like treatment on a non-requester block.
-    public requestState: number = 0;		// 0 - no request made, 1 - awaiting response, 2 - data ready
-    public response: any = null;
-		// public requestLoader:URLLoader = null;
+    isRequester: boolean = false;
+    forcedRequester: boolean = false;	// We've forced requester-like treatment on a non-requester block.
+    requestState: number = 0;		// 0 - no request made, 1 - awaiting response, 2 - data ready
+    response: any = null;
+    // requestLoader:URLLoader = null;
 
-    public nextBlock: BlockModel;
-    public previousBlock: BlockModel;
+    nextBlock: BlockModel;
+    previousBlock: BlockModel;
 
-    public subStack1: BlockModel;
-    public subStack2: BlockModel;
+    stack1: BlockModel;
+    stack2: BlockModel;
 
-    public base: BlockShapeModel;
+    shape: Shape;
 
     private suppressLayout: boolean; // used to avoid extra layouts during block initialization
     private labelsAndArgs: any[] = [];
@@ -71,46 +76,49 @@ export class BlockModel {
     private static ROLE_ABSOLUTE: number = 1;
     private static ROLE_EMBEDDED: number = 2;
     private static ROLE_NEXT: number = 3;
-    private static ROLE_SUBSTACK1: number = 4;
-    private static ROLE_SUBSTACK2: number = 5;
+    private static ROLE_stack1: number = 4;
+    private static ROLE_stack2: number = 5;
 
     // private originalParent:DisplayObjectContainer;
     private originalRole: number;
     private originalIndex: number;
     // private originalPosition:Point;
 
-    constructor(spec: string, type: string = " ", color: string = "#D00000", op: any = 0, defaultArgs: any[] = null) {
+    constructor(spec: SpecModel, defaultArgs: any[] = null) {
 
-        this.spec = Translator.map(spec);
-        this.type = type;
-        this.op = op;
+        // this.specC = Translator.map(specCode);
+        this.spec = spec;
+        //        this.op = op;
 
-        if ((Specs.Call === op) ||
-            (Specs.GetList === op) ||
-            (Specs.GetParam === op) ||
-            (Specs.GetVar === op) ||
-            (Specs.ProcedureDef === op) ||
-            ("proc_declaration" === op)) {
-            this.spec = spec; // don't translate var/list/param reporters
+
+
+        // if ((SpecOperation.Call === op) ||
+        //     (SpecOperation.GetList === op) ||
+        //     (SpecOperation.GetParam === op) ||
+        //     (SpecOperation.GetVar === op) ||
+        //     (SpecOperation.ProcedureDef === op) ||
+        //     (SpecOperation.ProcedureDeclaration === op)) {
+        //     this.spec = spec; // don't translate var/list/param reporters
+        // }
+
+        // if (!color) return; // copy for clone; omit graphics
+
+        let shape: number;
+        if (!spec) {
+            console.error("error: spec is null");
         }
-
-//        if (color == -1) return; // copy for clone; omit graphics
-
-        // let shape: number;
-				// let category = SpecCategoryModel.GetByType(type);
-				// let specObject = SpecModel.Get(spec);
-// this.base = new BlockShapeModel();
+        this.shape = ShapeFactory.createShape(spec);
         // if ((type === " ") || (type === "") || (type === "w")) {
-        //     this.base = new BlockShapeModel(BlockShapeModel.CmdShape, color);
+        //     this.shape = new BlockShapeModel(BlockShapeModel.CmdShape, color);
         //     this.indentTop = 3;
         // } else if (type === "b") {
-        //     this.base = new BlockShapeModel(BlockShapeModel.BooleanShape, color);
+        //     this.shape = new BlockShapeModel(BlockShapeModel.BooleanShape, color);
         //     this.isReporter = true;
         //     this.indentLeft = 9;
         //     this.indentRight = 7;
         // } else if (type === "r" || type === "R" || type === "rR") {
         //     this.type = "r";
-        //     this.base = new BlockShapeModel(BlockShapeModel.NumberShape, color);
+        //     this.shape = new BlockShapeModel(BlockShapeModel.NumberShape, color);
         //     this.isReporter = true;
         //     this.isRequester = ((type === "R") || (type === "rR"));
         //     this.forcedRequester = (type === "rR");
@@ -119,43 +127,43 @@ export class BlockModel {
         //     this.indentLeft = 6;
         //     this.indentRight = 4;
         // } else if (type === "h") {
-        //     this.base = new BlockShapeModel(BlockShapeModel.HatShape, color);
+        //     this.shape = new BlockShapeModel(BlockShapeModel.HatShape, color);
         //     this.isHat = true;
         //     this.indentTop = 12;
         // } else if (type === "c") {
-        //     this.base = new BlockShapeModel(BlockShapeModel.LoopShape, color);
+        //     this.shape = new BlockShapeModel(BlockShapeModel.LoopShape, color);
         // } else if (type === "cf") {
-        //     this.base = new BlockShapeModel(BlockShapeModel.FinalLoopShape, color);
+        //     this.shape = new BlockShapeModel(BlockShapeModel.FinalLoopShape, color);
         //     this.isTerminal = true;
         // } else if (type === "e") {
-        //     this.base = new BlockShapeModel(BlockShapeModel.IfElseShape, color);
+        //     this.shape = new BlockShapeModel(BlockShapeModel.IfElseShape, color);
         //     // this.addChild(this.elseLabel = this.makeLabel(Translator.map('else')));
         // } else if (type === "f") {
-        //     this.base = new BlockShapeModel(BlockShapeModel.FinalCmdShape, color);
+        //     this.shape = new BlockShapeModel(BlockShapeModel.FinalCmdShape, color);
         //     this.isTerminal = true;
         //     this.indentTop = 5;
         // } else if (type === "o") { // cmd outline for proc definition
-        //     this.base = new BlockShapeModel(BlockShapeModel.CmdOutlineShape, color);
-        //     // this.base.filters = []; // no bezel
+        //     this.shape = new BlockShapeModel(BlockShapeModel.CmdOutlineShape, color);
+        //     // this.shape.filters = []; // no bezel
         //     this.indentTop = 3;
         // } else if (type === "p") {
-        //     this.base = new BlockShapeModel(BlockShapeModel.ProcHatShape, color);
+        //     this.shape = new BlockShapeModel(BlockShapeModel.ProcHatShape, color);
         //     this.isHat = true;
         // } else {
-        //     this.base = new BlockShapeModel(BlockShapeModel.RectShape, color);
+        //     this.shape = new BlockShapeModel(BlockShapeModel.RectShape, color);
         // }
-        // this.addChildAt(this.base, 0);
-        this.setSpec(this.spec, defaultArgs);
+        //        this.addChildAt(this.shape, 0);
+        this.setArgs(defaultArgs);
 
         ///this.addEventListener(FocusEvent.KEY_FOCUS_CHANGE, this.focusChange);
     }
 
-    public setSpec(newSpec: string, defaultArgs: any[] = null): void {
-        for (let o of this.labelsAndArgs) {
-            if (o.parent != null) o.parent.removeChild(o);
-        }
-        this.spec = newSpec;
-        if (this.op === Specs.ProcedureDef) {
+    setArgs(defaultArgs: any[] = null) {
+        // for (let o of this.labelsAndArgs) {
+        //     if (o.parent != null) o.parent.removeChild(o);
+        // }
+        // this.spec = newSpec;
+        if (this.spec.code === SpecOperation.ProcedureDef) {
             // procedure hat: make an icon from my spec and use that as the label
             this.indentTop = 20;
             this.indentBottom = 5;
@@ -168,18 +176,21 @@ export class BlockModel {
             // this.labelsAndArgs.push(label);
             let b: BlockModel;
             // this.labelsAndArgs.push(b = this.declarationBlock());
-        } else if (this.op === Specs.GetList || this.op === Specs.GetList) {
+        } else if (this.spec.code === SpecOperation.GetList || this.spec.code === SpecOperation.GetList) {
             // this.labelsAndArgs = [this.makeLabel(this.spec)];
         } else {
-            let loopBlocks: any[] = ["doForever", "doForeverIf", "doRepeat", "doUntil"];
-            this.base.hasLoopArrow = (loopBlocks.indexOf(this.op) >= 0);
-            // this.addLabelsAndArgs(this.spec, this.base.color);
+            // loop
+
+            this.addLabelsAndArgs();
+
+
         }
         this.rightToLeft = Translator.rightToLeft;
-        if (this.rightToLeft) {
-            if (["+", "-", "*", "/", "%"].indexOf(this.op) > -1) this.rightToLeft = Translator.rightToLeftMath;
-            if ([">", "<"].indexOf(this.op) > -1) this.rightToLeft = false; // never change order of comparison ops
-        }
+        // TODO: right to left
+        // if (this.rightToLeft) {
+        //     if (["+", "-", "*", "/", "%"].indexOf(this.op) > -1) this.rightToLeft = Translator.rightToLeftMath;
+        //     if ([">", "<"].indexOf(this.op) > -1) this.rightToLeft = false; // never change order of comparison ops
+        // }
         if (this.rightToLeft) {
             // reverse specs that don't start with arg specifier or an ASCII character
             this.labelsAndArgs.reverse();
@@ -191,7 +202,7 @@ export class BlockModel {
         this.fixArgLayout();
     }
 
-    public get broadcastMsg(): string {
+    get broadcastMsg(): string {
         for (let arg of this.args) {
             if (arg instanceof BlockArgModel && arg.menuName === "broadcast") {
                 return arg.argValue;
@@ -201,7 +212,7 @@ export class BlockModel {
         return null;
     }
 
-    public set broadcastMsg(listName: string) {
+    set broadcastMsg(listName: string) {
         for (let arg of this.args) {
             if (arg instanceof BlockArgModel && arg.menuName === "broadcast") {
                 arg.setArgValue(listName);
@@ -209,22 +220,22 @@ export class BlockModel {
         }
     }
 
-    public normalizedArgs(): any[] {
+    normalizedArgs(): any[] {
         return this.rightToLeft ? this.args.concat().reverse() : this.args;
     }
 
-    // public changeOperator(newOp:string):void {
+    // changeOperator(newOp:string):void {
     // 	// Used to switch among a family of related operators (e.g. +, -, *, and /).
     // 	// Note: This does not deal with translation, so it only works for symbolic operators.
     // 	for (let item of this.labelsAndArgs) {
-    // 		if ((item instanceof TextField) && (item.text == this.op)) item.text = newOp;
+    // 		if ((item instanceof TextField) && (item.text === this.op)) item.text = newOp;
     // 	}
     // 	this.op = newOp;
     // 	this.opFunction = null;
     // 	this.fixArgLayout();
     // }
 
-    // public static setFonts(labelSize:number, argSize:number, boldFlag:boolean, vOffset:number):void {
+    // static setFonts(labelSize:number, argSize:number, boldFlag:boolean, vOffset:number):void {
     // 	let font:string = Resources.chooseFont([
     // 		'Lucida Grande', 'Verdana', 'Arial', 'DejaVu Sans']);
     // 	BlockModel.blockLabelFormat = new TextFormat(font, labelSize, 0xFFFFFF, boldFlag);
@@ -239,7 +250,7 @@ export class BlockModel {
     // 	let b:BlockModel = new BlockModel(this.spec, "o", Specs.procedureColor, 'proc_declaration');
     // 	if (!this.parameterNames) this.parameterNames = [];
     // 	for (let i:number = 0; i < this.parameterNames.length; i++) {
-    // 		let argType:string = (typeof(this.defaultArgValues[i]) == 'boolean') ? 'b' : 'r';
+    // 		let argType:string = (typeof(this.defaultArgValues[i]) === 'boolean') ? 'b' : 'r';
     // 		let pBlock:BlockModel = new BlockModel(this.parameterNames[i], argType, Specs.parameterColor, Specs.GET_PARAM);
     // 		pBlock.parameterIndex = i;
     // 		b.setArg(i, pBlock);
@@ -248,20 +259,20 @@ export class BlockModel {
     // 	return b;
     // }
 
-    // public isProcDef():boolean { return this.op == Specs.PROCEDURE_DEF }
+    // isProcDef():boolean { return this.op === Specs.PROCEDURE_DEF }
 
-    // public isEmbeddedInProcHat():boolean {
+    // isEmbeddedInProcHat():boolean {
     // 	return (this.parent instanceof BlockModel) &&
-    // 		(this.parent.op == Specs.PROCEDURE_DEF) &&
+    // 		(this.parent.op === Specs.PROCEDURE_DEF) &&
     // 		(this != this.parent.nextBlock);
     // }
 
-    // public isEmbeddedParameter():boolean {
+    // isEmbeddedParameter():boolean {
     // 	if ((this.op != Specs.GET_PARAM) || !(this.parent instanceof BlockModel)) return false;
-    // 	return this.parent.op == 'proc_declaration';
+    // 	return this.parent.op === 'proc_declaration';
     // }
 
-    // public isInPalette():boolean {
+    // isInPalette():boolean {
     // 	let o:DisplayObject = this.parent;
     // 	while (o) {
     // 		if ('isBlockPalette' in o) return true;
@@ -270,46 +281,48 @@ export class BlockModel {
     // 	return false;
     // }
 
-    // public setTerminal(flag:boolean):void {
+    // setTerminal(flag:boolean):void {
     // 	// Used to change the "stop" block shape.
-    // 	super.removeChild(this.base);
+    // 	super.removeChild(this.shape);
     // 	this.isTerminal = flag;
     // 	let newShape:number = this.isTerminal ? BlockShapeModel.FinalCmdShape : BlockShapeModel.CmdShape;
-    // 	this.base = new BlockShapeModel(newShape, this.base.color);
-    // 	this.addChildAt(this.base, 0);
+    // 	this.shape = new BlockShapeModel(newShape, this.shape.color);
+    // 	this.addChildAt(this.shape, 0);
     // 	this.fixArgLayout();
     // }
 
-    // private addLabelsAndArgs(spec:string, c:number):void {
-    // 	let specParts:any[] = ReadStream.tokenize(spec), i:number;
-    // 	this.labelsAndArgs = [];
-    // 	this.argTypes = [];
-    // 	for (i = 0; i < specParts.length; i++) {
-    // 		let o:DisplayObject = this.argOrLabelFor(specParts[i], c);
-    // 		this.labelsAndArgs.push(o);
-    // 		let argType:string = 'icon';
-    // 		if (o instanceof BlockArgModel) argType = specParts[i];
-    // 		if (o instanceof TextField) argType = 'label';
-    // 		this.argTypes.push(argType);
-    // 	}
-    // }
+    private addLabelsAndArgs() {
+        let specParts: any[] = ReadStream.tokenize(this.spec.description);
+        let i: number;
+        this.labelsAndArgs = [];
+        this.argTypes = [];
+        for (i = 0; i < specParts.length; i++) {
+            let o = this.argOrLabelFor(specParts[i], this.spec);
+            this.labelsAndArgs.push(o);
+            let argType: string = "icon";
+            if (o instanceof BlockArgModel) argType = specParts[i];
+            debugger;
+            // if (o.shape instanceof TextField) argType = "label";
+            this.argTypes.push(argType);
+        }
+    }
 
-    // public argType(arg:DisplayObject):string {
+    // argType(arg:DisplayObject):string {
     // 	let i:number = this.labelsAndArgs.indexOf(arg);
-    // 	return i == -1 ? '' : this.argTypes[i];
+    // 	return i === -1 ? '' : this.argTypes[i];
     // }
 
-    // public allBlocksDo(f:Function):void {
+    // allBlocksDo(f:Function):void {
     // 	f(this);
     // 	for (let arg of this.args) {
     // 		if (arg instanceof BlockModel) arg.allBlocksDo(f);
     // 	}
-    // 	if (this.subStack1 != null) this.subStack1.allBlocksDo(f);
-    // 	if (this.subStack2 != null) this.subStack2.allBlocksDo(f);
+    // 	if (this.stack1 != null) this.stack1.allBlocksDo(f);
+    // 	if (this.stack2 != null) this.stack2.allBlocksDo(f);
     // 	if (this.nextBlock != null) this.nextBlock.allBlocksDo(f);
     // }
 
-    // // public showRunFeedback():void {
+    // // showRunFeedback():void {
     // // 	if (this.filters && this.filters.length > 0) {
     // // 		for (let f of this.filters) {
     // // 			if (f instanceof GlowFilter) return;
@@ -318,7 +331,7 @@ export class BlockModel {
     // // 	this.filters = this.runFeedbackFilters().concat(this.filters || []);
     // // }
 
-    // // public hideRunFeedback():void {
+    // // hideRunFeedback():void {
     // // 	if (this.filters && this.filters.length > 0) {
     // // 		let newFilters:any[] = [];
     // // 		for (let f of this.filters) {
@@ -337,21 +350,21 @@ export class BlockModel {
     // // 	return [f];
     // // }
 
-    // // public saveOriginalState():void {
+    // // saveOriginalState():void {
     // // 	this.originalParent = this.parent;
     // // 	if (this.parent) {
     // // 		let b:BlockModel = <BlockModel>this.parent ;
-    // // 		if (b == null) {
+    // // 		if (b === null) {
     // // 			this.originalRole = BlockModel.ROLE_ABSOLUTE;
     // // 		} else if (this.isReporter) {
     // // 			this.originalRole = BlockModel.ROLE_EMBEDDED;
     // // 			this.originalIndex = b.args.indexOf(this);
-    // // 		} else if (b.nextBlock == this) {
+    // // 		} else if (b.nextBlock === this) {
     // // 			this.originalRole = BlockModel.ROLE_NEXT;
-    // // 		} else if (b.subStack1 == this) {
-    // // 			this.originalRole = BlockModel.ROLE_SUBSTACK1;
-    // // 		} else if (b.subStack2 == this) {
-    // // 			this.originalRole = BlockModel.ROLE_SUBSTACK2;
+    // // 		} else if (b.stack1 === this) {
+    // // 			this.originalRole = BlockModel.ROLE_stack1;
+    // // 		} else if (b.stack2 === this) {
+    // // 			this.originalRole = BlockModel.ROLE_stack2;
     // // 		}
     // // 		this.originalPosition = this.localToGlobal(new Point(0, 0));
     // // 	} else {
@@ -360,7 +373,7 @@ export class BlockModel {
     // // 	}
     // // }
 
-    // // public restoreOriginalState():void {
+    // // restoreOriginalState():void {
     // // 	let b:BlockModel = <BlockModel>this.originalParent ;
     // // 	this.scaleX = this.scaleY = 1;
     // // 	switch (this.originalRole) {
@@ -379,16 +392,16 @@ export class BlockModel {
     // // 	case BlockModel.ROLE_NEXT:
     // // 		b.insertBlock(this);
     // // 		break;
-    // // 	case BlockModel.ROLE_SUBSTACK1:
+    // // 	case BlockModel.ROLE_stack1:
     // // 		b.insertBlockSub1(this);
     // // 		break;
-    // // 	case BlockModel.ROLE_SUBSTACK2:
+    // // 	case BlockModel.ROLE_stack2:
     // // 		b.insertBlockSub2(this);
     // // 		break;
     // // 	}
     // // }
 
-    // public originalPositionIn(p:DisplayObject):Point {
+    // originalPositionIn(p:DisplayObject):Point {
     // 	return this.originalPosition && p.globalToLocal(this.originalPosition);
     // }
 
@@ -398,16 +411,16 @@ export class BlockModel {
     // 		let argLabel:string = null;
     // 		let v:any = defaults[i];
     // 		if (v instanceof BlockArgModel) v = v.argValue;
-    // 		if ('_edge_' == v) argLabel = Translator.map('edge');
-    // 		if ('_mouse_' == v) argLabel = Translator.map('mouse-pointer');
-    // 		if ('_myself_' == v) argLabel = Translator.map('myself');
-    // 		if ('_stage_' == v) argLabel = Translator.map('Stage');
+    // 		if ('_edge_' === v) argLabel = Translator.map('edge');
+    // 		if ('_mouse_' === v) argLabel = Translator.map('mouse-pointer');
+    // 		if ('_myself_' === v) argLabel = Translator.map('myself');
+    // 		if ('_stage_' === v) argLabel = Translator.map('Stage');
     // 		if (this.args[i] instanceof BlockArgModel) this.args[i].setArgValue(v, argLabel);
     // 	}
     // 	this.defaultArgValues = defaults;
     // }
 
-    public setArg(i: number, newArg: any): void {
+    setArg(i: number, newArg: any): void {
         // called on newly-created block (assumes argument being set is a BlockArgModel)
         // newArg can be either a reporter block or a literal value (string, number, etc.)
         this.collectArgs();
@@ -423,7 +436,7 @@ export class BlockModel {
         }
     }
 
-    // public fixExpressionLayout():void {
+    // fixExpressionLayout():void {
     // 	// fix expression layout up to the enclosing command block
     // 	let b:BlockModel = this;
     // 	while (b.isReporter) {
@@ -434,7 +447,7 @@ export class BlockModel {
     // 	if (b instanceof BlockModel) b.fixArgLayout();
     // }
 
-    public fixArgLayout(): void {
+    fixArgLayout(): void {
         let item: any, i: number;
         if (this.suppressLayout) return;
         let x: number = this.indentLeft - this.indentAjustmentFor(this.labelsAndArgs[0]);
@@ -461,10 +474,10 @@ export class BlockModel {
         if (["h"].indexOf(this.type) >= 0) x = Math.max(x, this.minHatWidth); // minimum width for hat blocks
         // if (this.elseLabel) x = Math.max(x, this.indentLeft + this.elseLabel.width + 2);
 
-        this.base.setWidthAndTopHeight(x + this.indentRight, this.indentTop + maxH + this.indentBottom);
-        if ((this.type === "c") || (this.type === "e")) this.fixStackLayout();
-        this.base.redraw();
-        this.fixElseLabel();
+        // this.shape.setWidthAndTopHeight(x + this.indentRight, this.indentTop + maxH + this.indentBottom);
+        // if ((this.type === "c") || (this.type === "e")) this.fixStackLayout();
+        // this.shape.redraw();
+        // this.fixElseLabel();
         this.collectArgs();
     }
 
@@ -477,34 +490,38 @@ export class BlockModel {
         return 0;
     }
 
-    public fixStackLayout(): void {
+    fixStackLayout(): void {
         let b: BlockModel = this;
         while (b != null) {
-            if (b.base.canHaveSubstack1()) {
-                let substackH: number = Geometry.EmptySubstackH;
-                if (b.subStack1) {
-                    b.subStack1.fixStackLayout();
-                    b.subStack1.x = Geometry.SubstackInset;
-                    b.subStack1.y = b.base.substack1y();
-                    // substackH = b.subStack1.getRect(b).height;
-                    if (b.subStack1.bottomBlock().isTerminal) substackH += Geometry.NotchDepth;
+            if (b.shape instanceof StackShape) {
+                let stackShape = <StackShape>b.shape;
+                let stackH: number = Geometry.EmptyStackH;
+                if (b.stack1) {
+                    b.stack1.fixStackLayout();
+                    b.stack1.x = Geometry.StackInset;
+                    // b.stack1.y = b.shape.stack1y();
+                    // stackH = b.stack1.getRect(b).height;
+                    // if (b.stack1.bottomBlock().isTerminal) stackH += Geometry.NotchDepth;
                 }
-                b.base.setSubstack1Height(substackH);
-                substackH = Geometry.EmptySubstackH;
-                if (b.subStack2) {
-                    b.subStack2.fixStackLayout();
-                    b.subStack2.x = Geometry.SubstackInset;
-                    b.subStack2.y = b.base.substack2y();
-                    // substackH = b.subStack2.getRect(b).height;
-                    if (b.subStack2.bottomBlock().isTerminal) substackH += Geometry.NotchDepth;
+                stackShape.stack1h = stackH;
+                if (b.shape instanceof DoubleStackShape) {
+                    let doubleStackShape = <DoubleStackShape>b.shape;
+                    stackH = Geometry.EmptyStackH;
+                    if (b.stack2) {
+                        b.stack2.fixStackLayout();
+                        b.stack2.x = Geometry.StackInset;
+                        b.stack2.y = doubleStackShape.stack2y;
+                        // stackH = b.stack2.getRect(b).height;
+                        if (b.stack2.bottomBlock().isTerminal) stackH += Geometry.NotchDepth;
+                    }
+                    doubleStackShape.stack2h = stackH;
+                    b.shape.draw();
+                    b.fixElseLabel();
                 }
-                b.base.setSubstack2Height(substackH);
-                b.base.redraw();
-                b.fixElseLabel();
             }
             if (b.nextBlock != null) {
                 b.nextBlock.x = 0;
-                b.nextBlock.y = b.base.nextBlockY();
+                b.nextBlock.y = b.shape.y + b.shape.h;
             }
             b = b.nextBlock;
         }
@@ -515,21 +532,21 @@ export class BlockModel {
         // 	let metrics:TextLineMetrics = this.elseLabel.getLineMetrics(0);
         // 	let dy:number = (metrics.ascent + metrics.descent) / 2;
         // 	this.elseLabel.x = 4;
-        // 	this.elseLabel.y = this.base.substack2y() - 11 - dy + BlockModel.vOffset;
+        // 	this.elseLabel.y = this.shape.stack2y() - 11 - dy + BlockModel.vOffset;
         // }
     }
 
-    // public previewSubstack1Height(h:number):void {
-    // 	this.base.setSubstack1Height(h);
-    // 	this.base.redraw();
+    // previewstack1Height(h:number):void {
+    // 	this.shape.setstack1Height(h);
+    // 	this.shape.redraw();
     // 	this.fixElseLabel();
-    // 	if (this.nextBlock) this.nextBlock.y = this.base.nextBlockY();
+    // 	if (this.nextBlock) this.nextBlock.y = this.shape.nextBlockY();
     // }
 
-    // public duplicate(forClone:boolean, forStage:boolean = false):BlockModel {
+    // duplicate(forClone:boolean, forStage:boolean = false):BlockModel {
     // 	let newSpec:string = this.spec;
-    // 	if (this.op == 'whenClicked') newSpec = forStage ? 'when Stage clicked' : 'when this sprite clicked';
-    // 	let dup:BlockModel = new BlockModel(newSpec, this.type, (forClone ? -1 : this.base.color), this.op);
+    // 	if (this.op === 'whenClicked') newSpec = forStage ? 'when Stage clicked' : 'when this sprite clicked';
+    // 	let dup:BlockModel = new BlockModel(newSpec, this.type, (forClone ? -1 : this.shape.color), this.op);
     // 	dup.isRequester = this.isRequester;
     // 	dup.forcedRequester = this.forcedRequester;
     // 	dup.parameterNames = this.parameterNames;
@@ -539,16 +556,16 @@ export class BlockModel {
     // 		dup.copyArgsForClone(this.args);
     // 	} else {
     // 		dup.copyArgs(this.args);
-    // 		if (this.op == 'stopScripts' && this.args[0] instanceof BlockArgModel) {
-    // 			if(this.args[0].argValue.indexOf('other scripts') == 0) {
+    // 		if (this.op === 'stopScripts' && this.args[0] instanceof BlockArgModel) {
+    // 			if(this.args[0].argValue.indexOf('other scripts') === 0) {
     // 				if (forStage) dup.args[0].setArgValue('other scripts in stage');
     // 				else dup.args[0].setArgValue('other scripts in sprite');
     // 			}
     // 		}
     // 	}
     // 	if (this.nextBlock != null) dup.addChild(dup.nextBlock = this.nextBlock.duplicate(forClone, forStage));
-    // 	if (this.subStack1 != null) dup.addChild(dup.subStack1 = this.subStack1.duplicate(forClone, forStage));
-    // 	if (this.subStack2 != null) dup.addChild(dup.subStack2 = this.subStack2.duplicate(forClone, forStage));
+    // 	if (this.stack1 != null) dup.addChild(dup.stack1 = this.stack1.duplicate(forClone, forStage));
+    // 	if (this.stack2 != null) dup.addChild(dup.stack2 = this.stack2.duplicate(forClone, forStage));
     // 	if (!forClone) {
     // 		dup.x = this.x;
     // 		dup.y = this.y;
@@ -606,17 +623,17 @@ export class BlockModel {
         }
     }
 
-    // public removeBlock(b:BlockModel):void {
-    // 	if (b.parent == this) this.removeChild(b);
-    // 	if (b == this.nextBlock) {
+    // removeBlock(b:BlockModel):void {
+    // 	if (b.parent === this) this.removeChild(b);
+    // 	if (b === this.nextBlock) {
     // 		this.nextBlock = null;
     // 	}
-    // 	if (b == this.subStack1) this.subStack1 = null;
-    // 	if (b == this.subStack2) this.subStack2 = null;
+    // 	if (b === this.stack1) this.stack1 = null;
+    // 	if (b === this.stack2) this.stack2 = null;
     // 	if (b.isReporter) {
     // 		let i:number = this.labelsAndArgs.indexOf(b);
     // 		if (i < 0) return;
-    // 		let newArg:DisplayObject = this.argOrLabelFor(this.argTypes[i], this.base.color);
+    // 		let newArg:DisplayObject = this.argOrLabelFor(this.argTypes[i], this.shape.color);
     // 		this.labelsAndArgs[i] = newArg;
     // 		this.addChild(newArg);
     // 		this.fixExpressionLayout();
@@ -629,7 +646,7 @@ export class BlockModel {
     // 	//Scratch::allow3d { Scratch.app.runtime.checkForGraphicEffects(); }
     // }
 
-    public insertBlock(b: BlockModel): void {
+    insertBlock(b: BlockModel): void {
         let oldNext: BlockModel = this.nextBlock;
 
         // if (oldNext != null) super.removeChild(oldNext);
@@ -644,45 +661,48 @@ export class BlockModel {
         this.topBlock().fixStackLayout();
     }
 
-    public insertBlockAbove(b: BlockModel): void {
+    insertBlockAbove(b: BlockModel): void {
         b.x = this.x;
         b.y = this.y - b.height + Geometry.NotchDepth;
         // this.parent.addChild(b);
         b.bottomBlock().insertBlock(this);
     }
 
-    public insertBlockAround(b: BlockModel): void {
-        b.x = this.x - Geometry.SubstackInset;
-        b.y = this.y - b.base.substack1y(); //  + BlockShapeModel.NotchDepth;
+    insertBlockAround(b: BlockModel): void {
+        b.x = this.x - Geometry.StackInset;
+
+
+
+        b.y = this.y - (<StackShape>b.shape).stack1y + Geometry.NotchDepth;
         // this.parent.addChild(b);
         // this.parent.removeChild(this);
         // b.addChild(this);
-        b.subStack1 = this;
+        b.stack1 = this;
         b.fixStackLayout();
     }
 
-    public insertBlockSub1(b: BlockModel): void {
-        let old: BlockModel = this.subStack1;
+    insertBlockSub1(b: BlockModel): void {
+        let old: BlockModel = this.stack1;
         // if (old != null) old.parent.removeChild(old);
 
         // this.addChild(b);
-        this.subStack1 = b;
+        this.stack1 = b;
 
         if (old != null) b.appendBlock(old);
         this.topBlock().fixStackLayout();
     }
 
-    public insertBlockSub2(b: BlockModel): void {
-        let old: BlockModel = this.subStack2;
+    insertBlockSub2(b: BlockModel): void {
+        let old: BlockModel = this.stack2;
         // if (old != null) this.removeChild(old);
 
         // this.addChild(b);
-        this.subStack2 = b;
+        this.stack2 = b;
         if (old != null) b.appendBlock(old);
         this.topBlock().fixStackLayout();
     }
 
-    // public replaceArgWithBlock(oldArg:DisplayObject, b:BlockModel, pane:DisplayObjectContainer):void {
+    // replaceArgWithBlock(oldArg:DisplayObject, b:BlockModel, pane:DisplayObjectContainer):void {
     // 	let i:number = this.labelsAndArgs.indexOf(oldArg);
     // 	if (i < 0) return;
 
@@ -704,7 +724,7 @@ export class BlockModel {
     // }
 
     private appendBlock(b: BlockModel): void {
-        if (this.base.canHaveSubstack1() && !this.subStack1) {
+        if (this.shape instanceof StackShape && !this.stack1) {
             this.insertBlockSub1(b);
         } else {
             let bottom: BlockModel = this.bottomBlock();
@@ -727,39 +747,43 @@ export class BlockModel {
     // 	return b; // never gets here
     // }
 
-    public topBlock(): BlockModel {
+    topBlock(): BlockModel {
         let result: BlockModel = this;
         while (result.previousBlock instanceof BlockModel) result = result.previousBlock;
         return <BlockModel>result;
     }
 
-    public bottomBlock(): BlockModel {
+    bottomBlock(): BlockModel {
         let result: BlockModel = this;
         while (result.nextBlock != null) result = result.nextBlock;
         return result;
     }
 
-    // private argOrLabelFor(s:string, c:number):DisplayObject {
-    // 	// Possible token formats:
-    // 	//	%<single letter>
-    // 	//	%m.<menuName>
-    // 	//	@<iconName>
-    // 	//	label (any string with no embedded white space that does not start with % or @)
-    // 	//	a token consisting of a single % or @ character is also a label
-    // 	if (s.length >= 2 && s.charAt(0) == "%") { // argument spec
-    // 		let argSpec:string = s.charAt(1);
-    // 		if (argSpec == "b") return new BlockArgModel("b", c);
-    // 		if (argSpec == "c") return new BlockArgModel("c", c);
-    // 		if (argSpec == "d") return new BlockArgModel("d", c, true, s.slice(3));
-    // 		if (argSpec == "m") return new BlockArgModel("m", c, false, s.slice(3));
-    // 		if (argSpec == "n") return new BlockArgModel("n", c, true);
-    // 		if (argSpec == "s") return new BlockArgModel("s", c, true);
-    // 	} else if (s.length >= 2 && s.charAt(0) == "@") { // icon spec
-    // 		let icon:any = Specs.IconNamed(s.slice(1));
-    // 		return (icon) ? icon : this.makeLabel(s);
-    // 	}
-    // 	return this.makeLabel(ReadStream.unescape(s));
-    // }
+    private argOrLabelFor(s: string, spec: SpecModel): any {
+        // Possible token formats:
+        // 	%<single letter>
+        // 	%m.<menuName>
+        // 	@<iconName>
+        // 	label (any string with no embedded white space that does not start with % or @)
+        // 	a token consisting of a single % or @ character is also a label
+        if (s.length >= 2 && s.charAt(0) === "%") { // argument spec
+            let argSpec: string = s.charAt(1);
+            if (argSpec === "b") return new BlockArgModel("b", this.spec);
+            if (argSpec === "c") return new BlockArgModel("c", this.spec);
+            if (argSpec === "d") return new BlockArgModel("d", this.spec, true, s.slice(3));
+            if (argSpec === "m") return new BlockArgModel("m", this.spec, false, s.slice(3));
+            if (argSpec === "n") return new BlockArgModel("n", this.spec, true);
+            if (argSpec === "s") return new BlockArgModel("s", this.spec, true);
+        } else if (s.length >= 2 && s.charAt(0) === "@") { // icon spec
+          debugger;
+            // let icon: any = Specs.IconNamed(s.slice(1));
+            // return (icon) ? icon : this.makeLabel(s);
+        }
+
+        debugger;
+        return null;
+        // return this.makeLabel(ReadStream.unescape(s));
+    }
 
     // private makeLabel(label:string):TextField {
     // 	let text:TextField = new TextField();
@@ -779,24 +803,24 @@ export class BlockModel {
 
     // /* Menu */
 
-    // public menu(evt:MouseEvent):void {
+    // menu(evt:MouseEvent):void {
     // 	// Note: Unlike most menu() methods, this method invokes
     // 	// the menu itself rather than returning a menu to the caller.
-    // 	if (BlockModel.MenuHandlerFunction == null) return;
+    // 	if (BlockModel.MenuHandlerFunction === null) return;
     // 	if (this.isEmbeddedInProcHat()) BlockModel.MenuHandlerFunction(null, this.parent);
     // 	else BlockModel.MenuHandlerFunction(null, this);
     // }
 
-    // public handleTool(tool:string, evt:MouseEvent):void {
+    // handleTool(tool:string, evt:MouseEvent):void {
     // 	if (this.isEmbeddedParameter()) return;
     // 	if (!this.isInPalette()) {
-    // 		if ('copy' == tool) this.duplicateStack(10, 5);
-    // 		if ('cut' == tool) this.deleteStack();
+    // 		if ('copy' === tool) this.duplicateStack(10, 5);
+    // 		if ('cut' === tool) this.deleteStack();
     // 	}
-    // 	if (tool == 'help') this.showHelp();
+    // 	if (tool === 'help') this.showHelp();
     // }
 
-    // public showHelp():void {
+    // showHelp():void {
     // 	let i:number = -1;
     // 	if((i = this.op.indexOf('.')) > -1) {
     // 		let extName:string = this.op.substr(0, i);
@@ -810,8 +834,8 @@ export class BlockModel {
     // 	}
     // }
 
-    // public duplicateStack(deltaX:number, deltaY:number):void {
-    // 	if (this.isProcDef() || this.op == 'proc_declaration') return; // don't duplicate procedure definition
+    // duplicateStack(deltaX:number, deltaY:number):void {
+    // 	if (this.isProcDef() || this.op === 'proc_declaration') return; // don't duplicate procedure definition
     // 	let forStage:boolean = Scratch.app.viewedObj() && Scratch.app.viewedObj().isStage;
     // 	let newStack:BlockModel = this.BlockIO.stringToStack(this.BlockIO.stackToString(this), forStage);
     // 	let p:Point = this.localToGlobal(new Point(0, 0));
@@ -820,17 +844,17 @@ export class BlockModel {
     // 	Scratch.app.gh.grabOnMouseUp(newStack);
     // }
 
-    // public deleteStack():boolean {
-    // 	if (this.op == 'proc_declaration') {
+    // deleteStack():boolean {
+    // 	if (this.op === 'proc_declaration') {
     // 		return (<BlockModel>this.parent ).deleteStack();
     // 	}
     // 	let app:Scratch = Scratch.app;
     // 	let top:BlockModel = this.topBlock();
-    // 	if (this.op == Specs.PROCEDURE_DEF && app.runtime.allCallsOf(this.spec, app.viewedObj(), false).length) {
+    // 	if (this.op === Specs.PROCEDURE_DEF && app.runtime.allCallsOf(this.spec, app.viewedObj(), false).length) {
     // 		this.DialogBox.notify('Cannot Delete', 'To delete a block definition, first remove all uses of the block.', this.stage);
     // 		return false;
     // 	}
-    // 	if (top == this && app.interp.isRunning(top, app.viewedObj())) {
+    // 	if (top === this && app.interp.isRunning(top, app.viewedObj())) {
     // 		app.interp.toggleThread(top, app.viewedObj());
     // 	}
     // 	// TODO: Remove any waiting reporter data in the Scratch.app.extensionManager
@@ -848,7 +872,7 @@ export class BlockModel {
     // 	return true;
     // }
 
-    // public attachedCommentsIn(scriptsPane:ScriptsPane):any[] {
+    // attachedCommentsIn(scriptsPane:ScriptsPane):any[] {
     // 	let allBlocks:any[] = [];
     // 	this.allBlocksDo(function (b:BlockModel):void {
     // 		allBlocks.push(this.b);
@@ -864,26 +888,26 @@ export class BlockModel {
     // 	return result;
     // }
 
-    // public addComment():void {
+    // addComment():void {
     // 	let scriptsPane:ScriptsPane = <ScriptsPane>this.topBlock().parent ;
     // 	if (scriptsPane) scriptsPane.addComment(this);
     // }
 
     // /* Dragging */
 
-    // public objToGrab(evt:MouseEvent):BlockModel {
+    // objToGrab(evt:MouseEvent):BlockModel {
     // 	if (this.isEmbeddedParameter() || this.isInPalette()) return this.duplicate(false, Scratch.app.viewedObj() instanceof ScratchStage);
     // 	return this;
     // }
 
     // /* Events */
 
-    // public click(evt:MouseEvent):void {
+    // click(evt:MouseEvent):void {
     // 	if (this.editArg(evt)) return;
     // 	Scratch.app.runtime.interp.toggleThread(this.topBlock(), Scratch.app.viewedObj(), 1);
     // }
 
-    // public doubleClick(evt:MouseEvent):void {
+    // doubleClick(evt:MouseEvent):void {
     // 	if (this.editArg(evt)) return;
     // 	Scratch.app.runtime.interp.toggleThread(this.topBlock(), Scratch.app.viewedObj(), 1);
     // }
@@ -891,7 +915,7 @@ export class BlockModel {
     // private editArg(evt:MouseEvent):boolean {
     // 	let arg:BlockArgModel = <BlockArgModel>evt.target ;
     // 	if (!arg) arg = <BlockArgModel>evt.target.parent ;
-    // 	if (arg && arg.isEditable && (arg.parent == this)) {
+    // 	if (arg && arg.isEditable && (arg.parent === this)) {
     // 		arg.startEditing();
     // 		return true;
     // 	}
@@ -901,10 +925,10 @@ export class BlockModel {
     // private focusChange(evt:FocusEvent):void {
     // 	evt.preventDefault();
     // 	if (evt.target.parent.parent != this) return; // make sure the target TextField is in this block, not a child block
-    // 	if (this.args.length == 0) return;
+    // 	if (this.args.length === 0) return;
     // 	let i:number, focusIndex:number = -1;
     // 	for (i = 0; i < this.args.length; i++) {
-    // 		if (this.args[i] instanceof BlockArgModel && this.stage.focus == this.args[i].field) focusIndex = i;
+    // 		if (this.args[i] instanceof BlockArgModel && this.stage.focus === this.args[i].field) focusIndex = i;
     // 	}
     // 	let target:BlockModel = this;
     // 	let delta:number = evt.shiftKey ? -1 : 1;
@@ -920,22 +944,22 @@ export class BlockModel {
     // 					continue;
     // 				}
     // 			}
-    // 			if (target.subStack1) {
-    // 				target = target.subStack1;
-    // 			} else if (target.subStack2) {
-    // 				target = target.subStack2;
+    // 			if (target.stack1) {
+    // 				target = target.stack1;
+    // 			} else if (target.stack2) {
+    // 				target = target.stack2;
     // 			} else {
     // 				let t:BlockModel = target;
     // 				target = t.nextBlock;
     // 				while (!target) {
     // 					let tp:BlockModel = <BlockModel>t.parent ;
     // 					let b:BlockModel = t;
-    // 					while (tp && tp.nextBlock == b) {
+    // 					while (tp && tp.nextBlock === b) {
     // 						b = tp;
     // 						tp = <BlockModel>tp.parent ;
     // 					}
     // 					if (!tp) return;
-    // 					target = tp.subStack1 == b && tp.subStack2 ? tp.subStack2 : tp.nextBlock;
+    // 					target = tp.stack1 === b && tp.stack2 ? tp.stack2 : tp.nextBlock;
     // 					t = tp;
     // 				}
     // 			}
@@ -949,11 +973,11 @@ export class BlockModel {
     // 				target = p;
     // 				continue;
     // 			}
-    // 			let nested:BlockModel = p.nextBlock == target ? p.subStack2 || p.subStack1 : p.subStack2 == target ? p.subStack1 : null;
+    // 			let nested:BlockModel = p.nextBlock === target ? p.stack2 || p.stack1 : p.stack2 === target ? p.stack1 : null;
     // 			if (nested) {
     // 				for (;;) {
     // 					nested = nested.bottomBlock();
-    // 					let n2:BlockModel = nested.subStack1 || nested.subStack2;
+    // 					let n2:BlockModel = nested.stack1 || nested.stack2;
     // 					if (!n2) break;
     // 					nested = n2;
     // 				}
@@ -978,8 +1002,8 @@ export class BlockModel {
     // 	}
     // }
 
-    // public getSummary():string {
-    // 	let s:string = this.type == "r" ? "(" : this.type == "b" ? "<" : "";
+    // getSummary():string {
+    // 	let s:string = this.type === "r" ? "(" : this.type === "b" ? "<" : "";
     // 	let space:boolean = false;
     // 	for (let x:DisplayObject of this.labelsAndArgs) {
     // 		if (space) {
@@ -1000,18 +1024,18 @@ export class BlockModel {
     // 			s += "@";
     // 		}
     // 	}
-    // 	if (this.base.canHaveSubstack1()) {
-    // 		s += "\n" + (this.subStack1 ? BlockModel.indent(this.subStack1.getSummary()) : "");
-    // 		if (this.base.canHaveSubstack2()) {
+    // 	if (this.shape.canHavestack1()) {
+    // 		s += "\n" + (this.stack1 ? BlockModel.indent(this.stack1.getSummary()) : "");
+    // 		if (this.shape.canHavestack2()) {
     // 			s += "\n" + this.elseLabel.text;
-    // 			s += "\n" + (this.subStack2 ? BlockModel.indent(this.subStack2.getSummary()) : "");
+    // 			s += "\n" + (this.stack2 ? BlockModel.indent(this.stack2.getSummary()) : "");
     // 		}
     // 		s += "\n" + Translator.map("end");
     // 	}
     // 	if (this.nextBlock) {
     // 		s += "\n" + this.nextBlock.getSummary();
     // 	}
-    // 	s += this.type == "r" ? ")" : this.type == "b" ? ">" : "";
+    // 	s += this.type === "r" ? ")" : this.type === "b" ? ">" : "";
     // 	return s;
     // }
 

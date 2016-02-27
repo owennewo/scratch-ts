@@ -1,5 +1,9 @@
+import {DoubleStackShape} from "../shapes/double.stack.shape";
+import {StackShape} from "../shapes/stack.shape";
+import {SpecModel} from "../model/spec.model";
 import {SpecCategoryModel} from "../model/spec.category.model";
-import {BlockModel} from "./../model/block.model";
+import {BlockModel} from "../model/block.model";
+import {SpecOperation} from "../model/spec.model";
 import {BlockArgModel} from "../model/blockarg.model";
 import {Translator} from "../utils/translator";
 
@@ -36,7 +40,10 @@ export class BlockIO {
         let topBlock: BlockModel, lastBlock: BlockModel;
         for (let cmd of cmdList) {
             let b: BlockModel = null;
-            try { b = BlockIO.arrayToBlock(cmd, "", forStage); } catch (e) { b = new BlockModel("undefined"); }
+            try { b = BlockIO.arrayToBlock(cmd, "", forStage); } catch (e) {
+              console.error("error reading stack", e);
+              b = new BlockModel(SpecModel.SPECS.get("undefined"));
+            }
             if (topBlock == null) topBlock = b;
             if (lastBlock != null) lastBlock.insertBlock(b);
             lastBlock = b;
@@ -46,13 +53,13 @@ export class BlockIO {
 
     private static blockToArray(b: BlockModel): any[] {
         // Return an array structure for this block.
-        let result: any[] = [b.op];
-        if (b.op === Specs.GetVar) return [Specs.GetVar, b.spec];		// variable reporter
-        if (b.op === Specs.GetList) return [Specs.GetList, b.spec];	// list reporter
-        if (b.op === Specs.GetParam) return [Specs.GetParam, b.spec, b.type]; // parameter reporter
-        if (b.op === Specs.ProcedureDef)								// procedure definition
-            return [Specs.ProcedureDef, b.spec, b.parameterNames, b.defaultArgValues, b.warpProcFlag];
-        if (b.op === Specs.Call) result = [Specs.Call, b.spec];			// procedure call - arguments follow spec
+        let result: any[] = [b.spec.code];
+        if (b.spec.code === SpecOperation.GetVar) return [SpecOperation.GetVar, b.spec];		// variable reporter
+        if (b.spec.code === SpecOperation.GetList) return [SpecOperation.GetList, b.spec];	// list reporter
+        if (b.spec.code === SpecOperation.GetParam) return [SpecOperation.GetParam, b.spec, b.type]; // parameter reporter
+        if (b.spec.code === SpecOperation.ProcedureDef)								// procedure definition
+            return [SpecOperation.ProcedureDef, b.spec, b.parameterNames, b.defaultArgValues, b.warpProcFlag];
+        if (b.spec.code === SpecOperation.Call) result = [SpecOperation.Call, b.spec];			// procedure call - arguments follow spec
         for (let a of b.normalizedArgs()) {
             // Note: arguments are always saved in normalized (i.e. left-to-right) order
             if (a instanceof BlockModel) result.push(BlockIO.blockToArray(a));
@@ -65,8 +72,8 @@ export class BlockIO {
                 result.push(argVal);
             }
         }
-        if (b.base.canHaveSubstack1()) result.push(BlockIO.stackToArray(b.subStack1));
-        if (b.base.canHaveSubstack2()) result.push(BlockIO.stackToArray(b.subStack2));
+        if (b.shape instanceof StackShape) result.push(BlockIO.stackToArray(b.stack1));
+        if (b.shape instanceof DoubleStackShape) result.push(BlockIO.stackToArray(b.stack2));
         return result;
     }
 
@@ -82,14 +89,14 @@ export class BlockIO {
         b = BlockIO.convertOldCmd(cmd);
         if (b) { b.fixArgLayout(); return b; }
 
-        if (cmd[0] === Specs.Call) {
-            b = new BlockModel(cmd[1], "", Specs.ProcedureColor, Specs.Call);
+        if (cmd[0] === SpecOperation.Call) {
+            b = new BlockModel(SpecModel.SPECS.get(SpecOperation.Call.toString()));
             cmd.splice(0, 1);
         } else {
-            let spec: any[] = BlockIO.specForCmd(cmd, undefinedBlockType);
+            let spec: SpecModel = BlockIO.specForCmd(cmd, undefinedBlockType);
             let label: string = spec[0];
             if (forStage && spec[3] === "whenClicked") label = "when Stage clicked";
-            b = new BlockModel(label, spec[1], SpecCategoryModel.GetColorFromSpec(spec)); // TODO, Specs.blockColor(spec[2]), spec[3]);
+            b = new BlockModel(spec); // TODO, Specs.blockColor(spec[2]), spec[3]);
         }
 
         let args: any[] = BlockIO.argsForCmd(cmd, b.args.length, b.rightToLeft);
@@ -103,8 +110,8 @@ export class BlockIO {
             // }
             b.setArg(i, a);
         }
-        if (substacks[0] && (b.base.canHaveSubstack1())) b.insertBlockSub1(substacks[0]);
-        if (substacks[1] && (b.base.canHaveSubstack2())) b.insertBlockSub2(substacks[1]);
+        if (substacks[0] && (b.shape instanceof StackShape)) b.insertBlockSub1(substacks[0]);
+        if (substacks[1] && (b.shape instanceof DoubleStackShape)) b.insertBlockSub2(substacks[1]);
         // if hadSpriteRef is true, don't call fixMouseEdgeRefs() to avoid converting references
         // to sprites named 'mouse' or 'edge' to '_mouse_' or '_edge_'.
         if (!hadSpriteRef) BlockIO.fixMouseEdgeRefs(b);
@@ -112,20 +119,23 @@ export class BlockIO {
         return b;
     }
 
-    public static specForCmd(cmd: any[], undefinedBlockType: string): any[] {
-        // Return the block specification for the given command.
-        let op: string = cmd[0];
-				// convert old Squeak modulo operator
-        if (op === "\\\\") op = "%";
-        for (let entry of Specs.commands) {
-            if (entry[3] === op) return entry;
+    public static specForCmd(specCode: any, undefinedBlockType: string): SpecModel {
+        if (specCode instanceof Array) {
+          specCode = specCode[0];
         }
+        // Return the block specification for the given command.
+        // let op: string = cmd[0];
+				// convert old Squeak modulo operator
+        // if (op === "\\\\") op = "%";
+        if (SpecModel.SPECS.has(specCode)) return SpecModel.SPECS.get(specCode);
+
         // let extensionSpec:any[] = Scratch.app.extensionManager.specForCmd(op);
         // if (extensionSpec) return extensionSpec;
-
-        let spec: string = "undefined";
-        for (let i: number = 1; i < cmd.length; i++) spec += " %n"; // add placeholder arg slots
-        return [spec, undefinedBlockType, 0, op]; // no match found
+        debugger;
+        throw new Error("unknown spec:" + specCode);
+        // let spec: string = "undefined";
+        // for (let i: number = 1; i < cmd.length; i++) spec += " %n"; // add placeholder arg slots
+        // return [spec, undefinedBlockType, 0, op]; // no match found
     }
 
     private static argsForCmd(cmd: any[], numArgs: number, reverseArgs: boolean): any[] {
@@ -151,8 +161,12 @@ export class BlockIO {
         let result: any[] = [];
         for (let i: number = 1 + numArgs; i < cmd.length; i++) {
             let a: any = cmd[i];
-            if (a == null) result.push(null); // null indicates an empty stack
-            else result.push(BlockIO.arrayToStack(a));
+            if (a instanceof Array) {
+              result.push(BlockIO.arrayToStack(a));
+            }
+            else {
+              result.push(null);
+            }
         }
         return result;
     }
@@ -164,27 +178,27 @@ export class BlockIO {
         // Otherwise, return null.
         let b: BlockModel;
         switch (cmd[0]) {
-            case Specs.GetVar:
-                return new BlockModel(cmd[1], "r", Specs.VariableColor, Specs.GetVar);
-            case Specs.GetList:
-                return new BlockModel(cmd[1], "r", Specs.ListColor, Specs.GetList);
-            case Specs.ProcedureDef:
-                b = new BlockModel("", "p", Specs.ProcedureColor, Specs.ProcedureDef);
+            case SpecOperation.GetVar:
+                return new BlockModel(SpecModel.SPECS.get(SpecOperation.GetVar.toString()));
+            case SpecOperation.GetList:
+                return new BlockModel(SpecModel.SPECS.get(SpecOperation.GetList.toString()));
+            case SpecOperation.ProcedureDef:
+                b = new BlockModel(SpecModel.SPECS.get(SpecOperation.ProcedureDef.toString()));
                 b.parameterNames = cmd[2];
                 b.defaultArgValues = cmd[3];
                 if (cmd.length > 4) b.warpProcFlag = cmd[4];
-                b.setSpec(cmd[1]);
+                // b.setSpec(cmd[1]);
                 b.fixArgLayout();
                 return b;
-            case Specs.GetParam:
+            case SpecOperation.GetParam:
                 let paramType: string = (cmd.length >= 3) ? cmd[2] : "r";
-                return new BlockModel(cmd[1], paramType, Specs.ParameterColor, Specs.GetParam);
+                return new BlockModel(SpecModel.SPECS.get(SpecOperation.GetParam.toString()));
             case "changeVariable":
                 let varOp: string = cmd[2];
-                if (varOp === Specs.SetVar) {
-                    b = new BlockModel("set %m.let to %s", " ", Specs.VariableColor, Specs.SetVar);
-                } else if (varOp === Specs.ChangeVar) {
-                    b = new BlockModel("change %m.let by %n", " ", Specs.VariableColor, Specs.ChangeVar);
+                if (varOp === SpecOperation.SetVar.toString()) {
+                    b = new BlockModel(SpecModel.SPECS.get(SpecOperation.SetVar.toString()));
+                } else if (varOp === SpecOperation.ChangeVar.toString()) {
+                    b = new BlockModel(SpecModel.SPECS.get(SpecOperation.ChangeVar.toString()));
                 }
                 if (b == null) return null;
                 let arg: any = cmd[3];
@@ -195,21 +209,21 @@ export class BlockIO {
                 return b;
             case "EventHatMorph":
                 if (cmd[1] === "Scratch-StartClicked") {
-                    return new BlockModel("when @greenFlag clicked", "h", SpecCategoryModel.CONTROL.color, "whenGreenFlag");
+                    return new BlockModel(SpecModel.SPECS.get("whenGreenFlag"));
                 }
-                b = new BlockModel("when I receive %m.broadcast", "h", SpecCategoryModel.CONTROL.color, "whenIReceive");
+                b = new BlockModel(SpecModel.SPECS.get("whenIReceive"));
                 b.setArg(0, cmd[1]);
                 return b;
             case "MouseClickEventHatMorph":
-                b = new BlockModel("when I am clicked", "h", SpecCategoryModel.CONTROL.color, "whenClicked");
+                b = new BlockModel(SpecModel.SPECS.get("whenClicked"));
                 return b;
             case "KeyEventHatMorph":
-                b = new BlockModel("when %m.key key pressed", "h", SpecCategoryModel.CONTROL.color, "whenKeyPressed");
+                b = new BlockModel(SpecModel.SPECS.get("whenKeyPressed"));
                 b.setArg(0, cmd[1]);
                 return b;
             case "stopScripts":
                 let type: string = (cmd[1].indexOf("other scripts") === 0) ? " " : "f"; // block type depends on menu arg
-                b = new BlockModel("stop %m.stop", type, SpecCategoryModel.CONTROL.color, "stopScripts");
+                b = new BlockModel(SpecModel.SPECS.get("stopScripts"));
                 if (type === " ") {
                     if (forStage) cmd[1] = "other scripts in stage";
                     else cmd[1] = "other scripts in sprite";
@@ -231,37 +245,37 @@ export class BlockIO {
 
         switch (cmd[0]) {
             case "abs":
-                b = new BlockModel("%m.mathOp of %n", "r", operatorsColor, "computeFunction:of:");
+                b = new BlockModel(SpecModel.SPECS.get("computeFunction:of:"));
                 b.setArg(0, "abs");
                 b.setArg(1, BlockIO.convertArg(cmd[1]));
                 return b;
             case "sqrt":
-                b = new BlockModel("%m.mathOp of %n", "r", operatorsColor, "computeFunction:of:");
+                b = new BlockModel(SpecModel.SPECS.get("computeFunction:of:"));
                 b.setArg(0, "sqrt");
                 b.setArg(1, BlockIO.convertArg(cmd[1]));
                 return b;
             case "doReturn":
-                b = new BlockModel("stop %m.stop", "f", controlColor, "stopScripts");
+                b = new BlockModel(SpecModel.SPECS.get("stopScripts"));
                 b.setArg(0, "this script");
                 return b;
             case "stopAll":
-                b = new BlockModel("stop %m.stop", "f", controlColor, "stopScripts");
+                b = new BlockModel(SpecModel.SPECS.get("stopScripts"));
                 b.setArg(0, "all");
                 return b;
             case "showBackground:":
-                b = new BlockModel("switch backdrop to %m.backdrop", " ", looksColor, "startScene");
+                b = new BlockModel(SpecModel.SPECS.get("startScene"));
                 b.setArg(0, BlockIO.convertArg(cmd[1]));
                 return b;
             case "nextBackground":
-                b = new BlockModel("next background", " ", looksColor, "nextScene");
+                b = new BlockModel(SpecModel.SPECS.get("nextScene"));
                 return b;
             case "doForeverIf":
-                let ifBlock: BlockModel = new BlockModel("if %b then", "c", controlColor, "doIf");
+                let ifBlock: BlockModel = new BlockModel(SpecModel.SPECS.get("doIf"));
                 ifBlock.setArg(0, BlockIO.convertArg(cmd[1]));
                 if (cmd[2] instanceof Array) ifBlock.insertBlockSub1(BlockIO.arrayToStack(cmd[2]));
                 ifBlock.fixArgLayout();
 
-                b = new BlockModel("forever", "cf", controlColor, "doForever");
+                b = new BlockModel(SpecModel.SPECS.get("doForever"));
                 b.insertBlockSub1(ifBlock);
                 return b;
         }
@@ -277,7 +291,7 @@ export class BlockIO {
         let refCmds: any[] = [
             "createCloneOf", "distanceTo:", "getAttribute:of:",
             "gotoSpriteOrMouse:", "pointTowards:", "touching:"];
-        if (refCmds.indexOf(b.op) < 0) return;
+        if (refCmds.indexOf(b.spec.code) < 0) return;
         let arg: BlockArgModel;
         if ((b.args.length === 1) && (b.args[0] instanceof BlockArgModel)) arg = b.args[0];
         if ((b.args.length === 2) && (b.args[1] instanceof BlockArgModel)) arg = b.args[1];

@@ -5,9 +5,29 @@ import {Graphics} from "../utils/graphics";
 import {SpecCategoryModel} from "../model/spec.category.model";
 import {ShapeFactory} from "../shapes/shape.factory";
 import {SpecSpacerModel} from "../model/spec.model";
+import {SpecOperation} from "../model/spec.model";
 
-export class ScriptUI {
+export class SpecPlacement {
     static drawCategories() {
+
+      let op2: SpecOperation = SpecOperation.ProcedureDeclaration;// = "grr";
+      let op3: SpecOperation = SpecOperation["ProcedureDeclaration"];
+      let op4: SpecOperation = SpecOperation["procedure_declaration"];
+      let op5: SpecOperation = SpecOperation.ProcedureDeclaration;
+      let op6: SpecOperation = SpecOperation.GetVar;
+
+      console.log (op2 === op3);
+      console.log (op2 === op4);
+      console.log (op2 === op5);
+      console.log (op3 === op4);
+      console.log (op3 === op4);
+      console.log (op4 === op5);
+      console.log (op2 === op6);
+console.log (op3 === op6);
+console.log (op4 === op6);
+console.log (op5 === op6);
+
+
         let groupCategories = Graphics.ScriptPane.group("script-pane-categories", 10, 10);
 
         let index = 0;

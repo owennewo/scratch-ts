@@ -4,7 +4,7 @@ import {ProjectIO} from "../io/project.io";
 import {Log} from "../logging/Log";
 import {ProjectModel} from "../model/project.model";
 import {SpriteModel} from "../model/sprite.model";
-import {ScriptUI} from "../ui/script.ui";
+import {SpecPlacement} from "../ui/spec.placement";
 import {SpecModel} from "../model/spec.model";
 import {SpecCategoryModel} from "../model/spec.category.model";
 import {Graphics} from "../utils/graphics";
@@ -20,25 +20,21 @@ export class ScratchRestIO {
     }
 
     loadProjectJson(res: Response) {
-        // var json = JSON.parse(res["_body"]);
-        // Log.info("Reading project", JSON.stringify(json));
+        let json = JSON.parse(res["_body"]);
+        Log.info("Reading project", JSON.stringify(json));
 
-        // //var scratch: Scratch = new Scratch();
-        // var projectIO: ProjectIO = new ProjectIO();
-        // var project = projectIO.readProject(json);
+        // var scratch: Scratch = new Scratch();
+        let projectIO: ProjectIO = new ProjectIO();
+        let project = projectIO.readProject(json);
 
-        // if (project.children.length > 0)
-        // {
-        //   var sprite = project.children[0];
-        //   if (sprite.scripts && sprite.scripts.length > 0)
-        //   {
-        //       //ScriptUI.displayScripts(sprite.scripts);
-        //   }
-        // }
+        if (project.children.length > 0) {
+          let sprite = project.children[0];
+          if (sprite.scripts && sprite.scripts.length > 0) {
+              // SpecPlacement.displayScripts(sprite.scripts);
+          }
+        }
 
-
-
-        ScriptUI.drawCategories();
+        SpecPlacement.drawCategories();
 
     }
 

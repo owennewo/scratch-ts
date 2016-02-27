@@ -2,19 +2,19 @@ import {SpecCategoryModel} from "./spec.category.model";
 import {BlockShapeModel} from "./block.shape.model";
 
 export class SpecModel {
-    static SPECS: SpecModel[] = [];
+    static SPECS: Map<String, SpecModel> = new Map<String, SpecModel>();
 
     code: string;
     description: string;
     category: SpecCategoryModel;
-    _type: string;
+    shapeType: string;
     defaultArgs: any[];
 
-    constructor(code: string, description: string, category: SpecCategoryModel, type: string, defaultArgs: any[]) {
+    constructor(code: string, description: string, category: SpecCategoryModel, shapeType: string, defaultArgs: any[]) {
         this.code = code;
         this.category = category;
         this.description = description;
-        this._type = type;
+        this.shapeType = shapeType;
         this.defaultArgs = defaultArgs;
         // this.shape = new BlockShapeModel()
     }
@@ -308,11 +308,11 @@ export class SpecModel {
     }
 
 
-    static add(description: string, type: string, category: SpecCategoryModel, code, defaultArgs?: any[]) {
+    static add(description: string, type: string, category: SpecCategoryModel, code: string, defaultArgs?: any[]) {
         let spec = new SpecModel(code, description, category, type, defaultArgs);
         // spec.prepareShape(spec, type);
         category.addSpec(spec);
-        SpecModel.SPECS.push(spec);
+        SpecModel.SPECS.set(spec.code, spec);
     }
 
 
@@ -331,4 +331,16 @@ export class SpecSpacerModel extends SpecModel {
     constructor(category: SpecCategoryModel, spaces: number) {
         super("spacer", "this will be used as spacer between real specs", category, "", [spaces]);
     }
+}
+
+export class SpecOperation {
+  static Call = "call";
+  static GetList = "getList";
+  static GetParam = "getParam";
+  static GetVar = "getVar";
+  static SetVar = "setVar";
+  static ChangeVar = "changeVar";
+  static ProcedureDef = "procedureDef";
+  static ProcedureDeclaration = "procedureDeclaration";
+  static procedure_declaration = "procedure_declatation";  // legacy name has same id as above - bit hacky
 }

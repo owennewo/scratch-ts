@@ -8,9 +8,8 @@ import {SpecModel} from "../model/spec.model";
 
 export class HatShape extends BaseShape {
 
-    constructor(category: SpecCategoryModel, spec: SpecModel, x: number, y: number) {
-        super(category, spec, x, y);
-        // this.isHat = true;
+    constructor(spec: SpecModel) {
+        super(spec);
         this.indentTop = 12;
     }
 
@@ -29,7 +28,7 @@ export class HatShape extends BaseShape {
             .lineTo(this.w, 10 + Geometry.CornerInset)
             .drawRightAndBottom(this.topH, this.w, true)
             .build();
-        this.group.append(Graphics.ScriptPane.drawPath(path, this.category.name.toLowerCase()));
+        this.group.append(Graphics.ScriptPane.drawPath(path, this.spec.category.name.toLowerCase()));
         this.group.append(text);
 
 

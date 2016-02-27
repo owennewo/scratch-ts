@@ -8,8 +8,8 @@ import {SpecModel} from "../model/spec.model";
 
 export class CommandOutlineShape extends BaseShape {
     hasNotch: boolean;
-    constructor(category: SpecCategoryModel, spec: SpecModel, hasNotch: boolean, x: number, y: number) {
-        super(category, spec, x, y);
+    constructor(spec: SpecModel, hasNotch: boolean) {
+        super(spec);
         this.hasNotch = hasNotch;
         // this.base.filters = []; // no bezel
         this.indentTop = 3;
@@ -24,7 +24,7 @@ export class CommandOutlineShape extends BaseShape {
             .lineTo(0, Geometry.CornerInset)
             .build();
 
-            this.group.append(Graphics.ScriptPane.drawPath(path, this.category.name.toLowerCase()));
+            this.group.append(Graphics.ScriptPane.drawPath(path, this.spec.category.name.toLowerCase()));
     }
 
 }

@@ -3,8 +3,8 @@ export class Geometry {
     static CornerInset: number = 3;
     static InnerCornerInset: number = 2;
 
-    static EmptySubstackH: number = 12;
-    static SubstackInset: number = 15;
+    static EmptyStackH: number = 12;
+    static StackInset: number = 15;
 
     static BottomBarH: number = 16; // height of the bottom bar of a C or E block
     static DividerH: number = 18; // height of the divider bar in an E block
