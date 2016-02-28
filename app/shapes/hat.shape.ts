@@ -13,8 +13,8 @@ export class HatShape extends BaseShape {
         this.indentTop = 12;
     }
 
-    draw() {
-        super.draw();
+    draw(parentGroup: Snap.Element) {
+        super.draw(parentGroup);
         let text = Graphics.ScriptPane.drawText(5, 25, this.spec.description);
 
         this.w = text.getBBox().width + 20;

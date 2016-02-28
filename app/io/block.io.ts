@@ -83,11 +83,11 @@ export class BlockIO {
         // if (cmd[0] == 'getUserName') Scratch.app.usesUserNameBlock = true;
 
         let special: BlockModel = BlockIO.specialCmd(cmd, forStage);
-        if (special) { special.fixArgLayout(); return special; }
+        if (special) { return special; }
 
         let b: BlockModel;
         b = BlockIO.convertOldCmd(cmd);
-        if (b) { b.fixArgLayout(); return b; }
+        if (b) { return b; }
 
         if (cmd[0] === SpecOperation.Call) {
             b = new BlockModel(SpecModel.SPECS.get(SpecOperation.Call.toString()));
@@ -115,7 +115,7 @@ export class BlockIO {
         // if hadSpriteRef is true, don't call fixMouseEdgeRefs() to avoid converting references
         // to sprites named 'mouse' or 'edge' to '_mouse_' or '_edge_'.
         if (!hadSpriteRef) BlockIO.fixMouseEdgeRefs(b);
-        b.fixArgLayout();
+        // b.fixArgLayout();
         return b;
     }
 
@@ -188,7 +188,7 @@ export class BlockIO {
                 b.defaultArgValues = cmd[3];
                 if (cmd.length > 4) b.warpProcFlag = cmd[4];
                 // b.setSpec(cmd[1]);
-                b.fixArgLayout();
+                // b.fixArgLayout();
                 return b;
             case SpecOperation.GetParam:
                 let paramType: string = (cmd.length >= 3) ? cmd[2] : "r";
@@ -273,7 +273,7 @@ export class BlockIO {
                 let ifBlock: BlockModel = new BlockModel(SpecModel.SPECS.get("doIf"));
                 ifBlock.setArg(0, BlockIO.convertArg(cmd[1]));
                 if (cmd[2] instanceof Array) ifBlock.insertBlockSub1(BlockIO.arrayToStack(cmd[2]));
-                ifBlock.fixArgLayout();
+                // ifBlock.fixArgLayout();
 
                 b = new BlockModel(SpecModel.SPECS.get("doForever"));
                 b.insertBlockSub1(ifBlock);

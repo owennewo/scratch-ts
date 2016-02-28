@@ -14,8 +14,8 @@ export class CommandShape extends BaseShape {
         this.indentTop = 3;
     }
 
-    draw() {
-        super.draw();
+    draw(parentGroup: Snap.Element) {
+        super.draw(parentGroup);
         let text = Graphics.ScriptPane.drawText(5, 18, this.spec.description);
 
         this.w = text.getBBox().width + 20;

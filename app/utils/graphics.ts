@@ -24,14 +24,9 @@ export class Graphics {
         }
     }
 
-    group(id, x: number, y: number, isDraggable: boolean = false, groupClass?: string): any {
+    group(id, x: number, y: number, groupClass?: string): any {
         this.checkPaperReady();
         let group = this.paper.group();
-
-        if (isDraggable) {
-          group.addClass("draggable");
-          this.makeDraggable(group);
-        }
 
         if (groupClass) {
           group.addClass(groupClass);
@@ -78,26 +73,6 @@ export class Graphics {
         }
 
         return p;
-    }
-
-    private makeDraggable(snapSvgElemennt) {
-
-        let move = function(dx, dy) {
-            this.attr({
-                transform: this.data("origTransform") + (this.data("origTransform") ? "T" : "t") + [dx, dy]
-            });
-        };
-
-        let start = function() {
-            this.data("origTransform", this.transform().local);
-        };
-        let stop = function(mouseEvent) {
-
-            console.log("finished dragging: " + this.getBBox().x + ":" + this.getBBox().y);
-        };
-
-        snapSvgElemennt.drag(move, start, stop);
-
     }
 
 }

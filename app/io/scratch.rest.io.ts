@@ -1,10 +1,11 @@
+import {ScriptLayout} from "../ui/script.layout";
 import {Http, Response, HTTP_PROVIDERS} from "angular2/http";
 import {Inject, Injectable} from "angular2/core";
 import {ProjectIO} from "../io/project.io";
 import {Log} from "../logging/Log";
 import {ProjectModel} from "../model/project.model";
 import {SpriteModel} from "../model/sprite.model";
-import {SpecPlacement} from "../ui/spec.placement";
+import {SpecLayout} from "../ui/spec.layout";
 import {SpecModel} from "../model/spec.model";
 import {SpecCategoryModel} from "../model/spec.category.model";
 import {Graphics} from "../utils/graphics";
@@ -27,14 +28,17 @@ export class ScratchRestIO {
         let projectIO: ProjectIO = new ProjectIO();
         let project = projectIO.readProject(json);
 
+        SpecLayout.drawCategories();
+
         if (project.children.length > 0) {
           let sprite = project.children[0];
           if (sprite.scripts && sprite.scripts.length > 0) {
-              // SpecPlacement.displayScripts(sprite.scripts);
+            ScriptLayout.drawScripts(sprite.scripts);
           }
         }
 
-        SpecPlacement.drawCategories();
+
+
 
     }
 

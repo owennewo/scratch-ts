@@ -16,8 +16,8 @@ export class TextShape extends BaseShape {
       this.text = text;
     }
 
-    draw() {
-        super.draw();
+    draw(parentGroup: Snap.Element) {
+        super.draw(parentGroup);
         this.group.append(Graphics.ScriptPane.drawText(0, 0, this.text));
     }
 }

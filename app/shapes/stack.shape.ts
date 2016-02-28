@@ -21,8 +21,8 @@ export class StackShape extends BaseShape {
         // this.base.hasLoopArrow = (loopBlocks.indexOf(this.op) >= 0);
     }
 
-    draw() {
-        super.draw();
+    draw(parentGroup: Snap.Element) {
+        super.draw(parentGroup);
         let h1: number = this.topH + this.stack1h - Geometry.NotchDepth;
 
         let text = Graphics.ScriptPane.drawText(5, 18, this.spec.description);

@@ -7,7 +7,7 @@ import {ShapeFactory} from "../shapes/shape.factory";
 import {SpecSpacerModel} from "../model/spec.model";
 import {SpecOperation} from "../model/spec.model";
 
-export class SpecPlacement {
+export class SpecLayout {
     static drawCategories() {
 
         let groupCategories = Graphics.ScriptPane.group("script-pane-categories", 10, 10);
@@ -24,7 +24,7 @@ export class SpecPlacement {
             let x = 20 + col * 110;
             let y = 20 + row * 25;
 
-            let groupCategory = Graphics.ScriptPane.group(category.name + "-categories", x, y, false, category.name.toLowerCase());
+            let groupCategory = Graphics.ScriptPane.group(category.name + "-categories", x, y, category.name.toLowerCase());
 
             let rectStub = Graphics.ScriptPane.drawRect(0, 0, 10, 20, "stub");
             let rectMain = Graphics.ScriptPane.drawRect(10, 0, 90, 20, "main");
@@ -58,7 +58,7 @@ export class SpecPlacement {
           oldCategoryBlocks.remove();
         }
 
-        let newCcategoryBlocks = Graphics.ScriptPane.group("script-pane-categories-blocks", 10, 200);
+        let newCategoryBlocks = Graphics.ScriptPane.group("script-pane-categories-blocks", 10, 200);
 
         let yPos = 0;
         category.specs.forEach(spec => {
@@ -67,10 +67,10 @@ export class SpecPlacement {
             return;
           }
             let shape = ShapeFactory.createShape(spec);
+            shape.setDraggable(true);
             shape.move(20, yPos);
-            shape.draw();
+            shape.draw(newCategoryBlocks);
             let shapeHeight = shape.getGroup().getBBox().h;
-            newCcategoryBlocks.append(shape.getGroup());
             yPos += shapeHeight + 5;
         });
     }

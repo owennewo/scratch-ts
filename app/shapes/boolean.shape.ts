@@ -13,8 +13,8 @@ export class BooleanShape extends BaseShape {
         // this.indentRight = 7;
     }
 
-    draw() {
-        super.draw();
+    draw(parentGroup: Snap.Element) {
+        super.draw(parentGroup);
         this.centerY = this.topH / 2;
 
         let text = Graphics.ScriptPane.drawText(10, 18, this.spec.description);

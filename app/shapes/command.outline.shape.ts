@@ -15,8 +15,8 @@ export class CommandOutlineShape extends BaseShape {
         this.indentTop = 3;
     }
 
-    draw() {
-        super.draw();
+    draw(parentGroup: Snap.Element) {
+        super.draw(parentGroup);
 
         let path = PathBuilder.create()
             .drawTop(this.w)

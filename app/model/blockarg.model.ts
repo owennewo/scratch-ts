@@ -188,7 +188,7 @@ export class BlockArgModel {
             return;
         }
         if (this.type === ArgType.ColorPicker) this.shape.setColor(this.argValue);
-        this.shape.draw();
+        // this.shape.draw();
     }
 
     public startEditing(): void {

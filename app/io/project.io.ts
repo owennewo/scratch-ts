@@ -58,13 +58,17 @@ export class ProjectIO {
     /** SCRIPT READ */
     readScripts(jsonScripts): ScriptModel[] {
         let scripts: ScriptModel[] = [];
+        let index = 0;
         if (!jsonScripts) return scripts;
         for (let jsonScript of jsonScripts) {
             let script: ScriptModel = new ScriptModel();
+            script.index = index;
             script.x = jsonScript[0];
             script.y = jsonScript[1];
+            script.index = index;
             script.firstBlock = BlockIO.arrayToStack(jsonScript[2]);
             scripts.push(script);
+            index++;
         }
         return scripts;
     }

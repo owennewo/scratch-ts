@@ -10,8 +10,8 @@ export class RectangleShape extends BaseShape {
         super(spec);
     }
 
-    draw() {
-        super.draw();
+    draw(parentGroup: Snap.Element) {
+        super.draw(parentGroup);
         this.group.append(Graphics.ScriptPane.drawRect(0, 0, this.w, this.topH, this.spec.category.name.toLowerCase()));
     }
 

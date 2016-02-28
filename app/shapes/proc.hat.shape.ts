@@ -11,8 +11,8 @@ export class ProcHatShape extends BaseShape {
         // this.isHat = true;
     }
 
-    draw() {
-        super.draw();
+    draw(parentGroup: Snap.Element) {
+        super.draw(parentGroup);
         let trimColor = "#8E2EC2"; // 0xcf4ad9;
         let archRoundness: number = Math.min(0.2, 35 / this.w);
 
