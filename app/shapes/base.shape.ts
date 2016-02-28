@@ -9,7 +9,7 @@ export abstract class BaseShape implements Shape {
     id: string;
     spec: SpecModel;
 
-    group: any; // svg group
+    group: Snap.Element; // svg group
 
     /* dimensio attributes */
     x: number;
@@ -28,8 +28,8 @@ export abstract class BaseShape implements Shape {
 
     move(x: number, y: number) {
         console.log("to do move");
-        this.x;
-        this.y;
+        this.group.transform("t" + x + "," + y);
+
     }
 
     getGroup(): any {

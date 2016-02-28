@@ -1,3 +1,4 @@
+import {IconShape} from "../shapes/icon.shape";
 import {TextShape} from "../shapes/text.shape";
 import {NumberShape} from "../shapes/number.shape";
 import {RectangleShape} from "../shapes/rectangle.shape";
@@ -35,13 +36,15 @@ export class BlockArgModel {
     public static NT_FLOAT: number = 1;
     public static NT_INT: number = 2;
 
-    public type: string;
+    public type: ArgType;
     public shape: Shape;
     public argValue: any = "";
     public numberType: number = BlockArgModel.NT_NOT_NUMBER;
-    public isEditable: boolean;
+    public editable: boolean = false;
     public field; // :TextField;
     public menuName: string;
+    public iconName: string;
+    isArgument: boolean = true;
 
     // private menuIcon:Shap;
 
@@ -53,88 +56,116 @@ export class BlockArgModel {
     // n - number (rounded)
     // s - string (rectangular)
     // none of the above - custom subclass of BlockArgModel
-    constructor(type: string, spec: SpecModel, editable: boolean = false, menuName: string = "") {
+    constructor(part: string, spec: SpecModel) {
 
-        this.type = type;
+      // Possible token formats:
+      // 	%<single letter>
+      // 	%m.<menuName>
+      // 	@<iconName>
+      // 	label (any string with no embedded white space that does not start with % or @)
+      // 	a token consisting of a single % or @ character is also a label
+      if (part.length >= 2 && part.charAt(0) === "%") { // argument spec
+          let argCode: string = part.charAt(1);
 
-        // if (color === -1) { // copy for clone; omit graphics
-        //     if ((type === "d") || (type === "n")) this.numberType = BlockArgModel.NT_FLOAT;
-        //     return;
-        // }
-        // let c: number = Color.scaleBrightness(color, 0.92);
-        if (type === "b") {
-            this.shape = new BooleanShape(spec);
-            this.argValue = false;
-        } else if (type === "c") {
-            this.shape = new RectangleShape(spec);
-            this.menuName = "colorPicker";
-            // this.addEventListener(MouseEvent.MOUSE_DOWN, this.invokeMenu);
-        } else if (type === "d") {
-            this.shape = new NumberShape(spec);
-            this.numberType = BlockArgModel.NT_FLOAT;
-            this.menuName = menuName;
-            // this.addEventListener(MouseEvent.MOUSE_DOWN, this.invokeMenu);
-        } else if (type === "m") {
-            this.shape = new RectangleShape(spec);
-            this.menuName = menuName;
-            // this.addEventListener(MouseEvent.MOUSE_DOWN, this.invokeMenu);
-        } else if (type === "n") {
-            this.shape = new NumberShape(spec);
-            this.numberType = BlockArgModel.NT_FLOAT;
-            this.argValue = 0;
-        } else if (type === "t") {
-            this.shape = new TextShape(spec);
-            debugger;
-            // this.argValue =
-            // this.shape.setText();
-        } else if (type === "s") {
-            this.shape = new RectangleShape(spec);
-        } else {
-            // custom type; subclass is responsible for adding
-            // the desired children, setting width and height,
-            // and optionally defining the base shape
-            return;
-        }
+          switch (argCode) {
+            case "b":
+              this.type = ArgType.Boolean;
+              this.shape = new BooleanShape(spec);
+              this.argValue = false;
+              return;
+            case "c":
+              this.type = ArgType.ColorPicker;
+              this.shape = new RectangleShape(spec);
+              this.menuName = "colorPicker";
+              // this.addEventListener(MouseEvent.MOUSE_DOWN, this.invokeMenu);
 
-        if (type === "c") {
-            this.shape.setWidthAndTopHeight(13, 13);
-          //  this.setArgValue(Color.random());
-        } else {
-            this.shape.setWidthAndTopHeight(30, 15); // BlockModel.argTextFormat.size + 6); // 15 for normal arg font
-        }
-        // this.shape.filters = this.blockArgFilters();
-        // this.addChild(this.shape);
+              return;
+            case "d":
+              this.type = ArgType.NumberMenu;
+              this.editable = true;
+              this.menuName = part.slice(3);
+              this.addMenuIcon();
+              this.shape = new NumberShape(spec);
+              // this.addEventListener(MouseEvent.MOUSE_DOWN, this.invokeMenu);
+              return;
+            case "m":
+              this.type = ArgType.Menu;
+              this.menuName = part.slice(3);
+              this.shape = new RectangleShape(spec);
+              this.addMenuIcon();
+              // this.addEventListener(MouseEvent.MOUSE_DOWN, this.invokeMenu);
 
-        if ((type === "d") || (type === "m")) { // add a menu icon
-            debugger;
-            // todo do menu icon
-            // this.menuIcon = new Shape();
-            // let g: Graphics = this.menuIcon.graphics;
-            // g.beginFill(0, 0.6); // darker version of base color
-            // g.lineTo(7, 0);
-            // g.lineTo(3.5, 4);
-            // g.lineTo(0, 0);
-            // g.endFill();
-            // this.menuIcon.y = 5;
-            // this.addChild(this.menuIcon);
-        }
+              return;
+            case "n":
+              this.type = ArgType.Number;
+              this.shape = new NumberShape(spec);
+              this.numberType = BlockArgModel.NT_FLOAT;
+              this.shape = new NumberShape(spec);
+              this.numberType = BlockArgModel.NT_FLOAT;
+              this.argValue = 0;
+              return;
+            case "s":
+              this.type = ArgType.UnknownS;
+              this.shape = new RectangleShape(spec);
+              return;
+            default:
+              // custom type; subclass is responsible for adding
+              // the desired children, setting width and height,
+              // and optionally defining the base shape
+              return;
 
-        if (editable || this.numberType || (type === "m")) { // add a string field
-            this.field = this.makeTextField();
-            if ((type === "m") && !editable) this.field.textColor = 0xFFFFFF;
-            else this.shape.setWidthAndTopHeight(30, 14); // Block.argTextFormat.size + 5); // 14 for normal arg font
-            this.field.text = this.numberType ? "10" : "";
-            if (this.numberType) this.field.restrict = "0-9e.\\-"; // restrict to numeric characters
-            if (editable) {
-                // this.shape.setColor(0xFFFFFF); // if editable, set color to white
-                this.isEditable = true;
-            }
-//            this.field.addEventListener(FocusEvent.FOCUS_OUT, this.stopEditing);
-//            this.addChild(this.field);
-//            this.textChanged(null);
-        } else {
-            this.shape.draw();
-        }
+          }
+      } else if (part.length >= 2 && part.charAt(0) === "@") { // icon spec
+
+        this.type = ArgType.Icon;
+        this.iconName = part.slice(1);
+        this.shape = new IconShape(spec, this.iconName);
+          // let icon: any = Specs.IconNamed(s.slice(1));
+          // return (icon) ? icon : this.makeLabel(s);
+      }
+      else {
+        this.type = ArgType.Label;
+        this.shape = new TextShape(spec, part);
+        this.isArgument = false;
+      }
+
+      if (this.type  === ArgType.ColorPicker) {
+        this.shape.setWidthAndTopHeight(13, 13);
+      }
+      else {
+        this.shape.setWidthAndTopHeight(30, 15); // BlockModel.argTextFormat.size + 6); // 15 for normal arg font
+      }
+
+//
+//
+//         if (this.editable || this.numberType || (this.type === "m")) { // add a string field
+//             this.field = this.makeTextField();
+//             if ((type === "m") && !editable) this.field.textColor = 0xFFFFFF;
+//             else this.shape.setWidthAndTopHeight(30, 14); // Block.argTextFormat.size + 5); // 14 for normal arg font
+//             this.field.text = this.numberType ? "10" : "";
+//             if (this.numberType) this.field.restrict = "0-9e.\\-"; // restrict to numeric characters
+//             if (editable) {
+//                 // this.shape.setColor(0xFFFFFF); // if editable, set color to white
+//                 this.isEditable = true;
+//             }
+// //            this.field.addEventListener(FocusEvent.FOCUS_OUT, this.stopEditing);
+// //            this.addChild(this.field);
+// //            this.textChanged(null);
+//         } else {
+//             this.shape.draw();
+//         }
+    }
+
+    addMenuIcon() {
+      // todo do menu icon
+      // this.menuIcon = new Shape();
+      // let g: Graphics = this.menuIcon.graphics;
+      // g.beginFill(0, 0.6); // darker version of base color
+      // g.lineTo(7, 0);
+      // g.lineTo(3.5, 4);
+      // g.lineTo(0, 0);
+      // g.endFill();
+      // this.menuIcon.y = 5;
     }
 
     public labelOrNull(): string { return this.field ? this.field.text : null; }
@@ -156,12 +187,12 @@ export class BlockArgModel {
             this.argValue = value; // set argValue after textChanged()
             return;
         }
-        if (this.type === "c") this.shape.setColor(this.argValue);
+        if (this.type === ArgType.ColorPicker) this.shape.setColor(this.argValue);
         this.shape.draw();
     }
 
     public startEditing(): void {
-        if (this.isEditable) {
+        if (this.editable) {
             this.field.type = "INPUT";
             this.field.selectable = true;
             if (this.field.text.length === 0) this.field.text = "  ";
@@ -237,4 +268,8 @@ export class BlockArgModel {
     // 	}
     // }
 
+}
+
+export enum ArgType {
+  Boolean, ColorPicker, NumberMenu, Menu, Number, Text, UnknownS, UnknownSub, Label, Icon
 }

@@ -7,6 +7,7 @@ import {SpecCategoryModel} from "./spec.category.model";
 import {ShapeFactory} from "../shapes/shape.factory";
 import {Geometry} from "../shapes/geometry";
 import {BlockArgModel} from "./blockarg.model";
+import {ArgType} from "./blockarg.model";
 import {Translator} from "../utils/translator";
 import {BlockIO} from "../io/block.io";
 import {ReadStream} from "../utils/read.stream";
@@ -63,8 +64,8 @@ export class BlockModel {
     shape: Shape;
 
     private suppressLayout: boolean; // used to avoid extra layouts during block initialization
-    private labelsAndArgs: any[] = [];
-    private argTypes: any[] = [];
+    private labelsAndArgs: BlockArgModel[] = [];
+    // private argTypes: any[] = [];
     // private elseLabel:TextField;
 
     private indentTop: number = 2;
@@ -171,7 +172,6 @@ export class BlockModel {
             this.indentRight = 5;
 
             this.labelsAndArgs = [];
-            this.argTypes = [];
             // let label:TextField = this.makeLabel(Translator.map('define'));
             // this.labelsAndArgs.push(label);
             let b: BlockModel;
@@ -194,7 +194,7 @@ export class BlockModel {
         if (this.rightToLeft) {
             // reverse specs that don't start with arg specifier or an ASCII character
             this.labelsAndArgs.reverse();
-            this.argTypes.reverse();
+
             if (defaultArgs) defaultArgs.reverse();
         }
         // for (let item of this.labelsAndArgs) this.addChild(item);
@@ -295,15 +295,10 @@ export class BlockModel {
         let specParts: any[] = ReadStream.tokenize(this.spec.description);
         let i: number;
         this.labelsAndArgs = [];
-        this.argTypes = [];
+
         for (i = 0; i < specParts.length; i++) {
-            let o = this.argOrLabelFor(specParts[i], this.spec);
-            this.labelsAndArgs.push(o);
-            let argType: string = "icon";
-            if (o instanceof BlockArgModel) argType = specParts[i];
-            debugger;
-            // if (o.shape instanceof TextField) argType = "label";
-            this.argTypes.push(argType);
+            let arg =  new BlockArgModel(specParts[i], this.spec);
+            this.labelsAndArgs.push(arg);
         }
     }
 
@@ -455,11 +450,11 @@ export class BlockModel {
         for (i = 0; i < this.labelsAndArgs.length; i++) {
             item = this.labelsAndArgs[i];
             // Next line moves the argument of if and if-else blocks right slightly:
-            if ((i === 1) && !(this.argTypes[i] === "label")) x = Math.max(x, 30);
+            if ((i === 1) && !(this.labelsAndArgs[i].type === ArgType.Label)) x = Math.max(x, 30);
             item.x = x;
             maxH = Math.max(maxH, item.height);
             x += item.width + 2;
-            if (this.argTypes[i] === "icon") x += 3;
+            if (this.labelsAndArgs[i].type === ArgType.Icon) x += 3;
         }
         x -= this.indentAjustmentFor(this.labelsAndArgs[this.labelsAndArgs.length - 1]);
 
@@ -619,7 +614,12 @@ export class BlockModel {
         this.args = [];
         for (i = 0; i < this.labelsAndArgs.length; i++) {
             let a: any = this.labelsAndArgs[i];
-            if ((a instanceof BlockModel) || (a instanceof BlockArgModel)) this.args.push(a);
+            if (a instanceof BlockModel) {
+              this.args.push(a);
+            } else if (a instanceof BlockArgModel ) {
+              let arg = <BlockArgModel> a;
+              if (arg.isArgument) this.args.push(a);
+            }
         }
     }
 
@@ -759,31 +759,6 @@ export class BlockModel {
         return result;
     }
 
-    private argOrLabelFor(s: string, spec: SpecModel): any {
-        // Possible token formats:
-        // 	%<single letter>
-        // 	%m.<menuName>
-        // 	@<iconName>
-        // 	label (any string with no embedded white space that does not start with % or @)
-        // 	a token consisting of a single % or @ character is also a label
-        if (s.length >= 2 && s.charAt(0) === "%") { // argument spec
-            let argSpec: string = s.charAt(1);
-            if (argSpec === "b") return new BlockArgModel("b", this.spec);
-            if (argSpec === "c") return new BlockArgModel("c", this.spec);
-            if (argSpec === "d") return new BlockArgModel("d", this.spec, true, s.slice(3));
-            if (argSpec === "m") return new BlockArgModel("m", this.spec, false, s.slice(3));
-            if (argSpec === "n") return new BlockArgModel("n", this.spec, true);
-            if (argSpec === "s") return new BlockArgModel("s", this.spec, true);
-        } else if (s.length >= 2 && s.charAt(0) === "@") { // icon spec
-          debugger;
-            // let icon: any = Specs.IconNamed(s.slice(1));
-            // return (icon) ? icon : this.makeLabel(s);
-        }
-
-        debugger;
-        return null;
-        // return this.makeLabel(ReadStream.unescape(s));
-    }
 
     // private makeLabel(label:string):TextField {
     // 	let text:TextField = new TextField();
