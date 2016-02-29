@@ -6,8 +6,8 @@ import {SpecModel} from "../model/spec.model";
 
 
 export class NumberShape extends BaseShape {
-    constructor(spec: SpecModel) {
-        super(spec);
+    constructor(spec: SpecModel, args) {
+        super(spec, args);
         this.indentTop = 2;
         // this.indentBottom = 2;
         // this.indentLeft = 6;
@@ -26,7 +26,7 @@ export class NumberShape extends BaseShape {
         super.draw(parentGroup);
         this.centerY = this.topH / 2;
 
-        let text = Graphics.ScriptPane.drawText(5, 18, this.spec.description);
+        let text = Graphics.ScriptPane.drawText(5, 18, this.spec.label, this.args);
 
         this.w = text.getBBox().width + 20;
 

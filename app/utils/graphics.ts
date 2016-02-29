@@ -1,3 +1,4 @@
+import {ReadStream} from "./read.stream";
 /// <reference path="../definitelytyped/snapsvg.d.ts" />
 
 import {Geometry} from "../shapes/geometry";
@@ -37,7 +38,12 @@ export class Graphics {
                 id: id,
                 transform: "translate(" + x + "," + y + ")"
             });
+        } else {
+          group.attr({
+              transform: "translate(" + x + "," + y + ")"
+          });
         }
+
         return group;
     }
 
@@ -55,14 +61,34 @@ export class Graphics {
         return r;
     }
 
-    drawText(x: number, y: number, text: string, textClasss?: string): any {
-        let t = this.paper.text(x, y, text);
+    drawText(x: number, y: number, text: string, args: any[], textClass?: string): any {
 
-        if (textClasss) {
-            t.addClass(textClasss);
+        let result;
+        if (!args || args.length === 0) {
+            result = this.paper.text(x, y, text);
+            if (textClass) {
+                result.addClass(textClass);
+            }
+        } else {
+          result = Graphics.ScriptPane.group(undefined, x, y, textClass);
+          let parts = ReadStream.tokenize(text);
+          let argIndex = 0;
+          let xPos = 0;
+          for (let part of parts)
+          {
+            if (part.startsWith("%")) {
+                part = args[argIndex];
+                argIndex++;
+            }
+            let textPart = this.paper.text(xPos, 0, part);
+            xPos += textPart.getBBox().width + 3;
+            result.append(textPart);
+
+          }
+
         }
 
-        return t;
+        return result;
     }
 
     drawPath(path: string, pathClass?: string): any {

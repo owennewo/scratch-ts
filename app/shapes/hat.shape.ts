@@ -8,14 +8,14 @@ import {SpecModel} from "../model/spec.model";
 
 export class HatShape extends BaseShape {
 
-    constructor(spec: SpecModel) {
-        super(spec);
+    constructor(spec: SpecModel, args: any[]) {
+        super(spec, args);
         this.indentTop = 12;
     }
 
     draw(parentGroup: Snap.Element) {
         super.draw(parentGroup);
-        let text = Graphics.ScriptPane.drawText(5, 25, this.spec.description);
+        let text = Graphics.ScriptPane.drawText(5, 25, this.spec.label, this.args);
 
         this.w = text.getBBox().width + 20;
         this.topH = 35;

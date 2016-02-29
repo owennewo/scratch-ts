@@ -6,8 +6,8 @@ export class TextShape extends BaseShape {
 
   text: string = "unspecified";
 
-  constructor(spec: SpecModel, text: string) {
-      super(spec);
+  constructor(spec: SpecModel, args: any[], text: string) {
+      super(spec, args);
       this.text = text;
     }
 
@@ -18,6 +18,6 @@ export class TextShape extends BaseShape {
 
     draw(parentGroup: Snap.Element) {
         super.draw(parentGroup);
-        this.group.append(Graphics.ScriptPane.drawText(0, 0, this.text));
+        this.group.append(Graphics.ScriptPane.drawText(0, 0, this.text, this.args));
     }
 }

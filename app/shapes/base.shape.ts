@@ -10,6 +10,7 @@ export abstract class BaseShape implements Shape {
     spec: SpecModel;
 
     group: Snap.Element; // svg group
+    args: any[];
 
     /* dimensio attributes */
     x: number;
@@ -20,12 +21,14 @@ export abstract class BaseShape implements Shape {
     centerY: number;
     h: number;
 
+
     draggable: boolean;
 
-    constructor(spec: SpecModel) {
+    constructor(spec: SpecModel, args: any[]) {
         this.spec = spec;
         this.id = this.spec.category.name + "_" + spec.code.replace(new RegExp(":", "g"), "_");
         this.group = Graphics.ScriptPane.group(this.id, this.x, this.y);
+        this.args = args;
     }
 
     move(x: number, y: number) {
@@ -60,8 +63,6 @@ export abstract class BaseShape implements Shape {
         this.makeDraggable();
         this.group.addClass("draggable");
       }
-
-
     }
 
     private makeDraggable() {

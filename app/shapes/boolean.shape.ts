@@ -6,8 +6,8 @@ import {SpecModel} from "../model/spec.model";
 
 
 export class BooleanShape extends BaseShape {
-    constructor(spec: SpecModel) {
-        super(spec);
+    constructor(spec: SpecModel, args: any[]) {
+        super(spec, args);
         // this.isReporter = true;
         // this.indentLeft = 9;
         // this.indentRight = 7;
@@ -17,7 +17,7 @@ export class BooleanShape extends BaseShape {
         super.draw(parentGroup);
         this.centerY = this.topH / 2;
 
-        let text = Graphics.ScriptPane.drawText(10, 18, this.spec.description);
+        let text = Graphics.ScriptPane.drawText(10, 18, this.spec.label, this.args);
         this.w = text.getBBox().width + 20;
 
         let path = PathBuilder.create()

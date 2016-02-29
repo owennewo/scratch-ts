@@ -6,8 +6,8 @@ import {SpecModel} from "../model/spec.model";
 
 
 export class ProcHatShape extends BaseShape {
-    constructor(spec: SpecModel) {
-        super(spec);
+    constructor(spec: SpecModel, args: any[]) {
+        super(spec, args);
         // this.isHat = true;
     }
 

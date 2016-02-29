@@ -8,8 +8,8 @@ import {SpecModel} from "../model/spec.model";
 
 export class CommandOutlineShape extends BaseShape {
     hasNotch: boolean;
-    constructor(spec: SpecModel, hasNotch: boolean) {
-        super(spec);
+    constructor(spec: SpecModel, args: any[], hasNotch: boolean) {
+        super(spec, args);
         this.hasNotch = hasNotch;
         // this.base.filters = []; // no bezel
         this.indentTop = 3;

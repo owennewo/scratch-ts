@@ -108,7 +108,7 @@ export class BlockModel {
         if (!spec) {
             console.error("error: spec is null");
         }
-        this.shape = ShapeFactory.createShape(spec);
+        this.shape = ShapeFactory.createShape(spec, this.args);
         // if ((type === " ") || (type === "") || (type === "w")) {
         //     this.shape = new BlockShapeModel(BlockShapeModel.CmdShape, color);
         //     this.indentTop = 3;
@@ -154,54 +154,54 @@ export class BlockModel {
         //     this.shape = new BlockShapeModel(BlockShapeModel.RectShape, color);
         // }
         //        this.addChildAt(this.shape, 0);
-        this.setArgs(defaultArgs);
+//        this.setArgs(defaultArgs);
 
         ///this.addEventListener(FocusEvent.KEY_FOCUS_CHANGE, this.focusChange);
     }
 
-    setArgs(defaultArgs: any[] = null) {
-        // for (let o of this.labelsAndArgs) {
-        //     if (o.parent != null) o.parent.removeChild(o);
-        // }
-        // this.spec = newSpec;
-        if (this.spec.code === SpecOperation.ProcedureDef) {
-            // procedure hat: make an icon from my spec and use that as the label
-            this.indentTop = 20;
-            this.indentBottom = 5;
-            this.indentLeft = 5;
-            this.indentRight = 5;
-
-            this.labelsAndArgs = [];
-            // let label:TextField = this.makeLabel(Translator.map('define'));
-            // this.labelsAndArgs.push(label);
-            let b: BlockModel;
-            // this.labelsAndArgs.push(b = this.declarationBlock());
-        } else if (this.spec.code === SpecOperation.GetList || this.spec.code === SpecOperation.GetList) {
-            // this.labelsAndArgs = [this.makeLabel(this.spec)];
-        } else {
-            // loop
-
-            this.addLabelsAndArgs();
-
-
-        }
-        this.rightToLeft = Translator.rightToLeft;
-        // TODO: right to left
-        // if (this.rightToLeft) {
-        //     if (["+", "-", "*", "/", "%"].indexOf(this.op) > -1) this.rightToLeft = Translator.rightToLeftMath;
-        //     if ([">", "<"].indexOf(this.op) > -1) this.rightToLeft = false; // never change order of comparison ops
-        // }
-        if (this.rightToLeft) {
-            // reverse specs that don't start with arg specifier or an ASCII character
-            this.labelsAndArgs.reverse();
-
-            if (defaultArgs) defaultArgs.reverse();
-        }
-        // for (let item of this.labelsAndArgs) this.addChild(item);
-        // if (defaultArgs) this.setDefaultArgs(defaultArgs);
-        // this.fixArgLayout();
-        this.collectArgs();
-    }
+    // setArgs(defaultArgs: any[] = null) {
+    //     // for (let o of this.labelsAndArgs) {
+    //     //     if (o.parent != null) o.parent.removeChild(o);
+    //     // }
+    //     // this.spec = newSpec;
+    //     if (this.spec.code === SpecOperation.ProcedureDef) {
+    //         // procedure hat: make an icon from my spec and use that as the label
+    //         this.indentTop = 20;
+    //         this.indentBottom = 5;
+    //         this.indentLeft = 5;
+    //         this.indentRight = 5;
+    //
+    //         this.labelsAndArgs = [];
+    //         // let label:TextField = this.makeLabel(Translator.map('define'));
+    //         // this.labelsAndArgs.push(label);
+    //         let b: BlockModel;
+    //         // this.labelsAndArgs.push(b = this.declarationBlock());
+    //     } else if (this.spec.code === SpecOperation.GetList || this.spec.code === SpecOperation.GetList) {
+    //         // this.labelsAndArgs = [this.makeLabel(this.spec)];
+    //     } else {
+    //         // loop
+    //
+    //         this.addLabelsAndArgs();
+    //
+    //
+    //     }
+    //     this.rightToLeft = Translator.rightToLeft;
+    //     // TODO: right to left
+    //     // if (this.rightToLeft) {
+    //     //     if (["+", "-", "*", "/", "%"].indexOf(this.op) > -1) this.rightToLeft = Translator.rightToLeftMath;
+    //     //     if ([">", "<"].indexOf(this.op) > -1) this.rightToLeft = false; // never change order of comparison ops
+    //     // }
+    //     if (this.rightToLeft) {
+    //         // reverse specs that don't start with arg specifier or an ASCII character
+    //         this.labelsAndArgs.reverse();
+    //
+    //         if (defaultArgs) defaultArgs.reverse();
+    //     }
+    //     // for (let item of this.labelsAndArgs) this.addChild(item);
+    //     // if (defaultArgs) this.setDefaultArgs(defaultArgs);
+    //     // this.fixArgLayout();
+    //     this.collectArgs();
+    // }
 
     get broadcastMsg(): string {
         for (let arg of this.args) {
@@ -292,16 +292,16 @@ export class BlockModel {
     // 	this.fixArgLayout();
     // }
 
-    private addLabelsAndArgs() {
-        let specParts: any[] = ReadStream.tokenize(this.spec.description);
-        let i: number;
-        this.labelsAndArgs = [];
-
-        for (i = 0; i < specParts.length; i++) {
-            let arg =  new BlockArgModel(specParts[i], this.spec);
-            this.labelsAndArgs.push(arg);
-        }
-    }
+    // private addLabelsAndArgs() {
+    //     let specParts: any[] = ReadStream.tokenize(this.spec.label);
+    //     let i: number;
+    //     this.labelsAndArgs = [];
+    //
+    //     for (i = 0; i < specParts.length; i++) {
+    //         let arg =  new BlockArgModel(specParts[i], this.spec);
+    //         this.labelsAndArgs.push(arg);
+    //     }
+    // }
 
     // argType(arg:DisplayObject):string {
     // 	let i:number = this.labelsAndArgs.indexOf(arg);
@@ -419,17 +419,21 @@ export class BlockModel {
     setArg(i: number, newArg: any): void {
         // called on newly-created block (assumes argument being set is a BlockArgModel)
         // newArg can be either a reporter block or a literal value (string, number, etc.)
-        this.collectArgs();
-        if (i >= this.args.length) return;
-        let oldArg: BlockArgModel = this.args[i];
-        if (newArg instanceof BlockModel) {
-            this.labelsAndArgs[this.labelsAndArgs.indexOf(oldArg)] = newArg;
-            this.args[i] = newArg;
-            // super.removeChild(oldArg);
-            // this.addChild(newArg);
-        } else {
-            oldArg.setArgValue(newArg);
+        // this.collectArgs();
+        if (i >= this.spec.argCount) {
+          console.log("too many args, ignoring:" + newArg);
+          return;
         }
+        this.args.push(newArg);
+        // let oldArg: BlockArgModel = this.args[i];
+        // if (newArg instanceof BlockModel) {
+        //     this.labelsAndArgs[this.labelsAndArgs.indexOf(oldArg)] = newArg;
+        //     this.args[i] = newArg;
+        //     // super.removeChild(oldArg);
+        //     // this.addChild(newArg);
+        // } else {
+        //     oldArg.setArgValue(newArg);
+        // }
     }
 
 
@@ -473,19 +477,19 @@ export class BlockModel {
     // 	for (let arg of this.args) this.addChild(arg); // fix for cloned proc bug xxx
     // }
 
-    private collectArgs(): void {
-        let i: number;
-        this.args = [];
-        for (i = 0; i < this.labelsAndArgs.length; i++) {
-            let a: any = this.labelsAndArgs[i];
-            if (a instanceof BlockModel) {
-              this.args.push(a);
-            } else if (a instanceof BlockArgModel ) {
-              let arg = <BlockArgModel> a;
-              if (arg.isArgument) this.args.push(a);
-            }
-        }
-    }
+    // private collectArgs(): void {
+    //     let i: number;
+    //     this.args = [];
+    //     for (i = 0; i < this.labelsAndArgs.length; i++) {
+    //         let a: any = this.labelsAndArgs[i];
+    //         if (a instanceof BlockModel) {
+    //           this.args.push(a);
+    //         } else if (a instanceof BlockArgModel ) {
+    //           let arg = <BlockArgModel> a;
+    //           if (arg.isArgument) this.args.push(a);
+    //         }
+    //     }
+    // }
 
     // removeBlock(b:BlockModel):void {
     // 	if (b.parent === this) this.removeChild(b);

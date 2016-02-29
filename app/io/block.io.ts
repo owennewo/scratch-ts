@@ -99,8 +99,9 @@ export class BlockIO {
             b = new BlockModel(spec); // TODO, Specs.blockColor(spec[2]), spec[3]);
         }
 
-        let args: any[] = BlockIO.argsForCmd(cmd, b.args.length, b.rightToLeft);
-        let substacks: any[] = BlockIO.substacksForCmd(cmd, b.args.length);
+        let args: any[] = BlockIO.argsForCmd(cmd, b.spec.argCount, b.rightToLeft);
+        console.log(b.spec.label + " with args " + args);
+        let substacks: any[] = BlockIO.substacksForCmd(cmd, args.length);
         let hadSpriteRef: boolean;
         for (let i: number = 0; i < args.length; i++) {
             let a: any = args[i];

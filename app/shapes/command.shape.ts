@@ -9,14 +9,14 @@ export class CommandShape extends BaseShape {
 
     hasNotch: boolean = true;
 
-    constructor(spec: SpecModel) {
-        super(spec);
+    constructor(spec: SpecModel, args: any[]) {
+        super(spec, args);
         this.indentTop = 3;
     }
 
     draw(parentGroup: Snap.Element) {
         super.draw(parentGroup);
-        let text = Graphics.ScriptPane.drawText(5, 18, this.spec.description);
+        let text = Graphics.ScriptPane.drawText(5, 18, this.spec.label, this.args);
 
         this.w = text.getBBox().width + 20;
 

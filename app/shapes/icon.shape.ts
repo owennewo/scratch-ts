@@ -6,8 +6,8 @@ import {BaseShape} from "./base.shape";
 export class IconShape extends BaseShape {
     iconName: string;
 
-    constructor(spec: SpecModel, iconName: string) {
-        super(spec);
+    constructor(spec: SpecModel, args: any[], iconName: string) {
+        super(spec, args);
         this.iconName = iconName;
         // this.isReporter = true;
         // this.indentLeft = 9;
@@ -18,7 +18,7 @@ export class IconShape extends BaseShape {
         super.draw(parentGroup);
         this.centerY = this.topH / 2;
 
-        let text = Graphics.ScriptPane.drawText(10, 18, this.iconName);
+        let text = Graphics.ScriptPane.drawText(10, 18, this.iconName, this.args);
         this.w = text.getBBox().width + 20;
 
 

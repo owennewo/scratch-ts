@@ -12,8 +12,8 @@ export class StackShape extends BaseShape {
     hasLoopArrow: boolean = true;
     isFinal: boolean;
 
-    constructor(spec: SpecModel, isFinal: boolean = false) {
-        super(spec);
+    constructor(spec: SpecModel, args: any[], isFinal: boolean = false) {
+        super(spec, args);
         this.isFinal = isFinal;
         // let loopBlocks: string[] = ["doForever", "doForeverIf", "doRepeat", "doUntil"];
 
@@ -25,7 +25,7 @@ export class StackShape extends BaseShape {
         super.draw(parentGroup);
         let h1: number = this.topH + this.stack1h - Geometry.NotchDepth;
 
-        let text = Graphics.ScriptPane.drawText(5, 18, this.spec.description);
+        let text = Graphics.ScriptPane.drawText(5, 18, this.spec.label, this.args);
 
         this.w = text.getBBox().width + 20;
 
