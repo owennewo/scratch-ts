@@ -1,7 +1,6 @@
 import {Component, Inject} from "angular2/core";
 import {MenuBarComponent} from "./components/menubar.component";
 import {ContainerComponent} from "./components/container.component";
-import {ScratchRestIO} from "./io/scratch.rest.io";
 
 import {SpecModel} from "./model/spec.model";
 import {SpecCategoryModel} from "./model/spec.category.model";
@@ -21,11 +20,10 @@ import {Graphics} from "./utils/graphics";
 })
 export class AppComponent {
 
-    constructor(@Inject(ScratchRestIO) private scratchRest: ScratchRestIO) {
+    constructor() {
+      SpecCategoryModel.initialize();
+      SpecModel.initialize();
 
-        SpecCategoryModel.initialize();
-        SpecModel.initialize();
-       scratchRest.load();
     }
 
 }

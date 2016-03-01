@@ -38,6 +38,11 @@ export class ProjectIO {
     readSprites(jsonSprites): SpriteModel[] {
         let sprites: SpriteModel[] = [];
         for (let jsonSprite of jsonSprites) {
+          if (!jsonSprite.objName) {
+            console.log("warning: child is not a sprite! (probably target)");
+            continue;
+          }
+
             let sprite: SpriteModel = new SpriteModel();
             this.readObject(sprite, jsonSprite);
             sprite.x = jsonSprite.scratchX;
