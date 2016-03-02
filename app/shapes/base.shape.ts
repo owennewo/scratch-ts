@@ -27,14 +27,15 @@ export abstract class BaseShape implements Shape {
     constructor(spec: SpecModel, args: any[]) {
         this.spec = spec;
         this.id = this.spec.category.name + "_" + spec.code.replace(new RegExp(":", "g"), "_");
-        this.group = Graphics.ScriptPane.group(this.id, this.x, this.y);
         this.args = args;
     }
 
     move(x: number, y: number) {
-        console.log("to do move");
-        this.group.transform("t" + x + "," + y);
-
+        this.x = x;
+        this.y = y;
+        if (this.group) {
+          this.group.transform("t" + x + "," + y);
+        }
     }
 
     getGroup(): any {
@@ -43,6 +44,11 @@ export abstract class BaseShape implements Shape {
 
 
     draw(parentGroup?: Snap.Element) {
+      this.group = Graphics.ScriptPane.group(this.id, this.x, this.y);
+      if (this.draggable) {
+        this.makeDraggable();
+        this.group.addClass("draggable");
+      }
       if (parentGroup) {
         parentGroup.append(this.group);
       }
@@ -59,10 +65,7 @@ export abstract class BaseShape implements Shape {
 
     setDraggable(draggable: boolean) {
       this.draggable = draggable;
-      if (draggable) {
-        this.makeDraggable();
-        this.group.addClass("draggable");
-      }
+
     }
 
     private makeDraggable() {

@@ -9,7 +9,9 @@ import {SpecOperation} from "../model/spec.model";
 
 export class SpecLayout {
     static drawCategories() {
-
+        if (Graphics.ScriptPane.has("#script-pane-categories")) {
+          return; // categories already setup
+        }
         let groupCategories = Graphics.ScriptPane.group("script-pane-categories", 10, 10);
 
         let index = 0;

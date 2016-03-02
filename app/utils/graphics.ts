@@ -47,8 +47,17 @@ export class Graphics {
         return group;
     }
 
+    remove(selector: string) {
+      let elem = this.paper.select(selector);
+      if (elem) elem.remove();
+    }
 
-
+    has(selector: string): boolean {
+      this.checkPaperReady();
+      let elem = this.paper.select(selector);
+      if (elem) return true;
+      return false;
+    }
 
     drawRect(x: number, y: number, width: number, height: number, categoryClass?: string): Snap.Element {
 

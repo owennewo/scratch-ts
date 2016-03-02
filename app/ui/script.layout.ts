@@ -6,7 +6,8 @@ import {BlockModel} from "../model/block.model";
 export class ScriptLayout {
 
     static drawScripts(scripts: ScriptModel[]) {
-        let scriptWorkArea = Graphics.ScriptPane.group("script-work-area", 220, 0);
+      Graphics.ScriptPane.remove("#script-work-area");
+      let scriptWorkArea = Graphics.ScriptPane.group("script-work-area", 220, 0);
       scripts.forEach( script => {
         ScriptLayout.drawScript(script, scriptWorkArea);
       });

@@ -1,3 +1,4 @@
+import {BackdropsComponent} from "./backdrops.component";
 import {ScriptLayout} from "../ui/script.layout";
 import {SpecLayout} from "../ui/spec.layout";
 import {ObjectModel} from "../model/object.model";
@@ -67,7 +68,7 @@ svg { width:100%; height:100%; background: #ffe}
 .col-offset-500 { padding-left:500px; background: #ddd; height: 100%; width:100%; position: fixed;}
 .fixed-width-499 { width:500px; background: #ddd; height: 100%; position: fixed; z-index:100}
   `],
-  directives: [StageComponent, SpritesComponent]
+  directives: [StageComponent, SpritesComponent, BackdropsComponent]
 })
 export class ContainerComponent {
 

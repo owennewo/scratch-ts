@@ -108,6 +108,7 @@ export class ProjectIO {
             costume.resolution = jsonCostume.bitmapResolution;
             costume.centerX = jsonCostume.rotationCenterX;
             costume.centerY = jsonCostume.rotationCenterY;
+            costumes.push(costume);
         }
         return costumes;
     }
