@@ -3,7 +3,7 @@ import {ScriptLayout} from "../ui/script.layout";
 import {SpecLayout} from "../ui/spec.layout";
 import {ObjectModel} from "../model/object.model";
 import {ModelService} from "./model.service";
-import {ProjectModel} from "../model/project.model";
+import {StageModel} from "../model/stage.model";
 import {Component, Inject} from "angular2/core";
 import {StageComponent} from "./stage.component"  ;
 import {SpritesComponent} from "./sprites.component";
@@ -72,7 +72,7 @@ svg { width:100%; height:100%; background: #ffe}
 })
 export class ContainerComponent {
 
-  project: ProjectModel;
+  // stage: StageModel;
 
   constructor(@Inject(ModelService) private modelService: ModelService) {
     modelService.onProjectLoaded.subscribe(res => {

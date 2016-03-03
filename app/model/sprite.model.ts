@@ -1,3 +1,4 @@
+import {SpriteRuntime} from "../runtime/sprite.runtime";
 import {ObjectModel} from "./object.model";
 
 export class SpriteModel extends ObjectModel {
@@ -10,6 +11,8 @@ export class SpriteModel extends ObjectModel {
     indexInLibrary: number;
     visible: boolean;
     info: SpriteInfoModel;  // spriteInfo
+    videomotion = {};
+    runtime = new SpriteRuntime();
 }
 
 export class SpriteInfoModel {

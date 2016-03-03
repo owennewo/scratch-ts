@@ -1,4 +1,4 @@
-import {ProjectModel, ProjectInfoModel} from "../model/project.model";
+import {StageModel, ProjectInfoModel} from "../model/stage.model";
 import {ObjectModel} from "../model/object.model";
 import {SpriteModel} from "../model/sprite.model";
 import {ScriptModel} from "../model/script.model";
@@ -11,9 +11,9 @@ import {BlockIO} from "./block.io";
 
 export class ProjectIO {
 
-    readProject(jsonProject: any): ProjectModel {
+    readProject(jsonProject: any): StageModel {
 
-        let project: ProjectModel = new ProjectModel();
+        let project: StageModel = new StageModel();
 
         this.readObject(project, jsonProject);
         project.tempo = jsonProject.tempoBPM;

@@ -1,21 +1,21 @@
 import {ScriptLayout} from "../ui/script.layout";
 import {SpecLayout} from "../ui/spec.layout";
 import {ProjectIO} from "../io/project.io";
-import {ProjectModel} from "../model/project.model";
+import {StageModel} from "../model/stage.model";
 import {ObjectModel} from "../model/object.model";
-import {Injectable, Inject} from 'angular2/core';
-import {Http, Response} from 'angular2/http';
+import {Injectable, Inject} from "angular2/core";
+import {Http, Response} from "angular2/http";
 import {EventEmitter} from "angular2/core";
 
 @Injectable()
 export class ModelService {
   items: Array<any>;
 
-  onProjectLoaded = new EventEmitter<ProjectModel>();
+  onProjectLoaded = new EventEmitter<StageModel>();
   onObjectSelected = new EventEmitter<ObjectModel>();
 
   constructor(@Inject(Http) private http: Http) {
-    
+
   }
 
   selectObject(scratchObject: ObjectModel) {
