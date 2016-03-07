@@ -1,5 +1,11 @@
+import {StageModel} from "../../model/stage.model";
+import {Interpreter} from "../interpreter";
+import {Scratch} from "../scratch";
 import {SpriteModel} from "../../model/sprite.model";
 import {BlockModel} from "../../model/block.model";
+import {Rectangle} from "../../shapes/geometry";
+import {Point} from "../../shapes/geometry";
+
 
 // MotionAndPenPrims.as
 // John Maloney, April 2010
@@ -61,7 +67,7 @@ export class MotionAndPenPrims {
     private primTurnRight(b: BlockModel): void {
         let s: SpriteModel = this.interp.targetSprite();
         if (s != null) {
-            s.setDirection(s.direction + this.interp.numarg(b, 0));
+            s.direction = s.direction + this.interp.numarg(b, 0);
             if (s.visible) this.interp.redraw();
         }
     }
@@ -69,7 +75,7 @@ export class MotionAndPenPrims {
     private primTurnLeft(b: BlockModel): void {
         let s: SpriteModel = this.interp.targetSprite();
         if (s != null) {
-            s.setDirection(s.direction - this.interp.numarg(b, 0));
+            s.direction = s.direction - this.interp.numarg(b, 0);
             if (s.visible) this.interp.redraw();
         }
     }
@@ -77,7 +83,7 @@ export class MotionAndPenPrims {
     private primSetDirection(b: BlockModel): void {
         let s: SpriteModel = this.interp.targetSprite();
         if (s != null) {
-            s.setDirection(this.interp.numarg(b, 0));
+            s.direction = this.interp.numarg(b, 0);
             if (s.visible) this.interp.redraw();
         }
     }
@@ -89,7 +95,7 @@ export class MotionAndPenPrims {
         let dx: number = p.x - s.x;
         let dy: number = p.y - s.y;
         let angle: number = 90 - ((Math.atan2(dy, dx) * 180) / Math.PI);
-        s.setDirection(angle);
+        s.direction = angle;
         if (s.visible) this.interp.redraw();
     }
 
@@ -138,14 +144,13 @@ export class MotionAndPenPrims {
 
     private mouseOrSpritePosition(arg: string): Point {
         if (arg === "_mouse_") {
-            let w: ScratchStage = this.app.stagePane;
-            return new Point(w.scratchMouseX(), w.scratchMouseY());
+            let w: StageModel = this.app.stage;
+            return new Point(w.runtime.mouseX(), w.runtime.mouseY());
         } else {
-            let s: SpriteModel = this.app.stagePane.spriteNamed(arg);
+            let s: SpriteModel = this.app.stage.spriteNamed(arg);
             if (s === null) return null;
             return new Point(s.x, s.y);
         }
-        return null;
     }
 
     private primChangeX(b: BlockModel): void {
@@ -199,66 +204,68 @@ export class MotionAndPenPrims {
     }
 
     private primClear(b: BlockModel): void {
-        this.app.stagePane.clearPenStrokes();
+        this.app.stage.runtime.clearPenStrokes()
+        ;
         this.interp.redraw();
     }
 
     private primPenDown(b: BlockModel): void {
         let s: SpriteModel = this.interp.targetSprite();
-        if (s != null) s.penIsDown = true;
+        if (s != null) s.runtime.penIsDown = true;
         this.touch(s, s.x, s.y);
         this.interp.redraw();
     }
 
     private touch(s: SpriteModel, x: number, y: number): void {
-        let g: Graphics = this.app.stagePane.newPenStrokes.graphics;
-        // g.lineStyle();
-        let alpha: number = (0xFF & (s.penColorCache >> 24)) / 0xFF;
-        if (alpha === 0) alpha = 1;
-        g.beginFill(0xFFFFFF & s.penColorCache, alpha);
-        g.drawCircle(240 + x, 180 - y, s.penWidth / 2);
-        g.endFill();
-        this.app.stagePane.penActivity = true;
+        // let g: Graphics = this.app.stage.newPenStrokes.graphics;
+        // // g.lineStyle();
+        // let alpha: number = (0xFF & (s.runtime.penColorCache >> 24)) / 0xFF;
+        // if (alpha === 0) alpha = 1;
+        // g.beginFill(0xFFFFFF & s.runtime.penColorCache, alpha);
+        // g.drawCircle(240 + x, 180 - y, s.runtime.penWidth / 2);
+        // g.endFill();
+        console.log("todo touch");
+        this.app.stage.runtime.penActivity = true;
     }
 
     private primPenUp(b: BlockModel): void {
         let s: SpriteModel = this.interp.targetSprite();
-        if (s != null) s.penIsDown = false;
+        if (s != null) s.runtime.penIsDown = false;
     }
 
     private primSetPenColor(b: BlockModel): void {
         let s: SpriteModel = this.interp.targetSprite();
-        if (s != null) s.setPenColor(this.interp.numarg(b, 0));
+        if (s != null) s.runtime.setPenColor(this.interp.numarg(b, 0));
     }
 
     private primSetPenHue(b: BlockModel): void {
         let s: SpriteModel = this.interp.targetSprite();
-        if (s != null) s.setPenHue(this.interp.numarg(b, 0));
+        if (s != null) s.runtime.setPenHue(this.interp.numarg(b, 0));
     }
 
     private primChangePenHue(b: BlockModel): void {
         let s: SpriteModel = this.interp.targetSprite();
-        if (s != null) s.setPenHue(s.penHue + this.interp.numarg(b, 0));
+        if (s != null) s.runtime.setPenHue(s.runtime.penHue + this.interp.numarg(b, 0));
     }
 
     private primSetPenShade(b: BlockModel): void {
         let s: SpriteModel = this.interp.targetSprite();
-        if (s != null) s.setPenShade(this.interp.numarg(b, 0));
+        if (s != null) s.runtime.setPenShade(this.interp.numarg(b, 0));
     }
 
     private primChangePenShade(b: BlockModel): void {
         let s: SpriteModel = this.interp.targetSprite();
-        if (s != null) s.setPenShade(s.penShade + this.interp.numarg(b, 0));
+        if (s != null) s.runtime.setPenShade(s.runtime.penShade + this.interp.numarg(b, 0));
     }
 
     private primSetPenSize(b: BlockModel): void {
         let s: SpriteModel = this.interp.targetSprite();
-        if (s != null) s.setPenSize(Math.max(1, Math.min(960, Math.round(this.interp.numarg(b, 0)))));
+        if (s != null) s.runtime.setPenSize(Math.max(1, Math.min(960, Math.round(this.interp.numarg(b, 0)))));
     }
 
     private primChangePenSize(b: BlockModel): void {
         let s: SpriteModel = this.interp.targetSprite();
-        if (s != null) s.setPenSize(s.penWidth + this.interp.numarg(b, 0));
+        if (s != null) s.runtime.setPenSize(s.runtime.penWidth + this.interp.numarg(b, 0));
     }
 
     private primStamp(b: BlockModel): void {
@@ -268,48 +275,51 @@ export class MotionAndPenPrims {
         // let alpha: number = (Scratch.app.isIn3D ?
         // 1.0 - (Math.max(0, Math.min(s.filterPack.getFilterSetting( "ghost "), 100)) / 100) :
         //  s.img.transform.colorTransform.alphaMultiplier);
-				let alpha: number = s.img.transform.colorTransform.alphaMultiplier;
+        let alpha: number = 0.5; // s.runtime.svg
+//        .transform.colorTransform.alphaMultiplier;
+
 
         this.doStamp(s, alpha);
     }
 
     private doStamp(s: SpriteModel, stampAlpha: number): void {
         if (s === null) return;
-        this.app.stagePane.stampSprite(s, stampAlpha);
+        this.app.stage.runtime.stampSprite(s, stampAlpha);
         this.interp.redraw();
     }
 
     private moveSpriteTo(s: SpriteModel, newX: number, newY: number): void {
-        if (!(s.parent instanceof ScratchStage)) return; // don "t move while being dragged
+        if (!(s.parent instanceof StageModel)) return; // don "t move while being dragged
         let oldX: number = s.x;
         let oldY: number = s.y;
-        s.setScratchXY(newX, newY);
-        s.keepOnStage();
-        if (s.penIsDown) this.stroke(s, oldX, oldY, s.x, s.y);
-        if ((s.penIsDown) || (s.visible)) this.interp.redraw();
+        s.runtime.setXY(newX, newY);
+        s.runtime.keepOnStage();
+        if (s.runtime.penIsDown) this.stroke(s, oldX, oldY, s.x, s.y);
+        if ((s.runtime.penIsDown) || (s.visible)) this.interp.redraw();
     }
 
     private stroke(s: SpriteModel, oldX: number, oldY: number, newX: number, newY: number): void {
-        let g: Graphics = this.app.stagePane.newPenStrokes.graphics;
-        let alpha: number = (0xFF & (s.penColorCache >> 24)) / 0xFF;
-        if (alpha === 0) alpha = 1;
-        g.lineStyle(s.penWidth, 0xFFFFFF & s.penColorCache, alpha);
-        g.moveTo(240 + oldX, 180 - oldY);
-        g.lineTo(240 + newX, 180 - newY);
+        console.log("todo stroke");
+        // let g: Graphics = this.app.stage.newPenStrokes.graphics;
+        // let alpha: number = (0xFF & (s.runtime.penColorCache >> 24)) / 0xFF;
+        // if (alpha === 0) alpha = 1;
+        // g.lineStyle(s.runtime.penWidth, 0xFFFFFF & s.runtime.penColorCache, alpha);
+        // g.moveTo(240 + oldX, 180 - oldY);
+        // g.lineTo(240 + newX, 180 - newY);
         // trace( "pen line( "+oldX+ ",  "+oldY+ ",  "+newX+ ",  "+newY+ ") ");
-        this.app.stagePane.penActivity = true;
+        this.app.stage.runtime.penActivity = true;
     }
 
     private turnAwayFromEdge(s: SpriteModel): boolean {
         // turn away from the nearest edge if it "s close enough; otherwise do nothing
         // Note: comparisons are in the stage coordinates, with origin (0, 0)
         // use bounding rect of the sprite to account for costume rotation and scale
-        let r: Rectangle = s.bounds();
+        let r: Rectangle = s.runtime.bounds();
         // measure distance to edges
         let d1: number = Math.max(0, r.left);
         let d2: number = Math.max(0, r.top);
-        let d3: number = Math.max(0, ScratchObj.STAGEW - r.right);
-        let d4: number = Math.max(0, ScratchObj.STAGEH - r.bottom);
+        let d3: number = Math.max(0, StageModel.STAGEW - r.right);
+        let d4: number = Math.max(0, StageModel.STAGEH - r.bottom);
         // find the nearest edge
         let e: number = 0, minDist: number = 100000;
         if (d1 < minDist) { minDist = d1; e = 1; }
@@ -321,24 +331,24 @@ export class MotionAndPenPrims {
         let radians: number = ((90 - s.direction) * Math.PI) / 180;
         let dx: number = Math.cos(radians);
         let dy: number = -Math.sin(radians);
-        if (e === 1) { dx = Math.max(0.2, Math.abs(dx)) }
-        if (e === 2) { dy = Math.max(0.2, Math.abs(dy)) }
-        if (e === 3) { dx = 0 - Math.max(0.2, Math.abs(dx)) }
-        if (e === 4) { dy = 0 - Math.max(0.2, Math.abs(dy)) }
+        if (e === 1) { dx = Math.max(0.2, Math.abs(dx)); }
+        if (e === 2) { dy = Math.max(0.2, Math.abs(dy)); }
+        if (e === 3) { dx = 0 - Math.max(0.2, Math.abs(dx)); }
+        if (e === 4) { dy = 0 - Math.max(0.2, Math.abs(dy)); }
         let newDir: number = ((180 * Math.atan2(dy, dx)) / Math.PI) + 90;
-        s.setDirection(newDir);
+        s.runtime.setDirection(newDir);
         return true;
     }
 
     private ensureOnStageOnBounce(s: SpriteModel): void {
-        let r: Rectangle = s.bounds();
+        let r: Rectangle = s.runtime.bounds();
         if (r.left < 0) this.moveSpriteTo(s, s.x - r.left, s.y);
         if (r.top < 0) this.moveSpriteTo(s, s.x, s.y + r.top);
-        if (r.right > ScratchObj.STAGEW) {
-            this.moveSpriteTo(s, s.x - (r.right - ScratchObj.STAGEW), s.y);
+        if (r.right > StageModel.STAGEW) {
+            this.moveSpriteTo(s, s.x - (r.right - StageModel.STAGEW), s.y);
         }
-        if (r.bottom > ScratchObj.STAGEH) {
-            this.moveSpriteTo(s, s.x, s.y + (r.bottom - ScratchObj.STAGEH));
+        if (r.bottom > StageModel.STAGEH) {
+            this.moveSpriteTo(s, s.x, s.y + (r.bottom - StageModel.STAGEH));
         }
     }
 

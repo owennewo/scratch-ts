@@ -1,3 +1,4 @@
+import {StageModel} from "./stage.model";
 import {SpriteRuntime} from "../runtime/sprite.runtime";
 import {ObjectModel} from "./object.model";
 
@@ -12,7 +13,21 @@ export class SpriteModel extends ObjectModel {
     visible: boolean;
     info: SpriteInfoModel;  // spriteInfo
     videomotion = {};
-    runtime = new SpriteRuntime();
+    parent: StageModel;
+    runtime: SpriteRuntime;
+
+    constructor() {
+      super();
+      this.runtime = new SpriteRuntime();
+    }
+
+    setRotationStyle(style: string) {
+        this.rotationStyle = style;
+    }
+
+
+
+
 }
 
 export class SpriteInfoModel {

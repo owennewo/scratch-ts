@@ -3,11 +3,20 @@ import {SpriteModel} from "./sprite.model";
 import {ObjectModel} from "./object.model";
 
 export class StageModel extends ObjectModel {
+
+    static STAGEW = 480;
+    static STAGEH = 360;
+
     tempo: number; // tempoBPM
     videoAlpha: number;
     children: SpriteModel[];
     info: ProjectInfoModel;  // info
-    runtime = new StageRuntime();
+    runtime: StageRuntime;
+
+    constructor() {
+      super();
+      this.runtime = new StageRuntime();
+    }
 
     duplicate(): StageModel {
         let duplicate: StageModel = new StageModel();
@@ -15,6 +24,24 @@ export class StageModel extends ObjectModel {
         duplicate.videoAlpha = this.videoAlpha;
         return duplicate;
     }
+
+    spriteNamed(spriteName: string): SpriteModel  {
+      for (let sprite of this.children) {
+        if (sprite.name === spriteName) return sprite;
+      }
+      console.error("can't find sprite: " + spriteName);
+    }
+
+    objNamed(objectName: string): ObjectModel {
+      let obj = this.spriteNamed(objectName);
+      if (obj !== null) {
+        return obj;
+      } else {
+        console.log ("todo: objNamed should look for other object types");
+        return null;
+      }
+    }
+
 }
 
 export class PenModel {

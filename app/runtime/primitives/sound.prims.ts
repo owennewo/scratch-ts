@@ -1,3 +1,8 @@
+import {ObjectModel} from "../../model/object.model";
+import {ScratchThread} from "../scratch.thread";
+import {BlockModel} from "../../model/block.model";
+import {Interpreter} from "../interpreter";
+import {Scratch} from "../scratch";
 // SoundPrimitives.as
 // John Maloney, June 2010
 //
@@ -17,7 +22,7 @@ export class SoundPrims {
     public addPrimsTo(primTable: any): void {
         primTable["playSound:"] = this.primPlaySound;
         primTable["doPlaySoundAndWait"] = this.primPlaySoundUntilDone;
-        primTable["stopAllSounds"] = function(b: any): any { this.ScratchSoundPlayer.stopAllSounds() };
+        primTable["stopAllSounds"] = function(b: any): any { this.ScratchSoundPlayer.stopAllSounds(); };
 
         primTable["drum:duration:elapsed:from:"] = this.primPlayDrum; // Scratch 1.4 drum numbers
         primTable["playDrum"] = this.primPlayDrum;
@@ -39,50 +44,53 @@ export class SoundPrims {
             this.app.stagePane.setTempo(this.interp.numarg(this.b, 0));
             this.interp.redraw();
         };
-        primTable["tempo"] = function(b: any): any { return this.app.stagePane.tempoBPM };
+        primTable["tempo"] = function(b: any): any { return this.app.stage.tempo; };
     }
 
     private primPlaySound(b: BlockModel): void {
-        let snd: ScratchSound = this.interp.targetObj().findSound(this.interp.arg(b, 0));
-        if (snd != null) this.playSound(snd, this.interp.targetObj());
+      console.log("primPlaySound");
+        // let snd: ScratchSound = this.interp.targetObj().findSound(this.interp.arg(b, 0));
+        // if (snd != null) this.playSound(snd, this.interp.targetObj());
     }
 
     private primPlaySoundUntilDone(b: BlockModel): void {
-        let activeThread: Thread = this.interp.activeThread;
-        if (activeThread.firstTime) {
-            let snd: ScratchSound = this.interp.targetObj().findSound(this.interp.arg(b, 0));
-            if (snd == null) return;
-            activeThread.tmpObj = this.playSound(snd, this.interp.targetObj());
-            activeThread.firstTime = false;
-        }
-        let player: ScratchSoundPlayer = activeThread.tmpObj;
-        if ((player == null) || (player.atEnd())) { // finished playing
-            activeThread.tmp = 0;
-            activeThread.firstTime = true;
-        } else {
-            this.interp.doYield();
-        }
+      console.log("todo primPlaySoundUntilDone");
+        // let activeThread: ScratchThread = this.interp.activeThread;
+        // if (activeThread.firstTime) {
+        //     let snd: ScratchSound = this.interp.targetObj().findSound(this.interp.arg(b, 0));
+        //     if (snd == null) return;
+        //     activeThread.tmpObj = this.playSound(snd, this.interp.targetObj());
+        //     activeThread.firstTime = false;
+        // }
+        // let player: ScratchSoundPlayer = activeThread.tmpObj;
+        // if ((player == null) || (player.atEnd())) { // finished playing
+        //     activeThread.tmp = 0;
+        //     activeThread.firstTime = true;
+        // } else {
+        //     this.interp.doYield();
+        // }
     }
 
     private primPlayNote(b: BlockModel): void {
-        let s: ScratchObj = this.interp.targetObj();
-        if (s == null) return;
-        if (this.interp.activeThread.firstTime) {
-            let key: number = this.interp.numarg(b, 0);
-            let secs: number = this.beatsToSeconds(this.interp.numarg(b, 1));
-            this.interp.activeThread.tmpObj = this.playNote(s.instrument, key, secs, s);
-            this.interp.startTimer(secs);
-        } else {
-            this.interp.checkTimer();
-        }
+      console.log("todo primPlayNote");
+        // let s: ObjectModel = this.interp.targetObj();
+        // if (s == null) return;
+        // if (this.interp.activeThread.firstTime) {
+        //     let key: number = this.interp.numarg(b, 0);
+        //     let secs: number = this.beatsToSeconds(this.interp.numarg(b, 1));
+        //     this.interp.activeThread.tmpObj = this.playNote(s.instrument, key, secs, s);
+        //     this.interp.startTimer(secs);
+        // } else {
+        //     this.interp.checkTimer();
+        // }
     }
 
     private primPlayDrum(b: BlockModel): void {
-        let s: ScratchObj = this.interp.targetObj();
+        let s: ObjectModel = this.interp.targetObj();
         if (s == null) return;
         if (this.interp.activeThread.firstTime) {
             let drum: number = Math.round(this.interp.numarg(b, 0));
-            let isMIDI: boolean = (b.op == 'drum:duration:elapsed:from:');
+            let isMIDI: boolean = (b.spec.code === "drum:duration:elapsed:from:");
             let secs: number = this.beatsToSeconds(this.interp.numarg(b, 1));
             this.playDrum(drum, isMIDI, 10, s); // always play entire drum sample
             this.interp.startTimer(secs);
@@ -91,33 +99,36 @@ export class SoundPrims {
         }
     }
 
-    private playSound(s: ScratchSound, client: ScratchObj): ScratchSoundPlayer {
-        let player: ScratchSoundPlayer = s.sndplayer();
-        player.client = client;
-        player.startPlaying();
-        return player;
+    private playSound(s: any /* ScratchSound */, client: ObjectModel): any { // ScratchSoundPlayer {
+        console.log("todo playSound");
+        // let player: ScratchSoundPlayer = s.sndplayer();
+        // player.client = client;
+        // player.startPlaying();
+        // return player;
     }
 
-    private playDrum(drum: number, isMIDI: boolean, secs: number, client: ScratchObj): ScratchSoundPlayer {
-        let player: NotePlayer = SoundBank.getDrumPlayer(drum, isMIDI, secs);
-        if (player == null) return null;
-        player.client = client;
-        player.setDuration(secs);
-        player.startPlaying();
-        return player;
+    private playDrum(drum: number, isMIDI: boolean, secs: number, client: ObjectModel): any { // ScratchSoundPlayer {
+      console.log("todo playDrum");
+        // let player: NotePlayer = SoundBank.getDrumPlayer(drum, isMIDI, secs);
+        // if (player == null) return null;
+        // player.client = client;
+        // player.setDuration(secs);
+        // player.startPlaying();
+        // return player;
     }
 
-    private playNote(instrument: number, midiKey: number, secs: number, client: ScratchObj): ScratchSoundPlayer {
-        let player: NotePlayer = SoundBank.getNotePlayer(instrument, midiKey);
-        if (player == null) return null;
-        player.client = client;
-        player.setNoteAndDuration(midiKey, secs);
-        player.startPlaying();
-        return player;
+    private playNote(instrument: number, midiKey: number, secs: number, client: ObjectModel): any { // ScratchSoundPlayer {
+      console.log("todo playNote");
+        // let player: NotePlayer = SoundBank.getNotePlayer(instrument, midiKey);
+        // if (player == null) return null;
+        // player.client = client;
+        // player.setNoteAndDuration(midiKey, secs);
+        // player.startPlaying();
+        // return player;
     }
 
     private primPlayRest(b: BlockModel): void {
-        let s: ScratchObj = this.interp.targetObj();
+        let s: ObjectModel = this.interp.targetObj();
         if (s == null) return;
         if (this.interp.activeThread.firstTime) {
             let secs: number = this.beatsToSeconds(this.interp.numarg(b, 0));
@@ -128,39 +139,40 @@ export class SoundPrims {
     }
 
     private beatsToSeconds(beats: number): number {
-        return (beats * 60) / this.app.stagePane.tempoBPM;
+        return (beats * 60) / this.app.stage.tempo;
     }
 
     private primSetInstrument(b: BlockModel): void {
         // Set Scratch 2.0 instrument.
-        let instr: number = this.interp.numarg(b, 0) - 1;
-        if (b.op == 'midiInstrument:') {
-            // map old to new instrument number
-            instr = this.instrumentMap[instr] - 1; // maps to -1 if out of range
-        }
-        instr = Math.max(0, Math.min(instr, SoundBank.instrumentNames.length - 1));
-        if (this.interp.targetObj()) this.interp.targetObj().instrument = instr;
+        console.log("todo primSetInstrument");
+        // let instr: number = this.interp.numarg(b, 0) - 1;
+        // if (b.spec.code === "midiInstrument:") {
+        //     // map old to new instrument number
+        //     instr = this.instrumentMap[instr] - 1; // maps to -1 if out of range
+        // }
+        // instr = Math.max(0, Math.min(instr, SoundBank.instrumentNames.length - 1));
+        // if (this.interp.targetObj()) this.interp.targetObj().instrument = instr;
     }
 
     private primChangeVolume(b: BlockModel): void {
-        let s: ScratchObj = this.interp.targetObj();
+        let s: ObjectModel = this.interp.targetObj();
         if (s != null) {
-            s.setVolume(s.volume + this.interp.numarg(b, 0));
+            s.runtime.setVolume(s.runtime.volume + this.interp.numarg(b, 0));
             this.interp.redraw();
         }
     }
 
     private primSetVolume(b: BlockModel): void {
-        let s: ScratchObj = this.interp.targetObj();
+        let s: ObjectModel = this.interp.targetObj();
         if (s != null) {
-            s.setVolume(this.interp.numarg(b, 0));
+            s.runtime.setVolume(this.interp.numarg(b, 0));
             this.interp.redraw();
         }
     }
 
     private primVolume(b: BlockModel): number {
-        let s: ScratchObj = this.interp.targetObj();
-        return (s != null) ? s.volume : 0;
+        let s: ObjectModel = this.interp.targetObj();
+        return (s != null) ? s.runtime.volume : 0;
     }
 
     // Map from a Scratch 1.4 (i.e. MIDI) instrument number to the closest Scratch 2.0 equivalent.

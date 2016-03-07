@@ -23,6 +23,7 @@ export class Scratch {
     // public jsEnabled: boolean = false; // true when the SWF can talk to the webpage
     // public ignoreResize: boolean = false; // If true, temporarily ignore resize events.
     public isExtensionDevMode: boolean = false; // If true, run in extension development mode (as on ScratchX)
+    pane: StageModel;
     // public isMicroworld: boolean = false;
     //
     // public presentationScale: number;
