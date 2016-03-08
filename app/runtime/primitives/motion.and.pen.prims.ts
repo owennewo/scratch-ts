@@ -14,11 +14,11 @@ import {Point} from "../../shapes/geometry";
 
 export class MotionAndPenPrims {
 
-    private app: Scratch;
+    private stage: StageModel;
     private interp: Interpreter;
 
-    constructor(app: Scratch, interpreter: Interpreter) {
-        this.app = app;
+    constructor(stage: StageModel, interpreter: Interpreter) {
+        this.stage = stage;
         this.interp = interpreter;
     }
 
@@ -144,10 +144,10 @@ export class MotionAndPenPrims {
 
     private mouseOrSpritePosition(arg: string): Point {
         if (arg === "_mouse_") {
-            let w: StageModel = this.app.stage;
+            let w: StageModel = this.stage;
             return new Point(w.runtime.mouseX(), w.runtime.mouseY());
         } else {
-            let s: SpriteModel = this.app.stage.spriteNamed(arg);
+            let s: SpriteModel = this.stage.spriteNamed(arg);
             if (s === null) return null;
             return new Point(s.x, s.y);
         }
@@ -204,7 +204,7 @@ export class MotionAndPenPrims {
     }
 
     private primClear(b: BlockModel): void {
-        this.app.stage.runtime.clearPenStrokes()
+        this.stage.runtime.clearPenStrokes()
         ;
         this.interp.redraw();
     }
@@ -217,7 +217,7 @@ export class MotionAndPenPrims {
     }
 
     private touch(s: SpriteModel, x: number, y: number): void {
-        // let g: Graphics = this.app.stage.newPenStrokes.graphics;
+        // let g: Graphics = this.stage.newPenStrokes.graphics;
         // // g.lineStyle();
         // let alpha: number = (0xFF & (s.runtime.penColorCache >> 24)) / 0xFF;
         // if (alpha === 0) alpha = 1;
@@ -225,7 +225,7 @@ export class MotionAndPenPrims {
         // g.drawCircle(240 + x, 180 - y, s.runtime.penWidth / 2);
         // g.endFill();
         console.log("todo touch");
-        this.app.stage.runtime.penActivity = true;
+        this.stage.runtime.penActivity = true;
     }
 
     private primPenUp(b: BlockModel): void {
@@ -284,7 +284,7 @@ export class MotionAndPenPrims {
 
     private doStamp(s: SpriteModel, stampAlpha: number): void {
         if (s === null) return;
-        this.app.stage.runtime.stampSprite(s, stampAlpha);
+        this.stage.runtime.stampSprite(s, stampAlpha);
         this.interp.redraw();
     }
 
@@ -300,14 +300,14 @@ export class MotionAndPenPrims {
 
     private stroke(s: SpriteModel, oldX: number, oldY: number, newX: number, newY: number): void {
         console.log("todo stroke");
-        // let g: Graphics = this.app.stage.newPenStrokes.graphics;
+        // let g: Graphics = this.stage.newPenStrokes.graphics;
         // let alpha: number = (0xFF & (s.runtime.penColorCache >> 24)) / 0xFF;
         // if (alpha === 0) alpha = 1;
         // g.lineStyle(s.runtime.penWidth, 0xFFFFFF & s.runtime.penColorCache, alpha);
         // g.moveTo(240 + oldX, 180 - oldY);
         // g.lineTo(240 + newX, 180 - newY);
         // trace( "pen line( "+oldX+ ",  "+oldY+ ",  "+newX+ ",  "+newY+ ") ");
-        this.app.stage.runtime.penActivity = true;
+        this.stage.runtime.penActivity = true;
     }
 
     private turnAwayFromEdge(s: SpriteModel): boolean {

@@ -1,7 +1,7 @@
 import {SpriteModel} from "../model/sprite.model";
 import {ModelService} from "./model.service";
 import {ObjectModel} from "../model/object.model";
-import {ProjectModel} from "../model/project.model";
+import {StageModel} from "../model/stage.model";
 import {Inject, Component, Input, Output, EventEmitter} from "angular2/core";
 
 @Component({
@@ -29,7 +29,7 @@ export class SpritesComponent {
 
   constructor(@Inject(ModelService) private modelService: ModelService) {
     modelService.onProjectLoaded.subscribe(data => {
-      let project = <ProjectModel> data;
+      let project = <StageModel> data;
       this.sprites = project.children;
       project.children.forEach(sprite => {
           console.log("sprite: " + sprite.name);
@@ -44,7 +44,5 @@ export class SpritesComponent {
       this.selectedObject = sprite;
       this.modelService.selectObject(this.selectedObject);
     }
-
   }
-
 }

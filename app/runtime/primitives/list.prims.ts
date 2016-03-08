@@ -1,3 +1,4 @@
+import {StageModel} from "../../model/stage.model";
 import {ListWatcher} from "../list.watcher";
 import {Primitives} from "./primitives";
 import {Scratch} from "../scratch";
@@ -12,11 +13,11 @@ import {SpecOperation} from "../../model/spec.model";
 export class ListPrims {
 
   contents: string;
-    private app: Scratch;
+    private stage: StageModel;
     protected interp: Interpreter;
 
-    constructor(app: Scratch, interpreter: Interpreter) {
-        this.app = app;
+    constructor(stage: StageModel, interpreter: Interpreter) {
+        this.stage = stage;
         this.interp = interpreter;
     }
 

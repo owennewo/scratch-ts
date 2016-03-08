@@ -1,3 +1,4 @@
+import {Primitives} from "../runtime/primitives/primitives";
 import {DoubleStackShape} from "../shapes/double.stack.shape";
 import {StackShape} from "../shapes/stack.shape";
 import {Shape} from "../shapes/shape";
@@ -32,6 +33,7 @@ export class BlockModel {
 
     static MenuHandlerFunction: Function;	// optional function to handle block and blockArg menus
 
+    proc: Function;
     spec: SpecModel;
     type: string;
     svg: Snap.Element;
@@ -154,7 +156,7 @@ export class BlockModel {
         //     this.shape = new BlockShapeModel(BlockShapeModel.RectShape, color);
         // }
         //        this.addChildAt(this.shape, 0);
-//        this.setArgs(defaultArgs);
+        //        this.setArgs(defaultArgs);
 
         ///this.addEventListener(FocusEvent.KEY_FOCUS_CHANGE, this.focusChange);
     }
@@ -421,8 +423,8 @@ export class BlockModel {
         // newArg can be either a reporter block or a literal value (string, number, etc.)
         // this.collectArgs();
         if (i >= this.spec.argCount) {
-          console.log("too many args, ignoring:" + newArg);
-          return;
+            console.log("too many args, ignoring:" + newArg);
+            return;
         }
         this.args.push(newArg);
         // let oldArg: BlockArgModel = this.args[i];
@@ -529,7 +531,7 @@ export class BlockModel {
         this.topBlock().fixStackLayout();
     }
 
-    fixStackLayout()  {
+    fixStackLayout() {
 
     }
 
@@ -889,5 +891,13 @@ export class BlockModel {
     // protected static indent(s:string):string {
     // 	return s.replace(/^/gm, "    ");
     // }
+    //
+    hideRunFeedback() {
+        console.log("todo hideRunFeedback");
+    }
+
+    showRunFeedback() {
+        console.log("todo showRunFeedback");
+    }
 
 }

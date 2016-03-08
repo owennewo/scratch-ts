@@ -483,46 +483,11 @@ export class ScratchRuntime {
     }
 
     // ----------
-    public stopAll(): void {
-        this.interp.stopAllThreads();
-        // this.clearRunFeedback();
-        this.app.stage.runtime.deleteClones();
-        this.cloneCount = 0;
-        // this.clearKeyDownArray();
-        // ScratchSoundPlayer.stopAllSounds();
-        // this.app.extensionManager.stopButtonPressed();
-        this.app.stage.runtime.clearFilters();
-        for (let s of this.app.stage.children) {
-            if (s instanceof SpriteModel) {
-                s.runtime.clearFilters();
-                s.runtime.hideBubble();
-            }
-        }
-        // this.clearAskPrompts();
-        // this.app.removeLoadProgressBox();
-        this.motionDetector = null;
-    }
 
     // -----------------------------
     // Hat BlockModels
     // ------------------------------
 
-    public startGreenFlags(firstTime: boolean = false): void {
-        function startIfGreenFlag(stack: BlockModel, target: ObjectModel): void {
-            if (this.stack.op === "whenGreenFlag") this.interp.toggleThread(this.stack, this.target);
-        }
-        this.stopAll();
-        this.lastAnswer = "";
-        // if (firstTime && this.app.stage.info.videoOn) {
-        //     // turn on video the first time if project was saved with camera on
-        //     this.app.stage.setVideoState("on");
-        // }
-        this.clearEdgeTriggeredHats();
-        this.timerReset();
-        window.setTimeout(function(): void {
-            this.allStacksAndOwnersDo(this.startIfGreenFlag);
-        }, 0);
-    }
 
     public startClickedHats(clickedObj: ObjectModel): void {
         for (let script of clickedObj.scripts) {
@@ -1036,7 +1001,7 @@ export class ScratchRuntime {
     // // ------------------------------
     //
     public timer(): number { return (this.interp.currentMSecs - this.timerBase) / 1000; }
-    public timerReset(): void { this.timerBase = this.interp.currentMSecs; }
+
     // public isLoud(): boolean { return this.soundLevel() > 10; }
     //
     public soundLevel(): number {

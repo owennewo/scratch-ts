@@ -1,3 +1,4 @@
+import {StageModel} from "../../model/stage.model";
 import {ListPrims} from "./list.prims";
 import {SensingPrims} from "./sensing.prims";
 import {VideoMotionPrims} from "./video.motion.prims";
@@ -20,12 +21,12 @@ export class Primitives {
 
     private MaxCloneCount: number = 300;
 
-    protected app: Scratch;
+    protected stage: StageModel;
     protected interp: Interpreter;
     private counter: number;
 
-    constructor(app: Scratch, interpreter: Interpreter) {
-        this.app = app;
+    constructor(stage: StageModel, interpreter: Interpreter) {
+        this.stage = stage;
         this.interp = interpreter;
     }
 
@@ -64,16 +65,16 @@ export class Primitives {
         primTable["INCR_COUNT"] = function(b: any): any { this.counter++; };
         primTable["CLR_COUNT"] = function(b: any): any { this.counter = 0; };
 
-        new LooksPrims(this.app, this.interp).addPrimsTo(primTable);
-        new MotionAndPenPrims(this.app, this.interp).addPrimsTo(primTable);
-        new SoundPrims(this.app, this.interp).addPrimsTo(primTable);
-        new VideoMotionPrims(this.app, this.interp).addPrimsTo(primTable);
+        new LooksPrims(this.stage, this.interp).addPrimsTo(primTable);
+        new MotionAndPenPrims(this.stage, this.interp).addPrimsTo(primTable);
+        new SoundPrims(this.stage, this.interp).addPrimsTo(primTable);
+        new VideoMotionPrims(this.stage, this.interp).addPrimsTo(primTable);
         this.addOtherPrims(primTable);
     }
 
     protected addOtherPrims(primTable: any): void {
-        new SensingPrims(this.app, this.interp).addPrimsTo(primTable);
-        new ListPrims(this.app, this.interp).addPrimsTo(primTable);
+        new SensingPrims(this.stage, this.interp).addPrimsTo(primTable);
+        new ListPrims(this.stage, this.interp).addPrimsTo(primTable);
     }
 
     private primRandom(b: BlockModel): number {
@@ -162,15 +163,15 @@ export class Primitives {
     private primCreateCloneOf(b: BlockModel) {
       console.log("todo create clone");
         // let objName: string = this.interp.arg(b, 0);
-        // let proto: SpriteModel = this.app.stage.spriteNamed(objName);
+        // let proto: SpriteModel = this.stage.stage.spriteNamed(objName);
         // if ("_myself_" === objName) proto = this.interp.activeThread.target;
         // if (!proto) return;
-        // if (this.app.runtime.cloneCount > this.MaxCloneCount) return;
+        // if (this.stage.runtime.cloneCount > this.MaxCloneCount) return;
         // let clone: SpriteModel = new SpriteModel();
-        // if (proto.parent === this.app.stagePane)
-        //     this.app.stage.addChildAt(clone, this.app.stage.getChildIndex(proto));
+        // if (proto.parent === this.stage.stagePane)
+        //     this.stage.stage.addChildAt(clone, this.stage.stage.getChildIndex(proto));
         // else
-        //     this.app.stage.addChild(clone);
+        //     this.stage.stage.addChild(clone);
         //
         // clone.initFrom(proto, true);
         // clone.name = proto.name;
@@ -180,7 +181,7 @@ export class Primitives {
         //         this.interp.startThreadForClone(stack, clone);
         //     }
         // }
-        // this.app.runtime.cloneCount++;
+        // this.stage.runtime.cloneCount++;
     }
 
     private primDeleteClone(b: BlockModel): void {
@@ -189,8 +190,8 @@ export class Primitives {
         // if ((clone === null) || (!clone.isClone) || (clone.parent === null)) return;
         // if (clone.bubble && clone.bubble.parent) clone.bubble.parent.removeChild(clone.bubble);
         // clone.parent.removeChild(clone);
-        // this.app.interp.stopThreadsFor(clone);
-        // this.app.runtime.cloneCount--;
+        // this.stage.interp.stopThreadsFor(clone);
+        // this.stage.runtime.cloneCount--;
     }
 
 }

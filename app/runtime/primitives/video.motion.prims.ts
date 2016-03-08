@@ -1,3 +1,4 @@
+import {StageModel} from "../../model/stage.model";
 import {ObjectModel} from "../../model/object.model";
 import {Scratch} from "../scratch";
 import {Interpreter} from "../interpreter";
@@ -20,7 +21,7 @@ export class VideoMotionPrims {
     private THRESHOLD: number = 10;
     private WINSIZE: number = 8;
 
-    private app: Scratch;
+    private stage: StageModel;
     private interp: Interpreter;
 
     private gradA2Array: number[] = new Array<number>(this.WIDTH * this.HEIGHT, 1);
@@ -38,8 +39,8 @@ export class VideoMotionPrims {
     private curr: number[];
     private prev: number[];
 
-    constructor(app: Scratch, interpreter: Interpreter) {
-        this.app = app;
+    constructor(stage: StageModel, interpreter: Interpreter) {
+        this.stage = stage;
         this.interp = interpreter;
   //      this.frameBuffer = new BitmapData(this.WIDTH, this.HEIGHT);
     }

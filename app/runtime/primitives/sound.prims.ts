@@ -1,3 +1,4 @@
+import {StageModel} from "../../model/stage.model";
 import {ObjectModel} from "../../model/object.model";
 import {ScratchThread} from "../scratch.thread";
 import {BlockModel} from "../../model/block.model";
@@ -11,11 +12,11 @@ import {Scratch} from "../scratch";
 
 export class SoundPrims {
 
-    private app: Scratch;
+    private stage: StageModel;
     private interp: Interpreter;
 
-    constructor(app: Scratch, interpreter: Interpreter) {
-        this.app = app;
+    constructor(stage: StageModel, interpreter: Interpreter) {
+        this.stage = stage;
         this.interp = interpreter;
     }
 
@@ -44,7 +45,7 @@ export class SoundPrims {
             this.app.stagePane.setTempo(this.interp.numarg(this.b, 0));
             this.interp.redraw();
         };
-        primTable["tempo"] = function(b: any): any { return this.app.stage.tempo; };
+        primTable["tempo"] = function(b: any): any { return this.stage.tempo; };
     }
 
     private primPlaySound(b: BlockModel): void {
@@ -139,7 +140,7 @@ export class SoundPrims {
     }
 
     private beatsToSeconds(beats: number): number {
-        return (beats * 60) / this.app.stage.tempo;
+        return (beats * 60) / this.stage.tempo;
     }
 
     private primSetInstrument(b: BlockModel): void {

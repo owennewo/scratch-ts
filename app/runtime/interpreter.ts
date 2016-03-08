@@ -57,7 +57,7 @@ export class Interpreter {
     public currentMSecs: number = ScratchTime.getTimer();	// millisecond clock for the current step
     public turboMode: boolean = false;
 
-    private app: Scratch;
+    private stage: StageModel;
     private primTable;		// maps opcodes to functions
     private threads: any[] = [];			// all ScratchThreads
     private yield: boolean;				// set true to indicate that active ScratchThread should yield control
@@ -74,14 +74,14 @@ export class Interpreter {
 
     protected debugFunc: Function;
 
-    constructor(app: Scratch) {
-        this.app = app;
+    constructor(stage: StageModel) {
+        this.stage = stage;
         this.initPrims();
         // checkPrims();
     }
 
-    public targetObj(): ObjectModel { return this.app.runtime.currentDoObj ? this.app.runtime.currentDoObj : this.activeThread.target; }
-    public targetSprite(): SpriteModel { return <SpriteModel>(this.app.runtime.currentDoObj ? this.app.runtime.currentDoObj : this.activeThread.target); }
+    public targetObj(): ObjectModel { return this.stage.runtime.currentDoObject ? this.stage.runtime.currentDoObject : this.activeThread.target; }
+    public targetSprite(): SpriteModel { return <SpriteModel>(this.stage.runtime.currentDoObject ? this.stage.runtime.currentDoObject : this.activeThread.target); }
 
     /* ScratchThreads */
 
@@ -112,30 +112,31 @@ export class Interpreter {
         }
         this.threads = newThreads;
         if (wasRunning) {
-            if (this.app.editMode) b.hideRunFeedback();
+            if (this.stage.runtime.editMode) b.hideRunFeedback();
             this.clearWarpBlock();
         } else {
             let topBlock: BlockModel = b;
             if (b.isReporter) {
+              console.log("todo: reporter");
                 // click on reporter shows value in bubble
-                if (this.bubbleThread) {
-                    this.toggleThread(this.bubbleThread.topBlock, this.bubbleThread.target);
-                }
-                let reporter: BlockModel = b;
-                let interp: Interpreter = this;
-                b = new BlockModel("%s", "", -1);
-                b.opFunction = function(b: BlockModel): void {
-                    let p: Point = reporter.localToGlobal(new Point(0, 0));
-                    this.app.showBubble(String(interp.arg(b, 0)), p.x, p.y, reporter.getRect(this.app.stage).width);
-                };
-                b.args[0] = reporter;
+                // if (this.bubbleThread) {
+                //     this.toggleThread(this.bubbleThread.topBlock, this.bubbleThread.target);
+                // }
+                // let reporter: BlockModel = b;
+                // let interp: Interpreter = this;
+                // b = new BlockModel("%s", "", -1);
+                // b.opFunction = function(b: BlockModel): void {
+                //     let p: Point = reporter.localToGlobal(new Point(0, 0));
+                //     this.stage.showBubble(String(interp.arg(b, 0)), p.x, p.y, reporter.getRect(this.stage.stage).width);
+                // };
+                // b.args[0] = reporter;
             }
-            if (this.app.editMode) topBlock.showRunFeedback();
+            if (this.stage.runtime.editMode) topBlock.showRunFeedback();
             let t: ScratchThread = new ScratchThread(b, targetObj, startupDelay);
             if (topBlock.isReporter) this.bubbleThread = t;
             t.topBlock = topBlock;
             this.threads.push(t);
-            this.app.threadStarted();
+            this.stage.runtime.threadStarted();
         }
     }
 
@@ -161,9 +162,10 @@ export class Interpreter {
             let t: ScratchThread = this.threads[i];
             if (skipActiveThread && (t === this.activeThread)) continue;
             if (t.target === target) {
-                if (t.tmpObj instanceof ScratchSoundPlayer) {
-                    (<ScratchSoundPlayer>t.tmpObj).stopPlaying();
-                }
+                console.log("todo stop sound player");
+                // if (t.tmpObj instanceof ScratchSoundPlayer) {
+                //     (<ScratchSoundPlayer>t.tmpObj).stopPlaying();
+                // }
                 t.stop();
             }
         }
@@ -177,48 +179,48 @@ export class Interpreter {
         let wasRunning: boolean = false;
         for (let i: number = 0; i < this.threads.length; i++) {
             if ((this.threads[i].topBlock === b) && (this.threads[i].target === targetObj)) {
-                if (this.askThread === this.threads[i]) this.app.runtime.clearAskPrompts();
+                if (this.askThread === this.threads[i]) this.stage.runtime.clearAskPrompts();
                 this.threads[i] = newThread;
                 wasRunning = true;
             }
         }
         if (!wasRunning) {
             this.threads.push(newThread);
-            if (this.app.editMode) b.showRunFeedback();
-            this.app.threadStarted();
+            if (this.stage.runtime.editMode) b.showRunFeedback();
+            this.stage.runtime.threadStarted();
         }
         return newThread;
     }
 
     public stopAllThreads(): void {
         this.threads = [];
-        if (this.activeThread !== null) this.activeThread.stop();
+        if (this.activeThread) this.activeThread.stop();
         this.clearWarpBlock();
-        this.app.runtime.clearRunFeedback();
+        this.stage.runtime.clearRunFeedback();
         this.doRedraw = true;
     }
 
     public stepThreads(): void {
         this.startTime = ScratchTime.getTimer();
-        let workTime: number = (0.75 * 1000) / this.app.stage.frameRate; // work for up to 75% of one frame ScratchTime
+        let workTime: number = (0.75 * 1000) / this.stage.runtime.frameRate; // work for up to 75% of one frame ScratchTime
         this.doRedraw = false;
         this.currentMSecs = ScratchTime.getTimer();
         if (this.threads.length === 0) return;
         while ((this.currentMSecs - this.startTime) < workTime) {
             if (this.warpThread && (this.warpThread.block === null)) this.clearWarpBlock();
-            let ScratchThreadStopped: boolean = false;
+            let threadStopped: boolean = false;
             let runnableCount: number = 0;
             for (this.activeThread of this.threads) {
                 this.isWaiting = false;
                 this.stepActiveThread();
-                if (this.activeThread.block === null) ScratchThreadStopped = true;
+                if (this.activeThread.block === null) threadStopped = true;
                 if (!this.isWaiting) runnableCount++;
             }
             if (threadStopped) {
                 let newThreads: any[] = [];
                 for (let t of this.threads) {
                     if (t.block !== null) newThreads.push(t);
-                    else if (this.app.editMode) {
+                    else if (this.stage.runtime.editMode) {
                         if (t === this.bubbleThread) this.bubbleThread = null;
                         t.topBlock.hideRunFeedback();
                     }
@@ -236,7 +238,7 @@ export class Interpreter {
         if (this.activeThread.startDelayCount > 0) { this.activeThread.startDelayCount--; this.doRedraw = true; return; }
         if (!(this.activeThread.target.isStage || (this.activeThread.target.parent instanceof StageModel))) {
             // sprite is being dragged
-            if (this.app.editMode) {
+            if (this.stage.runtime.editMode) {
                 // don"t run scripts of a sprite that is being dragged in edit mode, but do update the screen
                 this.doRedraw = true;
                 return;
@@ -286,8 +288,9 @@ export class Interpreter {
         if (!b) return 0; // arg() and friends can pass null if arg index is out of range
         let op: string = b.spec.code;
         if (b.opFunction === null) {
-            if (op.indexOf(".") > -1) b.opFunction = this.app.extensionManager.primExtensionOp;
-            else b.opFunction = (this.primTable[op] === undefined) ? this.primNoop : this.primTable[op];
+          console.log("todo evalCmd");
+            // if (op.indexOf(".") > -1) b.opFunction = this.stage.runtime.extensionManager.primExtensionOp;
+            // else b.opFunction = (this.primTable[op] === undefined) ? this.primNoop : this.primTable[op];
         }
 
         // TODO: Optimize this into a cached check if the args *could* BlockModel at all
@@ -435,7 +438,7 @@ export class Interpreter {
         this.primTable["doWhile"] = function(b: any): any { if (this.arg(this.b, 0)) this.startCmdList(this.b.stack1, true); };
         this.primTable["doUntil"] = function(b: any): any { if (!this.arg(this.b, 0)) this.startCmdList(this.b.stack1, true); };
         this.primTable["doReturn"] = this.primReturn;
-        this.primTable["stopAll"] = function(b: any): any { this.app.runtime.stopAll(); this.yield = true; };
+        this.primTable["stopAll"] = function(b: any): any { this.stage.runtime.stopAll(); this.yield = true; };
         this.primTable["stopScripts"] = this.primStop;
         this.primTable["warpSpeed"] = this.primOldWarpSpeed;
 
@@ -459,16 +462,17 @@ export class Interpreter {
 
     protected addOtherPrims(primTable: any): void {
         // other primitives
-        new Primitives(this.app, this).addPrimsTo(primTable);
+        new Primitives(this.stage, this).addPrimsTo(primTable);
     }
 
     private checkPrims(): void {
         let op: string;
         let allOps: any[] = ["CALL", "GET_VAR", "NOOP"];
-        for (let spec of SpecModel.SPECS) {
-            if (spec.length > 3) {
-                op = spec[3];
-                allOps.push(op);
+        for (let key in SpecModel.SPECS) {
+          let spec = SpecModel.SPECS.get(key);
+            if (spec.code.length > 3) {
+                // op = spec[3];
+                allOps.push(spec.code);
                 if (this.primTable[op] === undefined) console.log("Unimplemented:" + op);
             }
         }
@@ -540,7 +544,7 @@ export class Interpreter {
 
     private primStop(b: BlockModel): void {
         let type: string = this.arg(b, 0);
-        if (type === "all") { this.app.runtime.stopAll(); this.yield = true; }
+        if (type === "all") { this.stage.runtime.stopAll(); this.yield = true; }
         if (type === "this script") this.primReturn(b);
         if (type === "other scripts in sprite") this.stopThreadsFor(this.activeThread.target, true);
         if (type === "other scripts in stage") this.stopThreadsFor(this.activeThread.target, true);
@@ -566,7 +570,7 @@ export class Interpreter {
                     receivers.push([this.stack, this.target]);
                 }
             };
-            this.app.runtime.allStacksAndOwnersDo(findReceivers);
+            this.stage.runtime.allStacksAndOwnersDo(findReceivers);
             // (re)start all receivers
             for (pair of receivers) newThreads.push(this.restartThread(pair[0], pair[1]));
             if (!waitFlag) return;
@@ -592,9 +596,9 @@ export class Interpreter {
                 }
             }
             let receivers: any[] = [];
-            this.app.stagePane.showCostumeNamed(sceneName);
+            this.stage.showCostumeNamed(sceneName);
             this.redraw();
-            this.app.runtime.allStacksAndOwnersDo(findSceneHats);
+            this.stage.runtime.allStacksAndOwnersDo(findSceneHats);
             // (re)start all receivers
             let newThreads: any[] = [];
             for (pair of receivers) newThreads.push(this.restartThread(pair[0], pair[1]));
@@ -622,32 +626,41 @@ export class Interpreter {
 
         // Lookup the procedure and cache for future use
         let obj: ObjectModel = this.activeThread.target;
-        let code: string = b.spec.code;
-        let proc: BlockModel = obj.procCache[code];
-        if (!proc) {
-            proc = obj.lookupProcedure(code);
-            obj.procCache[code] = proc;
+        // let code: string = b.spec.code;
+        // let proc: BlockModel = obj.procCache[code];
+        // if (!proc) {
+        //     proc = obj.lookupProcedure(code);
+        //     obj.procCache[code] = proc;
+        // }
+        if (!b.proc) {
+          b.proc = this.primTable[b.spec.code];
         }
-        if (!proc) return;
+
+        if (!b.proc) {
+          console.log("can't find proc for" + b.spec.code);
+          return;
+        }
 
         if (this.warpThread) {
             this.activeThread.firstTime = false;
             if ((this.currentMSecs - this.startTime) > this.warpMSecs) this.yield = true;
         } else {
-            if (proc.warpProcFlag) {
-                // Start running in warp mode.
-                this.warpBlock = b;
-                this.warpThread = this.activeThread;
-                this.activeThread.firstTime = true;
-            }
-            else if (this.activeThread.isRecursiveCall(b, proc)) {
-                this.yield = true;
-            }
+          console.log("todo support warp and yield");
+            // if (proc.warpProcFlag) {
+            //     // Start running in warp mode.
+            //     this.warpBlock = b;
+            //     this.warpThread = this.activeThread;
+            //     this.activeThread.firstTime = true;
+            // }
+            // else
+            // if (this.activeThread.isRecursiveCall(b, b.proc)) {
+            //     this.yield = true;
+            // }
         }
-        let argCount: number = proc.parameterNames.length;
+        let argCount: number = b.parameterNames.length;
         let argList: any[] = [];
         for (let i: number = 0; i < argCount; ++i) argList.push(this.arg(b, i));
-        this.startCmdList(proc, false, argList);
+        this.startCmdList(b, false, argList);
     }
 
     private primReturn(b: BlockModel): void {
@@ -663,15 +676,16 @@ export class Interpreter {
     // a reference to the ScratchVariable object is cached in the target object.
 
     private primVarGet(b: BlockModel): any {
-        let target: ObjectModel = this.app.runtime.currentDoObj ? this.app.runtime.currentDoObj : this.activeThread.target;
-
-        let v: ScratchVariable = target.varCache[b.spec];
-        if (v === null) {
-            v = target.varCache[b.spec] = target.lookupOrCreateVar(b.spec);
-            if (v === null) return 0;
-        }
-        // XXX: Do we need a get() for persistent ScratchVariables here ?
-        return v.value;
+      console.log("todo primVarGet");
+        // let target: ObjectModel = this.stage.runtime.currentDoObject ? this.stage.runtime.currentDoObject : this.activeThread.target;
+        //
+        // let v: ScratchVariable = target.varCache[b.spec];
+        // if (v === null) {
+        //     v = target.varCache[b.spec] = target.lookupOrCreateVar(b.spec);
+        //     if (v === null) return 0;
+        // }
+        // // XXX: Do we need a get() for persistent ScratchVariables here ?
+        // return v.value;
     }
 
     protected primVarSet(b: BlockModel): ScratchVariable {

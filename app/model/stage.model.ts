@@ -15,7 +15,7 @@ export class StageModel extends ObjectModel {
 
     constructor() {
       super();
-      this.runtime = new StageRuntime();
+      this.runtime = new StageRuntime(this);
     }
 
     duplicate(): StageModel {
@@ -40,6 +40,10 @@ export class StageModel extends ObjectModel {
         console.log ("todo: objNamed should look for other object types");
         return null;
       }
+    }
+
+    showCostumeNamed(costumeName: string) {
+        console.log("todo: showCostumeNamed:" + costumeName);
     }
 
 }

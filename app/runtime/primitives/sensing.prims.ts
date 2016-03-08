@@ -14,11 +14,11 @@ import {SpriteModel} from "../../model/sprite.model";
 
 export class SensingPrims {
 
-    private app: Scratch;
+    private stage: StageModel;
     private interp: Interpreter;
 
-    constructor(app: Scratch, interpreter: Interpreter) {
-        this.app = app;
+    constructor(stage: StageModel, interpreter: Interpreter) {
+        this.stage = stage;
         this.interp = interpreter;
     }
 
@@ -29,25 +29,25 @@ export class SensingPrims {
         primTable["color:sees:"] = this.primColorSees;
 
         primTable["doAsk"] = this.primAsk;
-        primTable["answer"] = function(b: any): any { return this.app.runtime.lastAnswer; };
+        primTable["answer"] = function(b: any): any { return this.stage.runtime.lastAnswer; };
 
-        primTable["mousePressed"] = function(b: any): any { return this.app.gh.mouseIsDown; };
-        primTable["mouseX"] = function(b: any): any { return this.app.stage.scratchMouseX(); };
-        primTable["mouseY"] = function(b: any): any { return this.app.stage.scratchMouseY(); };
-        primTable["timer"] = function(b: any): any { return this.app.runtime.timer(); };
-        primTable["timerReset"] = function(b: any): any { this.app.runtime.timerReset(); };
+        primTable["mousePressed"] = function(b: any): any { return this.stage.gh.mouseIsDown; };
+        primTable["mouseX"] = function(b: any): any { return this.stage.stage.scratchMouseX(); };
+        primTable["mouseY"] = function(b: any): any { return this.stage.stage.scratchMouseY(); };
+        primTable["timer"] = function(b: any): any { return this.stage.runtime.timer(); };
+        primTable["timerReset"] = function(b: any): any { this.stage.runtime.timerReset(); };
         primTable["keyPressed:"] = this.primKeyPressed;
         primTable["distanceTo:"] = this.primDistanceTo;
         primTable["getAttribute:of:"] = this.primGetAttribute;
-        primTable["soundLevel"] = function(b: any): any { return this.app.runtime.soundLevel(); };
-        primTable["isLoud"] = function(b: any): any { return this.app.runtime.isLoud(); };
+        primTable["soundLevel"] = function(b: any): any { return this.stage.runtime.soundLevel(); };
+        primTable["isLoud"] = function(b: any): any { return this.stage.runtime.isLoud(); };
         primTable["timestamp"] = this.primTimestamp;
-        primTable["timeAndDate"] = function(b: any): any { return this.app.runtime.getTimeString(this.interp.arg(this.b, 0)); };
+        primTable["timeAndDate"] = function(b: any): any { return this.stage.runtime.getTimeString(this.interp.arg(this.b, 0)); };
         primTable["getUserName"] = function(b: any): any { return ""; };
 
         // sensor
-        primTable["sensor:"] = function(b: any): any { return this.app.runtime.getSensor(this.interp.arg(this.b, 0)); };
-        primTable["sensorPressed:"] = function(b: any): any { return this.app.runtime.getBooleanSensor(this.interp.arg(this.b, 0)); };
+        primTable["sensor:"] = function(b: any): any { return this.stage.runtime.getSensor(this.interp.arg(this.b, 0)); };
+        primTable["sensorPressed:"] = function(b: any): any { return this.stage.runtime.getBooleanSensor(this.interp.arg(this.b, 0)); };
 
         // variable and list watchers
         primTable["showVariable:"] = this.primShowWatcher;
@@ -77,7 +77,7 @@ export class SensingPrims {
         //
         // ;
         // let sBM: BitmapData = s.bitmap(true);
-        // for (let s2 of this.app.stage.spritesAndClonesNamed(arg))
+        // for (let s2 of this.stage.stage.spritesAndClonesNamed(arg))
         //     if (s2.visible && sBM.hitTest(s.runtime.bounds().topLeft, 1, s2.bitmap(true), s2.bounds().topLeft, 1))
         //         return true;
 
@@ -101,7 +101,7 @@ export class SensingPrims {
     // private let myBMTest:Bitmap;
     // private let stageBMTest:Bitmap;
     private primTouchingColor(b: BlockModel): boolean {
-        // Note: Attempted to switch app.stage.quality to LOW to disable anti-aliasing, which
+        // Note: Attempted to switch stage.stage.quality to LOW to disable anti-aliasing, which
         // can create false colors. Unfortunately, that caused serious performance issues.
         // let s: SpriteModel = this.interp.targetSprite();
         // if (s === null) return false;
@@ -111,7 +111,7 @@ export class SensingPrims {
         // if(s.objName === "sensor") {
         //    if(!testSpr) {
         //        testSpr = new Sprite();
-        //        app.stage.addChild(testSpr);
+        //        stage.stage.addChild(testSpr);
         //        myBMTest = new Bitmap();
         //        myBMTest.y = 300;
         //        testSpr.addChild(myBMTest);
@@ -130,7 +130,7 @@ export class SensingPrims {
     }
 
     private primColorSees(b: BlockModel): boolean {
-        // Note: Attempted to switch app.stage.quality to LOW to disable anti-aliasing, which
+        // Note: Attempted to switch stage.stage.quality to LOW to disable anti-aliasing, which
         // can create false colors. Unfortunately, that caused serious performance issues.
         // let s: SpriteModel = this.interp.targetSprite();
         // if (s === null) return false;
@@ -141,7 +141,7 @@ export class SensingPrims {
         // if(!testSpr) {
         // testSpr = new Sprite();
         // testSpr.y = 300;
-        // app.stage.addChild(testSpr);
+        // stage.stage.addChild(testSpr);
         // stageBMTest = new Bitmap();
         // testSpr.addChild(stageBMTest);
         // myBMTest = new Bitmap();
@@ -164,7 +164,7 @@ export class SensingPrims {
     //         this.debugView = new Bitmap();
     //         this.debugView.x = 100;
     //         this.debugView.y = 600;
-    //         this.app.addChild(this.debugView);
+    //         this.stage.addChild(this.debugView);
     //     }
     //     this.debugView.bitmapData = bm;
     // }
@@ -173,7 +173,7 @@ export class SensingPrims {
     // private bitmapFilteredByColor(srcBM: BitmapData, c: number): BitmapData {
     //     //		if(!testBM.parent) {
     //     //			testBM.y = 360; testBM.x = 15;
-    //     //			app.stage.addChild(testBM);
+    //     //			stage.stage.addChild(testBM);
     //     //		}
     //     //		testBM.bitmapData = srcBM;
     //     let outBM: BitmapData = new BitmapData(srcBM.width, srcBM.height, true, 0);
@@ -182,36 +182,37 @@ export class SensingPrims {
     // }
 
     // private stageBitmapWithoutSpriteFilteredByColor(s: SpriteModel, c: number): BitmapData {
-    //     // return this.app.stage.getBitmapWithoutSpriteFilteredByColor(s, c);
+    //     // return this.stage.stage.getBitmapWithoutSpriteFilteredByColor(s, c);
     // }
 
     private primAsk(b: BlockModel): void {
-        if (this.app.runtime.askPromptShowing()) {
-            // wait if (1) some other sprite is asking (2) this question is answered (when firstTime is false)
-            this.interp.doYield();
-            return;
-        }
-        let obj: ObjectModel = this.interp.targetObj();
-        if (this.interp.activeThread.firstTime) {
-            let question: string = this.interp.arg(b, 0);
-            if ((obj instanceof SpriteModel) && (obj.visible)) {
-                (<SpriteModel>obj).runtime.showBubble(question, "talk", b);
-                this.app.runtime.showAskPrompt("");
-            } else {
-                this.app.runtime.showAskPrompt(question);
-            }
-            this.interp.activeThread.firstTime = false;
-            this.interp.doYield();
-        } else {
-            if ((obj instanceof SpriteModel) && (obj.visible)) (<SpriteModel> obj).runtime.hideBubble();
-            this.interp.activeThread.firstTime = true;
-        }
+      console.log("todo primAsk");
+        // if (this.stage.runtime.askPromptShowing()) {
+        //     // wait if (1) some other sprite is asking (2) this question is answered (when firstTime is false)
+        //     this.interp.doYield();
+        //     return;
+        // }
+        // let obj: ObjectModel = this.interp.targetObj();
+        // if (this.interp.activeThread.firstTime) {
+        //     let question: string = this.interp.arg(b, 0);
+        //     if ((obj instanceof SpriteModel) && (obj.visible)) {
+        //         (<SpriteModel>obj).runtime.showBubble(question, "talk", b);
+        //         this.stage.runtime.showAskPrompt("");
+        //     } else {
+        //         this.stage.runtime.showAskPrompt(question);
+        //     }
+        //     this.interp.activeThread.firstTime = false;
+        //     this.interp.doYield();
+        // } else {
+        //     if ((obj instanceof SpriteModel) && (obj.visible)) (<SpriteModel> obj).runtime.hideBubble();
+        //     this.interp.activeThread.firstTime = true;
+        // }
     }
 
     private primKeyPressed(b: BlockModel): boolean {
         let key: string = this.interp.arg(b, 0);
         if (key === "any") {
-            for (let k of this.app.runtime.keyIsDown) {
+            for (let k of this.stage.runtime.keyIsDown) {
                 if (k) return true;
             }
             return false;
@@ -223,7 +224,7 @@ export class SensingPrims {
         if (key === "up arrow") ch = 30;
         if (key === "down arrow") ch = 31;
         if (key === "space") ch = 32;
-        return this.app.runtime.keyIsDown[ch];
+        return this.stage.runtime.keyIsDown[ch];
     }
 
     private primDistanceTo(b: BlockModel): number {
@@ -237,7 +238,7 @@ export class SensingPrims {
 
     private primGetAttribute(b: BlockModel): any {
         let attribute: string = this.interp.arg(b, 0);
-        let obj: ObjectModel = this.app.stage.objNamed(String(this.interp.arg(b, 1)));
+        let obj: ObjectModel = this.stage.objNamed(String(this.interp.arg(b, 1)));
         if (!(obj instanceof ObjectModel)) return 0;
         if (obj instanceof SpriteModel) {
             let s: SpriteModel = obj;
@@ -261,10 +262,9 @@ export class SensingPrims {
 
     private mouseOrSpritePosition(arg: string): Point {
         if (arg === "_mouse_") {
-            let w: StageModel = this.app.stage;
-            return new Point(w.runtime.mouseX(), w.runtime.mouseY());
+            return new Point(this.stage.runtime.mouseX(), this.stage.runtime.mouseY());
         } else {
-            let s: SpriteModel = this.app.stage.spriteNamed(arg);
+            let s: SpriteModel = this.stage.spriteNamed(arg);
             if (s === null) return null;
             return new Point(s.x, s.y);
         }
@@ -272,22 +272,26 @@ export class SensingPrims {
 
     private primShowWatcher(b: BlockModel): any {
         let obj: ObjectModel = this.interp.targetObj();
-        if (obj) this.app.runtime.showVarOrListFor(this.interp.arg(b, 0), false, obj);
+        console.log("todo: primShowWatcher");
+//        if (obj) this.stage.runtime.showVarOrListFor(this.interp.arg(b, 0), false, obj);
     }
 
     private primHideWatcher(b: BlockModel): any {
         let obj: ObjectModel = this.interp.targetObj();
-        if (obj) this.app.runtime.hideVarOrListFor(this.interp.arg(b, 0), false, obj);
+        console.log("todo: primHideWatcher");
+        // if (obj) this.stage.runtime.hideVarOrListFor(this.interp.arg(b, 0), false, obj);
     }
 
     private primShowListWatcher(b: BlockModel): any {
         let obj: ObjectModel = this.interp.targetObj();
-        if (obj) this.app.runtime.showVarOrListFor(this.interp.arg(b, 0), true, obj);
+        console.log("todo: showVarOrListFor");
+        // if (obj) this.stage.runtime.showVarOrListFor(this.interp.arg(b, 0), true, obj);
     }
 
     private primHideListWatcher(b: BlockModel): any {
         let obj: ObjectModel = this.interp.targetObj();
-        if (obj) this.app.runtime.hideVarOrListFor(this.interp.arg(b, 0), true, obj);
+        console.log("todo: hideVarOrListFor");
+        // if (obj) this.stage.runtime.hideVarOrListFor(this.interp.arg(b, 0), true, obj);
     }
 
     private primTimestamp(b: BlockModel): any {
