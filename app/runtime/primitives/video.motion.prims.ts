@@ -21,9 +21,6 @@ export class VideoMotionPrims {
     private THRESHOLD: number = 10;
     private WINSIZE: number = 8;
 
-    private stage: StageModel;
-    private interp: Interpreter;
-
     private gradA2Array: number[] = new Array<number>(this.WIDTH * this.HEIGHT, 1);
     private gradA1B2Array: number[] = new Array<number>(this.WIDTH * this.HEIGHT, 1);
     private gradB1Array: number[] = new Array<number>(this.WIDTH * this.HEIGHT, 1);
@@ -39,9 +36,7 @@ export class VideoMotionPrims {
     private curr: number[];
     private prev: number[];
 
-    constructor(stage: StageModel, interpreter: Interpreter) {
-        this.stage = stage;
-        this.interp = interpreter;
+    constructor() {
   //      this.frameBuffer = new BitmapData(this.WIDTH, this.HEIGHT);
     }
 
@@ -50,7 +45,7 @@ export class VideoMotionPrims {
         VideoMotionPrims.readMotionSensor = this.getMotionOn;
     }
 
-    private primVideoMotion(b: BlockModel): number {
+    private primVideoMotion(b: BlockModel, interp: Interpreter): number {
         // let motionType: string = this.interp.arg(b, 0);
         // let obj: ObjectModel = this.app.stage.objNamed(String(this.interp.arg(b, 1)));
         // if ("this sprite" === this.interp.arg(b, 1)) obj = this.interp.targetObj();

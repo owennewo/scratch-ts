@@ -53,11 +53,12 @@ import {ScratchThread} from "./scratch.thread";
 
 export class Interpreter {
 
-    public activeThread: ScratchThread;				// current ScratchThread
-    public currentMSecs: number = ScratchTime.getTimer();	// millisecond clock for the current step
-    public turboMode: boolean = false;
+    activeThread: ScratchThread;				// current ScratchThread
+    currentMSecs: number = ScratchTime.getTimer();	// millisecond clock for the current step
+    turboMode: boolean = false;
 
-    private stage: StageModel;
+    stage: StageModel;
+
     private primTable;		// maps opcodes to functions
     private threads: any[] = [];			// all ScratchThreads
     private yield: boolean;				// set true to indicate that active ScratchThread should yield control
@@ -205,21 +206,24 @@ export class Interpreter {
         let workTime: number = (0.75 * 1000) / this.stage.runtime.frameRate; // work for up to 75% of one frame ScratchTime
         this.doRedraw = false;
         this.currentMSecs = ScratchTime.getTimer();
-        if (this.threads.length === 0) return;
+        if (this.threads.length === 0) {
+          console.log("No threads, nothing to do");
+          return;
+        }
         while ((this.currentMSecs - this.startTime) < workTime) {
-            if (this.warpThread && (this.warpThread.block === null)) this.clearWarpBlock();
+            if (this.warpThread && (!this.warpThread.block)) this.clearWarpBlock();
             let threadStopped: boolean = false;
             let runnableCount: number = 0;
             for (this.activeThread of this.threads) {
                 this.isWaiting = false;
                 this.stepActiveThread();
-                if (this.activeThread.block === null) threadStopped = true;
+                if (!this.activeThread.block) threadStopped = true;
                 if (!this.isWaiting) runnableCount++;
             }
             if (threadStopped) {
                 let newThreads: any[] = [];
                 for (let t of this.threads) {
-                    if (t.block !== null) newThreads.push(t);
+                    if (t.block) newThreads.push(t);
                     else if (this.stage.runtime.editMode) {
                         if (t === this.bubbleThread) this.bubbleThread = null;
                         t.topBlock.hideRunFeedback();
@@ -234,7 +238,7 @@ export class Interpreter {
     }
 
     private stepActiveThread(): void {
-        if (this.activeThread.block === null) return;
+        if (!this.activeThread.block) return;
         if (this.activeThread.startDelayCount > 0) { this.activeThread.startDelayCount--; this.doRedraw = true; return; }
         if (!(this.activeThread.target.isStage || (this.activeThread.target.parent instanceof StageModel))) {
             // sprite is being dragged
@@ -256,10 +260,10 @@ export class Interpreter {
                 } else return;
             }
 
-            if (this.activeThread.block !== null)
+            if (this.activeThread.block)
                 this.activeThread.block = this.activeThread.block.nextBlock;
 
-            while (this.activeThread.block === null) { // end of BlockModel sequence
+            while (!this.activeThread.block) { // end of BlockModel sequence
                 if (!this.activeThread.popState()) return; // end of script
                 if ((this.activeThread.block === this.warpBlock) && this.activeThread.firstTime) { // end of outer warp BlockModel
                     this.clearWarpBlock();
@@ -287,10 +291,16 @@ export class Interpreter {
     public evalCmd(b: BlockModel): any {
         if (!b) return 0; // arg() and friends can pass null if arg index is out of range
         let op: string = b.spec.code;
-        if (b.opFunction === null) {
-          console.log("todo evalCmd");
-            // if (op.indexOf(".") > -1) b.opFunction = this.stage.runtime.extensionManager.primExtensionOp;
-            // else b.opFunction = (this.primTable[op] === undefined) ? this.primNoop : this.primTable[op];
+        if (!b.opFunction) {
+
+            if (op.indexOf(".") > -1) {
+              console.log("todo evalCmd for extensions");
+                // b.opFunction = this.stage.runtime.extensionManager.primExtensionOp;
+            } else {
+              b.opFunction = this.primTable[op];
+              if (!b.opFunction) b.opFunction = this.primTable["noop"];
+            }
+
         }
 
         // TODO: Optimize this into a cached check if the args *could* BlockModel at all
@@ -300,10 +310,10 @@ export class Interpreter {
         }
 
         // Debug code
-        if (this.debugFunc !== null)
+        if (this.debugFunc)
             this.debugFunc(b);
 
-        return b.opFunction(b);
+        return b.opFunction(b, this);
     }
 
     // Returns true if the ScratchThread needs to yield while data is requested
@@ -313,7 +323,7 @@ export class Interpreter {
         let args: any[] = b.args;
         for (let i: number = 0; i < args.length; ++i) {
             let barg: BlockModel = <BlockModel>args[i];
-            if (barg) {
+            if (barg && barg instanceof BlockModel) {
                 if (this.checkBlockingArgs(barg))
                     shouldYield = true;
 
@@ -374,7 +384,7 @@ export class Interpreter {
     }
 
     private startCmdList(b: BlockModel, isLoop: boolean = false, argList: any[] = null): void {
-        if (b === null) {
+        if (!b) {
             if (isLoop) this.yield = true;
             return;
         }
@@ -420,16 +430,16 @@ export class Interpreter {
     private initPrims(): void {
         this.primTable = {};
         // control
-        this.primTable["whenGreenFlag"] = this.primNoop;
-        this.primTable["whenKeyPressed"] = this.primNoop;
-        this.primTable["whenClicked"] = this.primNoop;
-        this.primTable["whenSceneStarts"] = this.primNoop;
+        this.primTable["whenGreenFlag"] = this.primTable["noop"];
+        this.primTable["whenKeyPressed"] = this.primTable["noop"];
+        this.primTable["whenClicked"] = this.primTable["noop"];
+        this.primTable["whenSceneStarts"] = this.primTable["noop"];
         this.primTable["wait:elapsed:from:"] = this.primWait;
         this.primTable["doForever"] = function(b: any): any { this.startCmdList(this.b.stack1, true); };
         this.primTable["doRepeat"] = this.primRepeat;
         this.primTable["broadcast:"] = function(b: any): any { this.broadcast(this.arg(this.b, 0), false); };
         this.primTable["doBroadcastAndWait"] = function(b: any): any { this.broadcast(this.arg(this.b, 0), true); };
-        this.primTable["whenIReceive"] = this.primNoop;
+        this.primTable["whenIReceive"] = this.primTable["noop"];
         this.primTable["doForeverIf"] = function(b: any): any { if (this.arg(this.b, 0)) this.startCmdList(this.b.stack1, true); else this.yield = true; };
         this.primTable["doForLoop"] = this.primForLoop;
         this.primTable["doIf"] = function(b: any): any { if (this.arg(this.b, 0)) this.startCmdList(this.b.stack1); };
@@ -452,17 +462,17 @@ export class Interpreter {
         this.primTable[SpecOperation.GetParam] = this.primGetParam;
 
         // edge-trigger hat BlockModels
-        this.primTable["whenDistanceLessThan"] = this.primNoop;
-        this.primTable["whenSensorConnected"] = this.primNoop;
-        this.primTable["whenSensorGreaterThan"] = this.primNoop;
-        this.primTable["whenTiltIs"] = this.primNoop;
+        this.primTable["whenDistanceLessThan"] = this.primTable["noop"];
+        this.primTable["whenSensorConnected"] = this.primTable["noop"];
+        this.primTable["whenSensorGreaterThan"] = this.primTable["noop"];
+        this.primTable["whenTiltIs"] = this.primTable["noop"];
 
         this.addOtherPrims(this.primTable);
     }
 
     protected addOtherPrims(primTable: any): void {
         // other primitives
-        new Primitives(this.stage, this).addPrimsTo(primTable);
+        new Primitives().addPrimsTo(primTable);
     }
 
     private checkPrims(): void {
@@ -480,8 +490,6 @@ export class Interpreter {
             if (allOps.indexOf(op) < 0) console.log("Not in SpecOperation:" + op);
         }
     }
-
-    public primNoop(b: BlockModel): void { }
 
     private primForLoop(b: BlockModel): void {
         let list: any[] = [];
@@ -524,7 +532,7 @@ export class Interpreter {
 
     private primOldWarpSpeed(b: BlockModel): void {
         // Semi-support for old warp BlockModel: run substack at normal speed.
-        if (b.stack1 === null) return;
+        if (!b.stack1) return;
         this.startCmdList(b.stack1);
     }
 
@@ -717,7 +725,7 @@ export class Interpreter {
             if (proc.parameterNames) b.parameterIndex = proc.parameterNames.indexOf(b.spec);
             if (b.parameterIndex < 0) return 0;
         }
-        if ((this.activeThread.args === null) || (b.parameterIndex >= this.activeThread.args.length)) return 0;
+        if ((!this.activeThread.args) || (b.parameterIndex >= this.activeThread.args.length)) return 0;
         return this.activeThread.args[b.parameterIndex];
     }
 

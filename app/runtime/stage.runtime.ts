@@ -15,8 +15,11 @@ export class StageRuntime extends ObjectRuntime {
     frameRate: number = 30;
     keyIsDown: any[] = new Array(128); // records key up/down state
     shiftIsDown: boolean;
+    mouseIsDown: boolean;
 
-    private interp: Interpreter;
+    lastAnswer: string = "todo";
+
+    interp: Interpreter;
     private motionDetector: VideoMotionPrims;
     private stage: StageModel;
     private timerBase: number;
@@ -134,6 +137,44 @@ export class StageRuntime extends ObjectRuntime {
 
     clearRunFeedback() {
       console.log("todo clearRunFeedback");
+    }
+
+    start() {
+      setInterval(() => {
+          console.log("timer loop (replace with requestAnimationFrame??)");
+          this.interp.stepThreads();
+      }, 2000);
+
+    }
+
+    timer(): number {
+      console.log("todo stage runtime timer");
+      return -1;
+    }
+
+    soundLevel(): number {
+      console.log("todo soundLevel");
+      return -1;
+    }
+
+    isLoud(): number {
+      console.log("todo stage isLoud");
+      return -1;
+    }
+
+    getTimeString(arg: any): string {
+      console.log("todo stage runtime getTimeString");
+      return "timestring";
+    }
+
+    getSensor(arg: any): number {
+      console.log("todo stage runtime getSensor");
+      return -1;
+    }
+
+    getBooleanSensor(arg: any): number {
+      console.log("todo stage runtime getBooleanSensor");
+      return -1;
     }
 
 }

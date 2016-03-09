@@ -13,12 +13,8 @@ import {SpecOperation} from "../../model/spec.model";
 export class ListPrims {
 
   contents: string;
-    private stage: StageModel;
-    protected interp: Interpreter;
 
-    constructor(stage: StageModel, interpreter: Interpreter) {
-        this.stage = stage;
-        this.interp = interpreter;
+    constructor() {
     }
 
     public addPrimsTo(primTable: any): void {
@@ -32,7 +28,7 @@ export class ListPrims {
         primTable["list:contains:"] = this.primContains;
     }
 
-    private primContents(b: BlockModel): string {
+    private primContents(b: BlockModel, interp: Interpreter): string {
       console.log("todo prime contenst");
       return "";
         // let list: ListWatcher = this.interp.targetObj().lookupOrCreateList(b.spec);
@@ -47,7 +43,7 @@ export class ListPrims {
         // return (list.contents.join(allSingleLetters ? "" : " "));
     }
 
-    private primAppend(b: BlockModel): void {
+    private primAppend(b: BlockModel, interp: Interpreter): void {
         // let list: ListWatcher = this.listarg(b, 1);
         // if (!list) return;
         // this.listAppend(list, this.interp.arg(b, 0));
@@ -58,7 +54,7 @@ export class ListPrims {
         // list.contents.push(item);
     }
 
-    private primDelete(b: BlockModel): void {
+    private primDelete(b: BlockModel, interp: Interpreter): void {
         // let which: any = this.interp.arg(b, 0);
         // let list: ListWatcher = this.listarg(b, 1);
         // if (!list) return;
@@ -83,7 +79,7 @@ export class ListPrims {
         // list.contents.splice(i - 1, 1);
     }
 
-    private primInsert(b: BlockModel): void {
+    private primInsert(b: BlockModel, interp: Interpreter): void {
         // let val: any = this.interp.arg(b, 0);
         // let where: any = this.interp.arg(b, 1);
         // let list: ListWatcher = this.listarg(b, 2);
@@ -103,7 +99,7 @@ export class ListPrims {
         // list.contents.splice(i - 1, 0, item);
     }
 
-    private primReplace(b: BlockModel): void {
+    private primReplace(b: BlockModel, interp: Interpreter): void {
         // let list: ListWatcher = this.listarg(b, 1);
         // if (!list) return;
         // let i: number = this.computeIndex(this.interp.arg(b, 0), list.contents.length);
@@ -116,7 +112,7 @@ export class ListPrims {
         // list.contents[i - 1] = item;
     }
 
-    private primGetItem(b: BlockModel): any {
+    private primGetItem(b: BlockModel, interp: Interpreter): any {
         // let list: ListWatcher = this.listarg(b, 1);
         // if (!list) return "";
         // let i: number = this.computeIndex(this.interp.arg(b, 0), list.contents.length);
@@ -125,14 +121,14 @@ export class ListPrims {
         // return list.contents[i - 1];
     }
 
-    private primLength(b: BlockModel): number {
+    private primLength(b: BlockModel, interp: Interpreter): number {
         // let list: ListWatcher = this.listarg(b, 0);
         // if (!list) return 0;
         // return list.contents.length;
         return 0;
     }
 
-    private primContains(b: BlockModel): boolean {
+    private primContains(b: BlockModel, interp: Interpreter): boolean {
         // let list: ListWatcher = this.listarg(b, 0);
         // if (!list) return false;
         // let item: any = this.interp.arg(b, 1);

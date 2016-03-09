@@ -29,6 +29,8 @@ export class StageComponent {
   constructor(@Inject(ModelService) private modelService: ModelService) {
     modelService.onProjectLoaded.subscribe(data => {
       this.stage = <StageModel> data;
+      console.log("StageComponent is starting threads");
+      this.stage.runtime.start();
     });
   }
 

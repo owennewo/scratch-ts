@@ -6,7 +6,7 @@ export class ScratchTime {
     }
     static getTimer(): number {
         if (ScratchTime.startTime === 0) {
-            console.warn("time not initialized");
+            this.startTime = new Date().getTime();
         }
         return new Date().getTime() - this.startTime;
     }

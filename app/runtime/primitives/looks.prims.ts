@@ -13,12 +13,8 @@ import {BlockModel} from "../../model/block.model";
 
 export class LooksPrims {
 
-    private stage: StageModel;
-    private interp: Interpreter;
 
-    constructor(stage: StageModel, interpreter: Interpreter) {
-        this.stage = stage;
-        this.interp = interpreter;
+    constructor() {
     }
 
     public addPrimsTo(primTable: any): void {
@@ -32,8 +28,8 @@ export class LooksPrims {
         primTable["backgroundIndex"] = this.primSceneIndex;
         primTable["sceneName"] = this.primSceneName;
         primTable["nextScene"] = function(b: any): any { this.startScene("next backdrop", false); };
-        primTable["startScene"] = function(b: any): any { this.startScene(this.interp.arg(this.b, 0), false); };
-        primTable["startSceneAndWait"] = function(b: any): any { this.startScene(this.interp.arg(this.b, 0), true); };
+        primTable["startScene"] = function(b: any, interp: Interpreter): any { this.startScene(interp.arg(this.b, 0), false); };
+        primTable["startSceneAndWait"] = function(b: any, interp: Interpreter): any { this.startScene(interp.arg(this.b, 0), true); };
 
         primTable["say:duration:elapsed:from:"] = function(b: any): any { this.showBubbleAndWait(this.b, "talk"); };
         primTable["say:"] = function(b: any): any { this.showBubble(this.b, "talk"); };
@@ -67,16 +63,16 @@ export class LooksPrims {
         primTable["setRotationStyle"] = this.primSetRotationStyle;
     }
 
-    private primNextCostume(b:  BlockModel): void {
-        let s: ObjectModel = this.interp.targetObj();
+    private primNextCostume(b:  BlockModel, interp: Interpreter): void {
+        let s: ObjectModel = interp.targetObj();
         if (s != null) s.showCostume(s.currentCostumeIndex + 1);
-        if (s.runtime.visible) this.interp.redraw();
+        if (s.runtime.visible) interp.redraw();
     }
 
-    private primShowCostume(b:  BlockModel): void {
-        let s: ObjectModel = this.interp.targetObj();
+    private primShowCostume(b:  BlockModel, interp: Interpreter): void {
+        let s: ObjectModel = interp.targetObj();
         if (s === null) return;
-        let arg: any = this.interp.arg(b, 0);
+        let arg: any = interp.arg(b, 0);
         if (typeof (arg) === "number") {
             s.showCostume(arg - 1);
         } else {
@@ -93,225 +89,225 @@ export class LooksPrims {
                 else return; // arg did not match a costume name nor is it a valid number
             }
         }
-        if (s.runtime.visible) this.interp.redraw();
+        if (s.runtime.visible) interp.redraw();
     }
 
-    private primCostumeIndex(b:  BlockModel): number {
-        let s: ObjectModel = this.interp.targetObj();
+    private primCostumeIndex(b:  BlockModel, interp: Interpreter): number {
+        let s: ObjectModel = interp.targetObj();
         return (s === null) ? 1 : s.currentCostumeIndex;
     }
 
-    private primCostumeName(b:  BlockModel): string {
-        let s: ObjectModel = this.interp.targetObj();
+    private primCostumeName(b:  BlockModel, interp: Interpreter): string {
+        let s: ObjectModel = interp.targetObj();
         return (s === null) ? "" : s.currentCostume.name;
     }
 
-    private primSceneIndex(b:  BlockModel): number {
-        return this.stage.currentCostumeIndex;
+    private primSceneIndex(b:  BlockModel, interp: Interpreter): number {
+        return interp.stage.currentCostumeIndex;
     }
 
-    private primSceneName(b:  BlockModel): string {
-        return this.stage.currentCostume.name;
+    private primSceneName(b:  BlockModel, interp: Interpreter): string {
+        return interp.stage.currentCostume.name;
     }
 
-    private startScene(s: string, waitFlag: boolean): void {
-        if ("next backdrop" === s) s = this.backdropNameAt(this.stage.currentCostumeIndex + 1);
-        else if ("previous backdrop" === s) s = this.backdropNameAt(this.stage.currentCostumeIndex - 1);
+    private startScene(interp: Interpreter, s: string, waitFlag: boolean): void {
+        if ("next backdrop" === s) s = this.backdropNameAt(interp, interp.stage.currentCostumeIndex + 1);
+        else if ("previous backdrop" === s) s = this.backdropNameAt(interp, interp.stage.currentCostumeIndex - 1);
         else {
             let n: number = Interpreter.asNumber(s);
             if (!isNaN(n)) {
-                n = (Math.round(n) - 1) % this.stage.costumes.length;
-                if (n < 0) n += this.stage.costumes.length;
-                s = this.stage.costumes[n].name;
+                n = (Math.round(n) - 1) % interp.stage.costumes.length;
+                if (n < 0) n += interp.stage.costumes.length;
+                s = interp.stage.costumes[n].name;
             }
         }
-        this.interp.startScene(s, waitFlag);
+        interp.startScene(s, waitFlag);
     }
 
-    private backdropNameAt(i: number): string {
-        let costumes: any[] = this.stage.costumes;
+    private backdropNameAt(interp: Interpreter, i: number): string {
+        let costumes: any[] = interp.stage.costumes;
         return costumes[(i + costumes.length) % costumes.length].costumeName;
     }
 
-    private showBubbleAndWait(b: BlockModel, type: string): void {
+    private showBubbleAndWait(b: BlockModel, interp: Interpreter, type: string): void {
         let text: any, secs: number;
-        let s: SpriteModel = this.interp.targetSprite();
+        let s: SpriteModel = interp.targetSprite();
         if (s === null) return;
-        if (this.interp.activeThread.firstTime) {
-            text = this.interp.arg(b, 0);
-            secs = this.interp.numarg(b, 1);
+        if (interp.activeThread.firstTime) {
+            text = interp.arg(b, 0);
+            secs = interp.numarg(b, 1);
             s.runtime.showBubble(text, type, b);
-            if (s.visible) this.interp.redraw();
-            this.interp.startTimer(secs);
+            if (s.visible) interp.redraw();
+            interp.startTimer(secs);
         } else {
-            if (this.interp.checkTimer() && s.runtime.bubble && (s.runtime.bubbleSource === b)) {
+            if (interp.checkTimer() && s.runtime.bubble && (s.runtime.bubbleSource === b)) {
                 s.runtime.hideBubble();
             }
         }
     }
 
-    private showBubble(b: BlockModel, type: string = null): void {
+    private showBubble(b: BlockModel, interp: Interpreter, type: string = null): void {
         let text: any, secs: number;
-        let s: SpriteModel = this.interp.targetSprite();
+        let s: SpriteModel = interp.targetSprite();
         if (s === null) return;
         if (type === null) { // combined talk/think/shout/whisper command
-            type = this.interp.arg(b, 0);
-            text = this.interp.arg(b, 1);
+            type = interp.arg(b, 0);
+            text = interp.arg(b, 1);
         } else { // talk or think command
-            text = this.interp.arg(b, 0);
+            text = interp.arg(b, 0);
         }
         s.runtime.showBubble(text, type, b);
-        if (s.visible) this.interp.redraw();
+        if (s.visible) interp.redraw();
     }
 
-    private primChangeEffect(b:  BlockModel): void {
-        let s: ObjectModel = this.interp.targetObj();
+    private primChangeEffect(b:  BlockModel, interp: Interpreter): void {
+        let s: ObjectModel = interp.targetObj();
         if (s === null) return;
-        let filterName: string = this.interp.arg(b, 0);
-        let delta: number = this.interp.numarg(b, 1);
+        let filterName: string = interp.arg(b, 0);
+        let delta: number = interp.numarg(b, 1);
         if (delta === 0) return;
 
         console.log("todo:  primChangeEffect" );
         // let newValue: number = s.runtime.filterPack.getFilterSetting(filterName) + delta;
         // s.runtime.filterPack.setFilter(filterName, newValue);
         // s.runtime.stagelyFilters();
-        // if (s.runtime.visible || s === Scratch.stage) this.interp.redraw();
+        // if (s.runtime.visible || s === Scratch.stage) interp.redraw();
     }
 
-    private primSetEffect(b:  BlockModel): void {
+    private primSetEffect(b:  BlockModel, interp: Interpreter): void {
       console.log("todo primSetEffect");
-        // let s: ObjectModel = this.interp.targetObj();
+        // let s: ObjectModel = interp.targetObj();
         // if (s === null) return;
-        // let filterName: string = this.interp.arg(b, 0);
-        // let newValue: number = this.interp.numarg(b, 1);
+        // let filterName: string = interp.arg(b, 0);
+        // let newValue: number = interp.numarg(b, 1);
         // if (s.filterPack.setFilter(filterName, newValue))
         //     s.stagelyFilters();
-        // if (s.visible || s === Scratch.stage) this.interp.redraw();
+        // if (s.visible || s === Scratch.stage) interp.redraw();
     }
 
-    private primClearEffects(b:  BlockModel): void {
+    private primClearEffects(b:  BlockModel, interp: Interpreter): void {
       console.log("todo primClearEffects");
-        // let s: ScratchObj = this.interp.targetObj();
+        // let s: ScratchObj = interp.targetObj();
         // s.clearFilters();
         // s.stagelyFilters();
-        // if (s.visible || s === Scratch.stage) this.interp.redraw();
+        // if (s.visible || s === Scratch.stage) interp.redraw();
     }
 
-    private primChangeSize(b:  BlockModel): void {
-        let s: SpriteModel = this.interp.targetSprite();
+    private primChangeSize(b:  BlockModel, interp: Interpreter): void {
+        let s: SpriteModel = interp.targetSprite();
         if (s === null) return;
         let oldScale: number = s.runtime.scaleX;
-        s.runtime.setSize(s.runtime.getSize() + this.interp.numarg(b, 0));
-        if (s.visible && (s.runtime.scaleX !== oldScale)) this.interp.redraw();
+        s.runtime.setSize(s.runtime.getSize() + interp.numarg(b, 0));
+        if (s.visible && (s.runtime.scaleX !== oldScale)) interp.redraw();
     }
 
-    private primSetRotationStyle(b:  BlockModel): void {
-        let s: SpriteModel = this.interp.targetSprite();
-        let newStyle: string = this.interp.arg(b, 0);
+    private primSetRotationStyle(b:  BlockModel, interp: Interpreter): void {
+        let s: SpriteModel = interp.targetSprite();
+        let newStyle: string = interp.arg(b, 0);
         if ((s === null) || (newStyle === null)) return;
         s.setRotationStyle(newStyle);
     }
 
-    private primSetSize(b:  BlockModel): void {
-        let s: SpriteModel = this.interp.targetSprite();
+    private primSetSize(b:  BlockModel, interp: Interpreter): void {
+        let s: SpriteModel = interp.targetSprite();
         if (s === null) return;
-        s.runtime.setSize(this.interp.numarg(b, 0));
-        if (s.visible) this.interp.redraw();
+        s.runtime.setSize(interp.numarg(b, 0));
+        if (s.visible) interp.redraw();
     }
 
-    private primSize(b:  BlockModel): number {
-        let s: SpriteModel = this.interp.targetSprite();
+    private primSize(b:  BlockModel, interp: Interpreter): number {
+        let s: SpriteModel = interp.targetSprite();
         if (s === null) return 100;
         return Math.round(s.runtime.getSize()); // reporter returns rounded size, as in Scratch 1.4
     }
 
-    private primShow(b:  BlockModel): void {
-        let s: SpriteModel = this.interp.targetSprite();
+    private primShow(b:  BlockModel, interp: Interpreter): void {
+        let s: SpriteModel = interp.targetSprite();
         if (s === null) return;
         s.visible = true;
-        // if (!this.stage.isIn3D) s.stagelyFilters();
+        // if (!interp.stage.isIn3D) s.stagelyFilters();
         s.runtime.updateBubble();
-        if (s.visible) this.interp.redraw();
+        if (s.visible) interp.redraw();
     }
 
-    private primHide(b:  BlockModel): void {
-        let s: SpriteModel = this.interp.targetSprite();
+    private primHide(b:  BlockModel, interp: Interpreter): void {
+        let s: SpriteModel = interp.targetSprite();
         if ((s === null) || !s.visible) return;
         s.visible = false;
-        // if (!this.stage.isIn3D) s.stagelyFilters();
+        // if (!interp.stage.isIn3D) s.stagelyFilters();
         s.runtime.updateBubble();
-        this.interp.redraw();
+        interp.redraw();
     }
 
-    private primHideAll(b:  BlockModel): void {
+    private primHideAll(b:  BlockModel, interp: Interpreter): void {
         // Hide all sprites and delete all clones. Only works from the stage.
-        if (!(this.interp.targetObj() instanceof StageModel)) return;
-        this.stage.runtime.deleteClones();
-        for (let i: number = 0; i < this.stage.children.length; i++) {
-            let o: any = this.stage.children[i];
+        if (!(interp.targetObj() instanceof StageModel)) return;
+        interp.stage.runtime.deleteClones();
+        for (let i: number = 0; i < interp.stage.children.length; i++) {
+            let o: any = interp.stage.children[i];
             if (o instanceof SpriteModel) {
                 o.visible = false;
                 o.updateBubble();
             }
         }
-        this.interp.redraw();
+        interp.redraw();
     }
 
-    private primGoFront(b:  BlockModel): void {
+    private primGoFront(b:  BlockModel, interp: Interpreter): void {
       console.log("todo go to front");
-        // let s: SpriteModel = this.interp.targetSprite();
+        // let s: SpriteModel = interp.targetSprite();
         // if ((s === null) || (s.parent === null)) return;
         // s.parent.setChildIndex(s, s.parent.numChildren - 1);
-        // if (s.visible) this.interp.redraw();
+        // if (s.visible) interp.redraw();
     }
 
-    private primGoBack(b:  BlockModel): void {
+    private primGoBack(b:  BlockModel, interp: Interpreter): void {
       console.log("todo go to back");
-        // let s: SpriteModel = this.interp.targetSprite();
+        // let s: SpriteModel = interp.targetSprite();
         // if ((s === null) || (s.parent === null)) return;
-        // let newIndex: number = s.parent.getChildIndex(s) - this.interp.numarg(b, 0);
+        // let newIndex: number = s.parent.getChildIndex(s) - interp.numarg(b, 0);
         // newIndex = Math.max(this.minSpriteLayer(), Math.min(newIndex, s.parent.numChildren - 1));
         //
         // if (newIndex > 0 && newIndex < s.parent.numChildren) {
         //     s.parent.setChildIndex(s, newIndex);
-        //     if (s.visible) this.interp.redraw();
+        //     if (s.visible) interp.redraw();
         // }
     }
 
     private minSpriteLayer(): number {
         // Return the lowest sprite layer.
-        // let stg: StageModel = this.stage;
+        // let stg: StageModel = interp.stage;
         // return stg.getChildIndex(stg.videoImage ? stg.videoImage : stg.penLayer) + 1;
         console.log("todo min SpriteLayer");
         return -1;
     }
 
-    private primSetVideoState(b:  BlockModel): void {
+    private primSetVideoState(b:  BlockModel, interp: Interpreter): void {
       console.log("todo primSetVideoState");
-        // this.stage.setVideoState(this.interp.arg(b, 0));
+        // interp.stage.setVideoState(interp.arg(b, 0));
     }
 
-    private primSetVideoTransparency(b:  BlockModel): void {
+    private primSetVideoTransparency(b:  BlockModel, interp: Interpreter): void {
       console.log("todo primSetVideoTransparency");
-        // this.stage.setVideoTransparency(this.interp.numarg(b, 0));
-        // this.stage.setVideoState("on");
+        // interp.stage.setVideoTransparency(interp.numarg(b, 0));
+        // interp.stage.setVideoState("on");
     }
 
-    private primScrollAlign(b:  BlockModel): void {
+    private primScrollAlign(b:  BlockModel, interp: Interpreter): void {
       console.log("todo primScrollAlign");
-        // if (!this.interp.targetObj().isStage) return;
-        // this.stage.scrollAlign(this.interp.arg(b, 0));
+        // if (!interp.targetObj().isStage) return;
+        // interp.stage.scrollAlign(interp.arg(b, 0));
     }
 
-    private primScrollRight(b:  BlockModel): void {
+    private primScrollRight(b:  BlockModel, interp: Interpreter): void {
       console.log("todo primScrollRight");
-        // if (!this.interp.targetObj().isStage) return;
-        // this.stage.scrollRight(this.interp.numarg(b, 0));
+        // if (!interp.targetObj().isStage) return;
+        // interp.stage.scrollRight(interp.numarg(b, 0));
     }
 
-    private primScrollUp(b:  BlockModel): void {
+    private primScrollUp(b:  BlockModel, interp: Interpreter): void {
       console.log("todo primScrollUp");
-        // if (!this.interp.targetObj().isStage) return;
-        // this.stage.scrollUp(this.interp.numarg(b, 0));
+        // if (!interp.targetObj().isStage) return;
+        // interp.stage.scrollUp(interp.numarg(b, 0));
     }
 }

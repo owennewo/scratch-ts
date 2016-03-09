@@ -14,12 +14,7 @@ import {Point} from "../../shapes/geometry";
 
 export class MotionAndPenPrims {
 
-    private stage: StageModel;
-    private interp: Interpreter;
-
-    constructor(stage: StageModel, interpreter: Interpreter) {
-        this.stage = stage;
-        this.interp = interpreter;
+    constructor() {
     }
 
     public addPrimsTo(primTable: any): void {
@@ -56,143 +51,143 @@ export class MotionAndPenPrims {
         primTable["stampCostume"] = this.primStamp;
     }
 
-    private primMove(b: BlockModel): void {
-        let s: SpriteModel = this.interp.targetSprite();
+    private primMove (b: BlockModel, interp: Interpreter): void {
+        let s: SpriteModel = interp.targetSprite();
         if (s === null) return;
         let radians: number = (Math.PI * (90 - s.direction)) / 180;
-        let d: number = this.interp.numarg(b, 0);
-        this.moveSpriteTo(s, s.x + (d * Math.cos(radians)), s.y + (d * Math.sin(radians)));
-    }
+        let d: number = interp.numarg(b, 0);
+        this.moveSpriteTo(s, interp, s.x + (d * Math.cos(radians)), s.y + (d * Math.sin(radians)));
+    };
 
-    private primTurnRight(b: BlockModel): void {
-        let s: SpriteModel = this.interp.targetSprite();
+    private primTurnRight(b: BlockModel, interp: Interpreter): void {
+        let s: SpriteModel = interp.targetSprite();
         if (s != null) {
-            s.direction = s.direction + this.interp.numarg(b, 0);
-            if (s.visible) this.interp.redraw();
+            s.direction = s.direction + interp.numarg(b, 0);
+            if (s.visible) interp.redraw();
         }
     }
 
-    private primTurnLeft(b: BlockModel): void {
-        let s: SpriteModel = this.interp.targetSprite();
+    private primTurnLeft(b: BlockModel, interp: Interpreter): void {
+        let s: SpriteModel = interp.targetSprite();
         if (s != null) {
-            s.direction = s.direction - this.interp.numarg(b, 0);
-            if (s.visible) this.interp.redraw();
+            s.direction = s.direction - interp.numarg(b, 0);
+            if (s.visible) interp.redraw();
         }
     }
 
-    private primSetDirection(b: BlockModel): void {
-        let s: SpriteModel = this.interp.targetSprite();
+    private primSetDirection(b: BlockModel, interp: Interpreter): void {
+        let s: SpriteModel = interp.targetSprite();
         if (s != null) {
-            s.direction = this.interp.numarg(b, 0);
-            if (s.visible) this.interp.redraw();
+            s.direction = interp.numarg(b, 0);
+            if (s.visible) interp.redraw();
         }
     }
 
-    private primPointTowards(b: BlockModel): void {
-        let s: SpriteModel = this.interp.targetSprite();
-        let p: Point = this.mouseOrSpritePosition(this.interp.arg(b, 0));
+    private primPointTowards(b: BlockModel, interp: Interpreter): void {
+        let s: SpriteModel = interp.targetSprite();
+        let p: Point = this.mouseOrSpritePosition(interp.arg(b, 0), interp);
         if ((s === null) || (p === null)) return;
         let dx: number = p.x - s.x;
         let dy: number = p.y - s.y;
         let angle: number = 90 - ((Math.atan2(dy, dx) * 180) / Math.PI);
         s.direction = angle;
-        if (s.visible) this.interp.redraw();
+        if (s.visible) interp.redraw();
     }
 
-    private primGoTo(b: BlockModel): void {
-        let s: SpriteModel = this.interp.targetSprite();
-        if (s != null) this.moveSpriteTo(s, this.interp.numarg(b, 0), this.interp.numarg(b, 1));
+    private primGoTo(b: BlockModel, interp: Interpreter): void {
+        let s: SpriteModel = interp.targetSprite();
+        if (s != null) this.moveSpriteTo(s, interp, interp.numarg(b, 0), interp.numarg(b, 1));
     }
 
-    private primGoToSpriteOrMouse(b: BlockModel): void {
-        let s: SpriteModel = this.interp.targetSprite();
-        let p: Point = this.mouseOrSpritePosition(this.interp.arg(b, 0));
+    private primGoToSpriteOrMouse(b: BlockModel, interp: Interpreter): void {
+        let s: SpriteModel = interp.targetSprite();
+        let p: Point = this.mouseOrSpritePosition(interp.arg(b, 0), interp);
         if ((s === null) || (p === null)) return;
-        this.moveSpriteTo(s, p.x, p.y);
+        this.moveSpriteTo(s, interp, p.x, p.y);
     }
 
-    private primGlide(b: BlockModel): void {
-        let s: SpriteModel = this.interp.targetSprite();
+    private primGlide(b: BlockModel, interp: Interpreter): void {
+        let s: SpriteModel = interp.targetSprite();
         if (s === null) return;
-        if (this.interp.activeThread.firstTime) {
-            let secs: number = this.interp.numarg(b, 0);
-            let destX: number = this.interp.numarg(b, 1);
-            let destY: number = this.interp.numarg(b, 2);
+        if (interp.activeThread.firstTime) {
+            let secs: number = interp.numarg(b, 0);
+            let destX: number = interp.numarg(b, 1);
+            let destY: number = interp.numarg(b, 2);
             if (secs <= 0) {
-                this.moveSpriteTo(s, destX, destY);
+                this.moveSpriteTo(s, interp, destX, destY);
                 return;
             }
             // record state: [0]start msecs, [1]duration, [2]startX, [3]startY, [4]endX, [5]endY
-            this.interp.activeThread.tmpObj =
-                [this.interp.currentMSecs, 1000 * secs, s.x, s.y, destX, destY];
-            this.interp.startTimer(secs);
+            interp.activeThread.tmpObj =
+                [interp.currentMSecs, 1000 * secs, s.x, s.y, destX, destY];
+            interp.startTimer(secs);
         } else {
-            let state: any[] = this.interp.activeThread.tmpObj;
-            if (!this.interp.checkTimer()) {
+            let state: any[] = interp.activeThread.tmpObj;
+            if (!interp.checkTimer()) {
                 // in progress: move to intermediate position along path
-                let frac: number = (this.interp.currentMSecs - state[0]) / state[1];
+                let frac: number = (interp.currentMSecs - state[0]) / state[1];
                 let newX: number = state[2] + (frac * (state[4] - state[2]));
                 let newY: number = state[3] + (frac * (state[5] - state[3]));
-                this.moveSpriteTo(s, newX, newY);
+                this.moveSpriteTo(s, interp, newX, newY);
             } else {
                 // finished: move to final position and clear state
-                this.moveSpriteTo(s, state[4], state[5]);
-                this.interp.activeThread.tmpObj = null;
+                this.moveSpriteTo(s, interp, state[4], state[5]);
+                interp.activeThread.tmpObj = null;
             }
         }
     }
 
-    private mouseOrSpritePosition(arg: string): Point {
+    private mouseOrSpritePosition(arg: string, interp: Interpreter): Point {
         if (arg === "_mouse_") {
-            let w: StageModel = this.stage;
+            let w: StageModel = interp.stage;
             return new Point(w.runtime.mouseX(), w.runtime.mouseY());
         } else {
-            let s: SpriteModel = this.stage.spriteNamed(arg);
+            let s: SpriteModel = interp.stage.spriteNamed(arg);
             if (s === null) return null;
             return new Point(s.x, s.y);
         }
     }
 
-    private primChangeX(b: BlockModel): void {
-        let s: SpriteModel = this.interp.targetSprite();
-        if (s != null) this.moveSpriteTo(s, s.x + this.interp.numarg(b, 0), s.y);
+    private primChangeX(b: BlockModel, interp: Interpreter): void {
+        let s: SpriteModel = interp.targetSprite();
+        if (s != null) this.moveSpriteTo(s, interp, s.x + interp.numarg(b, 0), s.y);
     }
 
-    private primSetX(b: BlockModel): void {
-        let s: SpriteModel = this.interp.targetSprite();
-        if (s != null) this.moveSpriteTo(s, this.interp.numarg(b, 0), s.y);
+    private primSetX(b: BlockModel, interp: Interpreter): void {
+        let s: SpriteModel = interp.targetSprite();
+        if (s != null) this.moveSpriteTo(s, interp, interp.numarg(b, 0), s.y);
     }
 
-    private primChangeY(b: BlockModel): void {
-        let s: SpriteModel = this.interp.targetSprite();
-        if (s != null) this.moveSpriteTo(s, s.x, s.y + this.interp.numarg(b, 0));
+    private primChangeY(b: BlockModel, interp: Interpreter): void {
+        let s: SpriteModel = interp.targetSprite();
+        if (s != null) this.moveSpriteTo(s, interp, s.x, s.y + interp.numarg(b, 0));
     }
 
-    private primSetY(b: BlockModel): void {
-        let s: SpriteModel = this.interp.targetSprite();
-        if (s != null) this.moveSpriteTo(s, s.x, this.interp.numarg(b, 0));
+    private primSetY(b: BlockModel, interp: Interpreter): void {
+        let s: SpriteModel = interp.targetSprite();
+        if (s != null) this.moveSpriteTo(s, interp, s.x, interp.numarg(b, 0));
     }
 
-    private primBounceOffEdge(b: BlockModel): void {
-        let s: SpriteModel = this.interp.targetSprite();
+    private primBounceOffEdge(b: BlockModel, interp: Interpreter): void {
+        let s: SpriteModel = interp.targetSprite();
         if (s === null) return;
         if (!this.turnAwayFromEdge(s)) return;
-        this.ensureOnStageOnBounce(s);
-        if (s.visible) this.interp.redraw();
+        this.ensureOnStageOnBounce(s, interp);
+        if (s.visible) interp.redraw();
     }
 
-    private primXPosition(b: BlockModel): number {
-        let s: SpriteModel = this.interp.targetSprite();
+    private primXPosition(b: BlockModel, interp: Interpreter): number {
+        let s: SpriteModel = interp.targetSprite();
         return (s != null) ? this.snapToInteger(s.x) : 0;
     }
 
-    private primYPosition(b: BlockModel): number {
-        let s: SpriteModel = this.interp.targetSprite();
+    private primYPosition(b: BlockModel, interp: Interpreter): number {
+        let s: SpriteModel = interp.targetSprite();
         return (s != null) ? this.snapToInteger(s.y) : 0;
     }
 
-    private primDirection(b: BlockModel): number {
-        let s: SpriteModel = this.interp.targetSprite();
+    private primDirection(b: BlockModel, interp: Interpreter): number {
+        let s: SpriteModel = interp.targetSprite();
         return (s != null) ? this.snapToInteger(s.direction) : 0;
     }
 
@@ -203,21 +198,21 @@ export class MotionAndPenPrims {
         return (delta < 0.00000001) ? rounded : n;
     }
 
-    private primClear(b: BlockModel): void {
-        this.stage.runtime.clearPenStrokes()
+    private primClear(b: BlockModel, interp: Interpreter): void {
+        interp.stage.runtime.clearPenStrokes()
         ;
-        this.interp.redraw();
+        interp.redraw();
     }
 
-    private primPenDown(b: BlockModel): void {
-        let s: SpriteModel = this.interp.targetSprite();
+    private primPenDown(b: BlockModel, interp: Interpreter): void {
+        let s: SpriteModel = interp.targetSprite();
         if (s != null) s.runtime.penIsDown = true;
-        this.touch(s, s.x, s.y);
-        this.interp.redraw();
+        this.touch(s, interp, s.x, s.y);
+        interp.redraw();
     }
 
-    private touch(s: SpriteModel, x: number, y: number): void {
-        // let g: Graphics = this.stage.newPenStrokes.graphics;
+    private touch(s: SpriteModel, interp: Interpreter, x: number, y: number): void {
+        // let g: Graphics = interp.stage.newPenStrokes.graphics;
         // // g.lineStyle();
         // let alpha: number = (0xFF & (s.runtime.penColorCache >> 24)) / 0xFF;
         // if (alpha === 0) alpha = 1;
@@ -225,51 +220,51 @@ export class MotionAndPenPrims {
         // g.drawCircle(240 + x, 180 - y, s.runtime.penWidth / 2);
         // g.endFill();
         console.log("todo touch");
-        this.stage.runtime.penActivity = true;
+        interp.stage.runtime.penActivity = true;
     }
 
-    private primPenUp(b: BlockModel): void {
-        let s: SpriteModel = this.interp.targetSprite();
+    private primPenUp(b: BlockModel, interp: Interpreter): void {
+        let s: SpriteModel = interp.targetSprite();
         if (s != null) s.runtime.penIsDown = false;
     }
 
-    private primSetPenColor(b: BlockModel): void {
-        let s: SpriteModel = this.interp.targetSprite();
-        if (s != null) s.runtime.setPenColor(this.interp.numarg(b, 0));
+    private primSetPenColor(b: BlockModel, interp: Interpreter): void {
+        let s: SpriteModel = interp.targetSprite();
+        if (s != null) s.runtime.setPenColor(interp.numarg(b, 0));
     }
 
-    private primSetPenHue(b: BlockModel): void {
-        let s: SpriteModel = this.interp.targetSprite();
-        if (s != null) s.runtime.setPenHue(this.interp.numarg(b, 0));
+    private primSetPenHue(b: BlockModel, interp: Interpreter): void {
+        let s: SpriteModel = interp.targetSprite();
+        if (s != null) s.runtime.setPenHue(interp.numarg(b, 0));
     }
 
-    private primChangePenHue(b: BlockModel): void {
-        let s: SpriteModel = this.interp.targetSprite();
-        if (s != null) s.runtime.setPenHue(s.runtime.penHue + this.interp.numarg(b, 0));
+    private primChangePenHue(b: BlockModel, interp: Interpreter): void {
+        let s: SpriteModel = interp.targetSprite();
+        if (s != null) s.runtime.setPenHue(s.runtime.penHue + interp.numarg(b, 0));
     }
 
-    private primSetPenShade(b: BlockModel): void {
-        let s: SpriteModel = this.interp.targetSprite();
-        if (s != null) s.runtime.setPenShade(this.interp.numarg(b, 0));
+    private primSetPenShade(b: BlockModel, interp: Interpreter): void {
+        let s: SpriteModel = interp.targetSprite();
+        if (s != null) s.runtime.setPenShade(interp.numarg(b, 0));
     }
 
-    private primChangePenShade(b: BlockModel): void {
-        let s: SpriteModel = this.interp.targetSprite();
-        if (s != null) s.runtime.setPenShade(s.runtime.penShade + this.interp.numarg(b, 0));
+    private primChangePenShade(b: BlockModel, interp: Interpreter): void {
+        let s: SpriteModel = interp.targetSprite();
+        if (s != null) s.runtime.setPenShade(s.runtime.penShade + interp.numarg(b, 0));
     }
 
-    private primSetPenSize(b: BlockModel): void {
-        let s: SpriteModel = this.interp.targetSprite();
-        if (s != null) s.runtime.setPenSize(Math.max(1, Math.min(960, Math.round(this.interp.numarg(b, 0)))));
+    private primSetPenSize(b: BlockModel, interp: Interpreter): void {
+        let s: SpriteModel = interp.targetSprite();
+        if (s != null) s.runtime.setPenSize(Math.max(1, Math.min(960, Math.round(interp.numarg(b, 0)))));
     }
 
-    private primChangePenSize(b: BlockModel): void {
-        let s: SpriteModel = this.interp.targetSprite();
-        if (s != null) s.runtime.setPenSize(s.runtime.penWidth + this.interp.numarg(b, 0));
+    private primChangePenSize(b: BlockModel, interp: Interpreter): void {
+        let s: SpriteModel = interp.targetSprite();
+        if (s != null) s.runtime.setPenSize(s.runtime.penWidth + interp.numarg(b, 0));
     }
 
-    private primStamp(b: BlockModel): void {
-        let s: SpriteModel = this.interp.targetSprite();
+    private primStamp(b: BlockModel, interp: Interpreter): void {
+        let s: SpriteModel = interp.targetSprite();
         // In 3D mode, get the alpha from the ghost filter
         // Otherwise, it can be easily accessed from the color transform.
         // let alpha: number = (Scratch.app.isIn3D ?
@@ -279,35 +274,35 @@ export class MotionAndPenPrims {
 //        .transform.colorTransform.alphaMultiplier;
 
 
-        this.doStamp(s, alpha);
+        this.doStamp(s, alpha, interp);
     }
 
-    private doStamp(s: SpriteModel, stampAlpha: number): void {
+    private doStamp(s: SpriteModel, stampAlpha: number, interp: Interpreter): void {
         if (s === null) return;
-        this.stage.runtime.stampSprite(s, stampAlpha);
-        this.interp.redraw();
+        interp.stage.runtime.stampSprite(s, stampAlpha);
+        interp.redraw();
     }
 
-    private moveSpriteTo(s: SpriteModel, newX: number, newY: number): void {
+    private moveSpriteTo(s: SpriteModel, interp: Interpreter, newX: number, newY: number): void {
         if (!(s.parent instanceof StageModel)) return; // don "t move while being dragged
         let oldX: number = s.x;
         let oldY: number = s.y;
         s.runtime.setXY(newX, newY);
         s.runtime.keepOnStage();
-        if (s.runtime.penIsDown) this.stroke(s, oldX, oldY, s.x, s.y);
-        if ((s.runtime.penIsDown) || (s.visible)) this.interp.redraw();
+        if (s.runtime.penIsDown) this.stroke(s, interp, oldX, oldY, s.x, s.y);
+        if ((s.runtime.penIsDown) || (s.visible)) interp.redraw();
     }
 
-    private stroke(s: SpriteModel, oldX: number, oldY: number, newX: number, newY: number): void {
+    private stroke(s: SpriteModel, interp: Interpreter, oldX: number, oldY: number, newX: number, newY: number): void {
         console.log("todo stroke");
-        // let g: Graphics = this.stage.newPenStrokes.graphics;
+        // let g: Graphics = interp.stage.newPenStrokes.graphics;
         // let alpha: number = (0xFF & (s.runtime.penColorCache >> 24)) / 0xFF;
         // if (alpha === 0) alpha = 1;
         // g.lineStyle(s.runtime.penWidth, 0xFFFFFF & s.runtime.penColorCache, alpha);
         // g.moveTo(240 + oldX, 180 - oldY);
         // g.lineTo(240 + newX, 180 - newY);
         // trace( "pen line( "+oldX+ ",  "+oldY+ ",  "+newX+ ",  "+newY+ ") ");
-        this.stage.runtime.penActivity = true;
+        interp.stage.runtime.penActivity = true;
     }
 
     private turnAwayFromEdge(s: SpriteModel): boolean {
@@ -340,15 +335,15 @@ export class MotionAndPenPrims {
         return true;
     }
 
-    private ensureOnStageOnBounce(s: SpriteModel): void {
+    private ensureOnStageOnBounce(s: SpriteModel, interp: Interpreter): void {
         let r: Rectangle = s.runtime.bounds();
-        if (r.left < 0) this.moveSpriteTo(s, s.x - r.left, s.y);
-        if (r.top < 0) this.moveSpriteTo(s, s.x, s.y + r.top);
+        if (r.left < 0) this.moveSpriteTo(s, interp, s.x - r.left, s.y);
+        if (r.top < 0) this.moveSpriteTo(s, interp, s.x, s.y + r.top);
         if (r.right > StageModel.STAGEW) {
-            this.moveSpriteTo(s, s.x - (r.right - StageModel.STAGEW), s.y);
+            this.moveSpriteTo(s, interp, s.x - (r.right - StageModel.STAGEW), s.y);
         }
         if (r.bottom > StageModel.STAGEH) {
-            this.moveSpriteTo(s, s.x, s.y + (r.bottom - StageModel.STAGEH));
+            this.moveSpriteTo(s, interp, s.x, s.y + (r.bottom - StageModel.STAGEH));
         }
     }
 

@@ -28,7 +28,7 @@ export class ModelService {
     console.log("reading project file:" + projectUrl);
     this.http.get(projectUrl).subscribe((res: Response) => {
       let json = JSON.parse(res["_body"]);
-      console.log("Reading project", JSON.stringify(json));
+      // console.log("Reading project", JSON.stringify(json));
 
       // var scratch: Scratch = new Scratch();
       let projectIO: ProjectIO = new ProjectIO();

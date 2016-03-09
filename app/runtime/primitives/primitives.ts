@@ -21,65 +21,64 @@ export class Primitives {
 
     private MaxCloneCount: number = 300;
 
-    protected stage: StageModel;
-    protected interp: Interpreter;
     private counter: number;
 
-    constructor(stage: StageModel, interpreter: Interpreter) {
-        this.stage = stage;
-        this.interp = interpreter;
+    constructor() {
+
     }
 
     public addPrimsTo(primTable: any) {
-        // operators
-        primTable["+"] = function(b: any): any { return this.interp.numarg(this.b, 0) + this.interp.numarg(this.b, 1); };
-        primTable["-"] = function(b: any): any { return this.interp.numarg(this.b, 0) - this.interp.numarg(this.b, 1); };
-        primTable["*"] = function(b: any): any { return this.interp.numarg(this.b, 0) * this.interp.numarg(this.b, 1); };
-        primTable["/"] = function(b: any): any { return this.interp.numarg(this.b, 0) / this.interp.numarg(this.b, 1); };
-        primTable["randomFrom:to:"] = this.primRandom;
-        primTable["<"] = function(b: any): any { return Primitives.compare(this.interp.arg(this.b, 0), this.interp.arg(this.b, 1)) < 0; };
-        primTable["="] = function(b: any): any { return Primitives.compare(this.interp.arg(this.b, 0), this.interp.arg(this.b, 1)) === 0; };
-        primTable[">"] = function(b: any): any { return Primitives.compare(this.interp.arg(this.b, 0), this.interp.arg(this.b, 1)) > 0; };
-        primTable["&"] = function(b: any): any { return this.interp.arg(this.b, 0) && this.interp.arg(this.b, 1); };
-        primTable["|"] = function(b: any): any { return this.interp.arg(this.b, 0) || this.interp.arg(this.b, 1); };
-        primTable["not"] = function(b: any): any { return !this.interp.arg(this.b, 0); };
-        primTable["abs"] = function(b: any): any { return Math.abs(this.interp.numarg(this.b, 0)); };
-        primTable["sqrt"] = function(b: any): any { return Math.sqrt(this.interp.numarg(this.b, 0)); };
 
-        primTable["concatenate:with:"] = function(b: any): any { return ("" + this.interp.arg(this.b, 0) + this.interp.arg(this.b, 1)).substr(0, 10240); };
+        primTable["noop"] = function(b: any, interp: Interpreter): any { };
+        // operators
+        primTable["+"] = function(b: any, interp: Interpreter): any { return interp.numarg(this.b, 0) + interp.numarg(this.b, 1); };
+        primTable["-"] = function(b: any, interp: Interpreter): any { return interp.numarg(this.b, 0) - interp.numarg(this.b, 1); };
+        primTable["*"] = function(b: any, interp: Interpreter): any { return interp.numarg(this.b, 0) * interp.numarg(this.b, 1); };
+        primTable["/"] = function(b: any, interp: Interpreter): any { return interp.numarg(this.b, 0) / interp.numarg(this.b, 1); };
+        primTable["randomFrom:to:"] = this.primRandom;
+        primTable["<"] = function(b: any, interp: Interpreter): any { return Primitives.compare(interp.arg(this.b, 0), interp.arg(this.b, 1)) < 0; };
+        primTable["="] = function(b: any, interp: Interpreter): any { return Primitives.compare(interp.arg(this.b, 0), interp.arg(this.b, 1)) === 0; };
+        primTable[">"] = function(b: any, interp: Interpreter): any { return Primitives.compare(interp.arg(this.b, 0), interp.arg(this.b, 1)) > 0; };
+        primTable["&"] = function(b: any, interp: Interpreter): any { return interp.arg(this.b, 0) && interp.arg(this.b, 1); };
+        primTable["|"] = function(b: any, interp: Interpreter): any { return interp.arg(this.b, 0) || interp.arg(this.b, 1); };
+        primTable["not"] = function(b: any, interp: Interpreter): any { return !interp.arg(this.b, 0); };
+        primTable["abs"] = function(b: any, interp: Interpreter): any { return Math.abs(interp.numarg(this.b, 0)); };
+        primTable["sqrt"] = function(b: any, interp: Interpreter): any { return Math.sqrt(interp.numarg(this.b, 0)); };
+
+        primTable["concatenate:with:"] = function(b: any, interp: Interpreter): any { return ("" + interp.arg(this.b, 0) + interp.arg(this.b, 1)).substr(0, 10240); };
         primTable["letter:of:"] = this.primLetterOf;
-        primTable["stringLength:"] = function(b: any): any { return String(this.interp.arg(this.b, 0)).length; };
+        primTable["stringLength:"] = function(b: any, interp: Interpreter): any { return String(interp.arg(this.b, 0)).length; };
 
         primTable["%"] = this.primModulo;
-        primTable["rounded"] = function(b: any): any { return Math.round(this.interp.numarg(this.b, 0)); };
+        primTable["rounded"] = function(b: any, interp: Interpreter): any { return Math.round(interp.numarg(this.b, 0)); };
         primTable["computeFunction:of:"] = this.primMathFunction;
 
         // clone
         primTable["createCloneOf"] = this.primCreateCloneOf;
         primTable["deleteClone"] = this.primDeleteClone;
-        primTable["whenCloned"] = this.interp.primNoop;
+        primTable["whenCloned"] = primTable["noop"];
 
+        primTable["NOOP"] = primTable["noop"];
         // testing (for development)
-        primTable["NOOP"] = this.interp.primNoop;
-        primTable["COUNT"] = function(b: any): any { return this.counter; };
-        primTable["INCR_COUNT"] = function(b: any): any { this.counter++; };
-        primTable["CLR_COUNT"] = function(b: any): any { this.counter = 0; };
+        primTable["COUNT"] = function(b: any, interp: Interpreter): any { return this.counter; };
+        primTable["INCR_COUNT"] = function(b: any, interp: Interpreter): any { this.counter++; };
+        primTable["CLR_COUNT"] = function(b: any, interp: Interpreter): any { this.counter = 0; };
 
-        new LooksPrims(this.stage, this.interp).addPrimsTo(primTable);
-        new MotionAndPenPrims(this.stage, this.interp).addPrimsTo(primTable);
-        new SoundPrims(this.stage, this.interp).addPrimsTo(primTable);
-        new VideoMotionPrims(this.stage, this.interp).addPrimsTo(primTable);
+        new LooksPrims().addPrimsTo(primTable);
+        new MotionAndPenPrims().addPrimsTo(primTable);
+        new SoundPrims().addPrimsTo(primTable);
+        new VideoMotionPrims().addPrimsTo(primTable);
         this.addOtherPrims(primTable);
     }
 
     protected addOtherPrims(primTable: any): void {
-        new SensingPrims(this.stage, this.interp).addPrimsTo(primTable);
-        new ListPrims(this.stage, this.interp).addPrimsTo(primTable);
+        new SensingPrims().addPrimsTo(primTable);
+        new ListPrims().addPrimsTo(primTable);
     }
 
-    private primRandom(b: BlockModel): number {
-        let n1: number = this.interp.numarg(b, 0);
-        let n2: number = this.interp.numarg(b, 1);
+    private primRandom(b: BlockModel, interp: Interpreter): number {
+        let n1: number = interp.numarg(b, 0);
+        let n2: number = interp.numarg(b, 1);
         let low: number = (n1 <= n2) ? n1 : n2;
         let hi: number = (n1 <= n2) ? n2 : n1;
         if (low === hi) return low;
@@ -95,24 +94,24 @@ export class Primitives {
         return (Math.random() * (hi - low)) + low;
     }
 
-    private primLetterOf(b: BlockModel): string {
-        let s: string = this.interp.arg(b, 1);
-        let i: number = this.interp.numarg(b, 0) - 1;
+    private primLetterOf(b: BlockModel, interp: Interpreter): string {
+        let s: string = interp.arg(b, 1);
+        let i: number = interp.numarg(b, 0) - 1;
         if ((i < 0) || (i >= s.length)) return "";
         return s.charAt(i);
     }
 
-    private primModulo(b: BlockModel): number {
-        let n: number = this.interp.numarg(b, 0);
-        let modulus: number = this.interp.numarg(b, 1);
+    private primModulo(b: BlockModel, interp: Interpreter): number {
+        let n: number = interp.numarg(b, 0);
+        let modulus: number = interp.numarg(b, 1);
         let result: number = n % modulus;
         if (result / modulus < 0) result += modulus;
         return result;
     }
 
-    private primMathFunction(b: BlockModel): number {
-        let op: any = this.interp.arg(b, 0);
-        let n: number = this.interp.numarg(b, 1);
+    private primMathFunction(b: BlockModel, interp: Interpreter): number {
+        let op: any = interp.arg(b, 0);
+        let n: number = interp.numarg(b, 1);
         switch (op) {
             case "abs": return Math.abs(n);
             case "floor": return Math.floor(n);
@@ -160,11 +159,11 @@ export class Primitives {
         return 1;
     }
 
-    private primCreateCloneOf(b: BlockModel) {
+    private primCreateCloneOf(b: BlockModel, interp: Interpreter) {
       console.log("todo create clone");
-        // let objName: string = this.interp.arg(b, 0);
+        // let objName: string = interp.arg(b, 0);
         // let proto: SpriteModel = this.stage.stage.spriteNamed(objName);
-        // if ("_myself_" === objName) proto = this.interp.activeThread.target;
+        // if ("_myself_" === objName) proto = interp.activeThread.target;
         // if (!proto) return;
         // if (this.stage.runtime.cloneCount > this.MaxCloneCount) return;
         // let clone: SpriteModel = new SpriteModel();
@@ -178,15 +177,15 @@ export class Primitives {
         // clone.isClone = true;
         // for (let stack of clone.scripts) {
         //     if (stack.firstBlock.spec.code === "whenCloned") {
-        //         this.interp.startThreadForClone(stack, clone);
+        //         interp.startThreadForClone(stack, clone);
         //     }
         // }
         // this.stage.runtime.cloneCount++;
     }
 
-    private primDeleteClone(b: BlockModel): void {
+    private primDeleteClone(b: BlockModel, interp: Interpreter): void {
       console.log("todo delete clone");
-        // let clone: SpriteModel = this.interp.targetSprite();
+        // let clone: SpriteModel = interp.targetSprite();
         // if ((clone === null) || (!clone.isClone) || (clone.parent === null)) return;
         // if (clone.bubble && clone.bubble.parent) clone.bubble.parent.removeChild(clone.bubble);
         // clone.parent.removeChild(clone);

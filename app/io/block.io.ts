@@ -100,7 +100,7 @@ export class BlockIO {
         }
 
         let args: any[] = BlockIO.argsForCmd(cmd, b.spec.argCount, b.rightToLeft);
-        console.log(b.spec.label + " with args " + args);
+        // console.log(b.spec.label + " with args " + args);
         let substacks: any[] = BlockIO.substacksForCmd(cmd, args.length);
         let hadSpriteRef: boolean;
         for (let i: number = 0; i < args.length; i++) {
