@@ -70,12 +70,12 @@ export class BlockArgModel {
           switch (argCode) {
             case "b":
               this.type = ArgType.Boolean;
-              this.shape = new BooleanShape(spec);
+              this.shape = new BooleanShape(spec, undefined);
               this.argValue = false;
               return;
             case "c":
               this.type = ArgType.ColorPicker;
-              this.shape = new RectangleShape(spec);
+              this.shape = new RectangleShape(spec, undefined);
               this.menuName = "colorPicker";
               // this.addEventListener(MouseEvent.MOUSE_DOWN, this.invokeMenu);
 
@@ -85,28 +85,28 @@ export class BlockArgModel {
               this.editable = true;
               this.menuName = part.slice(3);
               this.addMenuIcon();
-              this.shape = new NumberShape(spec);
+              this.shape = new NumberShape(spec, undefined);
               // this.addEventListener(MouseEvent.MOUSE_DOWN, this.invokeMenu);
               return;
             case "m":
               this.type = ArgType.Menu;
               this.menuName = part.slice(3);
-              this.shape = new RectangleShape(spec);
+              this.shape = new RectangleShape(spec, undefined);
               this.addMenuIcon();
               // this.addEventListener(MouseEvent.MOUSE_DOWN, this.invokeMenu);
 
               return;
             case "n":
               this.type = ArgType.Number;
-              this.shape = new NumberShape(spec);
+              this.shape = new NumberShape(spec, undefined);
               this.numberType = BlockArgModel.NT_FLOAT;
-              this.shape = new NumberShape(spec);
+              this.shape = new NumberShape(spec, undefined);
               this.numberType = BlockArgModel.NT_FLOAT;
               this.argValue = 0;
               return;
             case "s":
               this.type = ArgType.UnknownS;
-              this.shape = new RectangleShape(spec);
+              this.shape = new RectangleShape(spec, undefined);
               return;
             default:
               // custom type; subclass is responsible for adding
@@ -119,13 +119,13 @@ export class BlockArgModel {
 
         this.type = ArgType.Icon;
         this.iconName = part.slice(1);
-        this.shape = new IconShape(spec, this.iconName);
+        this.shape = new IconShape(spec, undefined, this.iconName);
           // let icon: any = Specs.IconNamed(s.slice(1));
           // return (icon) ? icon : this.makeLabel(s);
       }
       else {
         this.type = ArgType.Label;
-        this.shape = new TextShape(spec, part);
+        this.shape = new TextShape(spec, undefined, part);
         this.isArgument = false;
       }
 
