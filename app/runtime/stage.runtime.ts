@@ -1,3 +1,5 @@
+import {AssetIO} from "../io/asset.io";
+import {CostumeModel} from "../model/costume.model";
 import {ScriptModel} from "../model/script.model";
 import {ObjectModel} from "../model/object.model";
 import {BlockModel} from "../model/block.model";
@@ -125,6 +127,19 @@ export class StageRuntime extends ObjectRuntime {
         if (setDoObj) this.currentDoObject = stage;
         for (stack of stage.scripts) f(stack.firstBlock, stage);
         this.currentDoObject = null;
+    }
+
+    showCostumeNamed(costumeName: string) {
+        this.stage.costumes.forEach (costume => {
+            if (costume.name === costumeName) {
+              let s = Snap("#svg-stage");
+
+              let backgroundUrl = "http://cdn.assets.scratch.mit.edu/internalapi/asset/" + costume.md5 + "/get/";
+              s.image(backgroundUrl, -240, -180, 480, 360);
+
+            }
+        });
+
     }
 
     threadStarted() {

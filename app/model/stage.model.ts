@@ -42,10 +42,6 @@ export class StageModel extends ObjectModel {
       }
     }
 
-    showCostumeNamed(costumeName: string) {
-        console.log("todo: showCostumeNamed:" + costumeName);
-    }
-
 }
 
 export class PenModel {

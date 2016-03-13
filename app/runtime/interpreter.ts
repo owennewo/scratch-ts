@@ -574,7 +574,7 @@ export class Interpreter {
             let newThreads: any[] = [];
             msg = msg.toLowerCase();
             let findReceivers: Function = function(stack: BlockModel, target: ObjectModel): void {
-                if ((this.stack.op === "whenIReceive") && (this.stack.args[0].argValue.toLowerCase() === msg)) {
+                if ((stack.spec.code === "whenIReceive") && (this.stack.args[0].argValue.toLowerCase() === msg)) {
                     receivers.push([this.stack, this.target]);
                 }
             };
@@ -599,12 +599,12 @@ export class Interpreter {
         let pair: any[];
         if (this.activeThread.firstTime) {
             function findSceneHats(stack: BlockModel, target: ObjectModel): void {
-                if ((this.stack.op === "whenSceneStarts") && (this.stack.args[0].argValue === sceneName)) {
+                if ((stack.spec.code === "whenSceneStarts") && (this.stack.args[0].argValue === sceneName)) {
                     receivers.push([this.stack, this.target]);
                 }
             }
             let receivers: any[] = [];
-            this.stage.showCostumeNamed(sceneName);
+            this.stage.runtime.showCostumeNamed(sceneName);
             this.redraw();
             this.stage.runtime.allStacksAndOwnersDo(findSceneHats);
             // (re)start all receivers

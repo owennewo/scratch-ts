@@ -46,7 +46,7 @@ export class SoundPrims {
     private primPlaySound(b: BlockModel, interp: Interpreter): void {
       console.log("primPlaySound");
         // let snd: ScratchSound = interp.targetObj().findSound(interp.arg(b, 0));
-        // if (snd != null) this.playSound(snd, interp.targetObj());
+        // if (snd != null) SoundPrims.playSound(snd, interp.targetObj());
     }
 
     private primPlaySoundUntilDone(b: BlockModel, interp: Interpreter): void {
@@ -55,7 +55,7 @@ export class SoundPrims {
         // if (activeThread.firstTime) {
         //     let snd: ScratchSound = interp.targetObj().findSound(interp.arg(b, 0));
         //     if (snd == null) return;
-        //     activeThread.tmpObj = this.playSound(snd, interp.targetObj());
+        //     activeThread.tmpObj = SoundPrims.playSound(snd, interp.targetObj());
         //     activeThread.firstTime = false;
         // }
         // let player: ScratchSoundPlayer = activeThread.tmpObj;
@@ -73,8 +73,8 @@ export class SoundPrims {
         // if (s == null) return;
         // if (interp.activeThread.firstTime) {
         //     let key: number = interp.numarg(b, 0);
-        //     let secs: number = this.beatsToSeconds(interp.numarg(b, 1));
-        //     interp.activeThread.tmpObj = this.playNote(s.instrument, key, secs, s);
+        //     let secs: number = SoundPrims.beatsToSeconds(interp.numarg(b, 1));
+        //     interp.activeThread.tmpObj = SoundPrims.playNote(s.instrument, key, secs, s);
         //     interp.startTimer(secs);
         // } else {
         //     interp.checkTimer();
@@ -87,15 +87,15 @@ export class SoundPrims {
         if (interp.activeThread.firstTime) {
             let drum: number = Math.round(interp.numarg(b, 0));
             let isMIDI: boolean = (b.spec.code === "drum:duration:elapsed:from:");
-            let secs: number = this.beatsToSeconds(interp, interp.numarg(b, 1));
-            this.playDrum(drum, isMIDI, 10, s); // always play entire drum sample
+            let secs: number = SoundPrims.beatsToSeconds(interp, interp.numarg(b, 1));
+            SoundPrims.playDrum(drum, isMIDI, 10, s); // always play entire drum sample
             interp.startTimer(secs);
         } else {
             interp.checkTimer();
         }
     }
 
-    private playSound(s: any /* ScratchSound */, client: ObjectModel): any { // ScratchSoundPlayer {
+    private static playSound(s: any /* ScratchSound */, client: ObjectModel): any { // ScratchSoundPlayer {
         console.log("todo playSound");
         // let player: ScratchSoundPlayer = s.sndplayer();
         // player.client = client;
@@ -103,7 +103,7 @@ export class SoundPrims {
         // return player;
     }
 
-    private playDrum(drum: number, isMIDI: boolean, secs: number, client: ObjectModel): any { // ScratchSoundPlayer {
+    private static playDrum(drum: number, isMIDI: boolean, secs: number, client: ObjectModel): any { // ScratchSoundPlayer {
       console.log("todo playDrum");
         // let player: NotePlayer = SoundBank.getDrumPlayer(drum, isMIDI, secs);
         // if (player == null) return null;
@@ -113,7 +113,7 @@ export class SoundPrims {
         // return player;
     }
 
-    private playNote(instrument: number, midiKey: number, secs: number, client: ObjectModel): any { // ScratchSoundPlayer {
+    private static playNote(instrument: number, midiKey: number, secs: number, client: ObjectModel): any { // ScratchSoundPlayer {
       console.log("todo playNote");
         // let player: NotePlayer = SoundBank.getNotePlayer(instrument, midiKey);
         // if (player == null) return null;
@@ -127,14 +127,14 @@ export class SoundPrims {
         let s: ObjectModel = interp.targetObj();
         if (s == null) return;
         if (interp.activeThread.firstTime) {
-            let secs: number = this.beatsToSeconds(interp, interp.numarg(b, 0));
+            let secs: number = SoundPrims.beatsToSeconds(interp, interp.numarg(b, 0));
             interp.startTimer(secs);
         } else {
             interp.checkTimer();
         }
     }
 
-    private beatsToSeconds(interp: Interpreter, beats: number): number {
+    private static beatsToSeconds(interp: Interpreter, beats: number): number {
         return (beats * 60) / interp.stage.tempo;
     }
 
@@ -144,7 +144,7 @@ export class SoundPrims {
         // let instr: number = interp.numarg(b, 0) - 1;
         // if (b.spec.code === "midiInstrument:") {
         //     // map old to new instrument number
-        //     instr = this.instrumentMap[instr] - 1; // maps to -1 if out of range
+        //     instr = SoundPrims.instrumentMap[instr] - 1; // maps to -1 if out of range
         // }
         // instr = Math.max(0, Math.min(instr, SoundBank.instrumentNames.length - 1));
         // if (interp.targetObj()) interp.targetObj().instrument = instr;

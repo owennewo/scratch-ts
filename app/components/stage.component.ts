@@ -7,7 +7,7 @@ import {Component, Inject} from "angular2/core";
     template: `
 
         <div id="stage-header">stage header<a class="button" (click)="start()">Start</a><a class="button" (click)="stop()">Stop</a></div>
-        <div id="stage-content">stage content</div>
+        <div id="stage-content"><svg id="svg-stage" viewBox=\"-240 -180 480 360\"></svg></div>
 
   `,
     styles: [`

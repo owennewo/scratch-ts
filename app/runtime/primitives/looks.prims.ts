@@ -27,14 +27,14 @@ export class LooksPrims {
         primTable["nextBackground"] = this.primNextCostume; // used by Scratch 1.4 and earlier (doesn"t start scene hats)
         primTable["backgroundIndex"] = this.primSceneIndex;
         primTable["sceneName"] = this.primSceneName;
-        primTable["nextScene"] = function(b: any): any { this.startScene("next backdrop", false); };
-        primTable["startScene"] = function(b: any, interp: Interpreter): any { this.startScene(interp.arg(this.b, 0), false); };
-        primTable["startSceneAndWait"] = function(b: any, interp: Interpreter): any { this.startScene(interp.arg(this.b, 0), true); };
+        primTable["nextScene"] = (b: any, interp: Interpreter): any => { this.startScene(interp, "next backdrop", false); };
+        primTable["startScene"] = (b: any, interp: Interpreter): any => { this.startScene(interp, interp.arg(b, 0), false); };
+        primTable["startSceneAndWait"] = (b: any, interp: Interpreter): any => { this.startScene(interp, interp.arg(b, 0), true); };
 
-        primTable["say:duration:elapsed:from:"] = function(b: any): any { this.showBubbleAndWait(this.b, "talk"); };
-        primTable["say:"] = function(b: any): any { this.showBubble(this.b, "talk"); };
-        primTable["think:duration:elapsed:from:"] = function(b: any): any { this.showBubbleAndWait(this.b, "think"); };
-        primTable["think:"] = function(b: any): any { this.showBubble(this.b, "think"); };
+        primTable["say:duration:elapsed:from:"] = function(b: any): any { this.showBubbleAndWait(b, "talk"); };
+        primTable["say:"] = function(b: any): any { this.showBubble(b, "talk"); };
+        primTable["think:duration:elapsed:from:"] = function(b: any): any { this.showBubbleAndWait(b, "think"); };
+        primTable["think:"] = function(b: any): any { this.showBubble(b, "think"); };
 
         primTable["changeGraphicEffect:by:"] = this.primChangeEffect;
         primTable["setGraphicEffect:to:"] = this.primSetEffect;
@@ -111,8 +111,8 @@ export class LooksPrims {
     }
 
     private startScene(interp: Interpreter, s: string, waitFlag: boolean): void {
-        if ("next backdrop" === s) s = this.backdropNameAt(interp, interp.stage.currentCostumeIndex + 1);
-        else if ("previous backdrop" === s) s = this.backdropNameAt(interp, interp.stage.currentCostumeIndex - 1);
+        if ("next backdrop" === s) s = LooksPrims.backdropNameAt(interp, interp.stage.currentCostumeIndex + 1);
+        else if ("previous backdrop" === s) s = LooksPrims.backdropNameAt(interp, interp.stage.currentCostumeIndex - 1);
         else {
             let n: number = Interpreter.asNumber(s);
             if (!isNaN(n)) {
@@ -124,7 +124,7 @@ export class LooksPrims {
         interp.startScene(s, waitFlag);
     }
 
-    private backdropNameAt(interp: Interpreter, i: number): string {
+    private static backdropNameAt(interp: Interpreter, i: number): string {
         let costumes: any[] = interp.stage.costumes;
         return costumes[(i + costumes.length) % costumes.length].costumeName;
     }
@@ -266,7 +266,7 @@ export class LooksPrims {
         // let s: SpriteModel = interp.targetSprite();
         // if ((s === null) || (s.parent === null)) return;
         // let newIndex: number = s.parent.getChildIndex(s) - interp.numarg(b, 0);
-        // newIndex = Math.max(this.minSpriteLayer(), Math.min(newIndex, s.parent.numChildren - 1));
+        // newIndex = Math.max(LooksPrims.minSpriteLayer(), Math.min(newIndex, s.parent.numChildren - 1));
         //
         // if (newIndex > 0 && newIndex < s.parent.numChildren) {
         //     s.parent.setChildIndex(s, newIndex);
