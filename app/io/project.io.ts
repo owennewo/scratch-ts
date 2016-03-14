@@ -11,19 +11,19 @@ import {BlockIO} from "./block.io";
 
 export class ProjectIO {
 
-    readProject(jsonProject: any): StageModel {
+    readProject(jsonStage: any): StageModel {
 
-        let project: StageModel = new StageModel();
+        let stage: StageModel = new StageModel();
 
-        this.readObject(project, jsonProject);
-        project.tempo = jsonProject.tempoBPM;
-        project.videoAlpha = jsonProject.videoAlpha;
+        this.readObject(stage, jsonStage);
+        stage.tempo = jsonStage.tempoBPM;
+        stage.videoAlpha = jsonStage.videoAlpha;
 
 
-        project.children = this.readSprites(jsonProject.children);
-        project.info = this.readProjectInfo(jsonProject.info);
+        stage.children = this.readSprites(jsonStage.children, stage);
+        stage.info = this.readProjectInfo(jsonStage.info);
 
-        return project;
+        return stage;
     }
 
     readObject(object: ObjectModel, jsonProject: any) {
@@ -35,7 +35,7 @@ export class ProjectIO {
     }
 
     /** SPRITES READ */
-    readSprites(jsonSprites): SpriteModel[] {
+    readSprites(jsonSprites, stage: StageModel): SpriteModel[] {
         let sprites: SpriteModel[] = [];
         for (let jsonSprite of jsonSprites) {
           if (!jsonSprite.objName) {
@@ -43,7 +43,7 @@ export class ProjectIO {
             continue;
           }
 
-            let sprite: SpriteModel = new SpriteModel();
+            let sprite: SpriteModel = new SpriteModel(stage);
             this.readObject(sprite, jsonSprite);
             sprite.x = jsonSprite.scratchX;
             sprite.y = jsonSprite.scratchY;

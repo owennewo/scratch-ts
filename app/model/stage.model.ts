@@ -6,7 +6,7 @@ export class StageModel extends ObjectModel {
 
     static STAGEW = 480;
     static STAGEH = 360;
-
+    svg: Snap.Paper;
     tempo: number; // tempoBPM
     videoAlpha: number;
     children: SpriteModel[];

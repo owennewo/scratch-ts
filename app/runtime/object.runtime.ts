@@ -1,12 +1,11 @@
 import {CostumeModel} from "../model/costume.model";
-export class ObjectRuntime {
+export abstract class ObjectRuntime {
 
     visible: boolean;
     volume: number;
+    svg: any;
 
-    showCostume(costume: CostumeModel) {
-      console.log("todo showCostume runtime");
-    }
+    abstract showCostume(costume: CostumeModel);
 
     setVolume(volume: number) {
       this.volume = volume;

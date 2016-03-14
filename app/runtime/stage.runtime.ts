@@ -1,4 +1,3 @@
-import {AssetIO} from "../io/asset.io";
 import {CostumeModel} from "../model/costume.model";
 import {ScriptModel} from "../model/script.model";
 import {ObjectModel} from "../model/object.model";
@@ -33,6 +32,8 @@ export class StageRuntime extends ObjectRuntime {
         super();
         this.stage = stage;
         this.interp = new Interpreter(stage);
+        this.svg = Snap("#svg-stage");
+
     }
 
     step() {
@@ -129,14 +130,15 @@ export class StageRuntime extends ObjectRuntime {
         this.currentDoObject = null;
     }
 
+    showCostume(costume: CostumeModel) {
+      let backgroundUrl = "http://cdn.assets.scratch.mit.edu/internalapi/asset/" + costume.md5 + "/get/";
+      this.svg.image(backgroundUrl, -240, -180, 480, 360);
+    }
+
     showCostumeNamed(costumeName: string) {
-        this.stage.costumes.forEach (costume => {
+        this.stage.costumes.forEach ((costume, index) => {
             if (costume.name === costumeName) {
-              let s = Snap("#svg-stage");
-
-              let backgroundUrl = "http://cdn.assets.scratch.mit.edu/internalapi/asset/" + costume.md5 + "/get/";
-              s.image(backgroundUrl, -240, -180, 480, 360);
-
+              this.showCostume(this.stage.costumes[index]);
             }
         });
 
@@ -155,6 +157,13 @@ export class StageRuntime extends ObjectRuntime {
     }
 
     start() {
+      console.log("Display initial stage");
+      this.stage.showCostume(0);
+
+      this.stage.children.forEach(sprite => {
+        sprite.runtime.showCostume(sprite.currentCostume);
+      });
+
       setInterval(() => {
           console.log("timer loop (replace with requestAnimationFrame??)");
           this.interp.stepThreads();

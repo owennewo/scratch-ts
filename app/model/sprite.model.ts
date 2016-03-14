@@ -3,6 +3,7 @@ import {SpriteRuntime} from "../runtime/sprite.runtime";
 import {ObjectModel} from "./object.model";
 
 export class SpriteModel extends ObjectModel {
+    stage: StageModel;
     x: number; // scratchX
     y: number; // scratchY
     scale: number;
@@ -16,9 +17,10 @@ export class SpriteModel extends ObjectModel {
     parent: StageModel;
     runtime: SpriteRuntime;
 
-    constructor() {
+    constructor(stage: StageModel) {
       super();
-      this.runtime = new SpriteRuntime();
+      this.stage = stage;
+      this.runtime = new SpriteRuntime(this);
     }
 
     setRotationStyle(style: string) {
