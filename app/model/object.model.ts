@@ -9,14 +9,12 @@ export class ObjectModel {
     sounds: SoundModel[];
     costumes: CostumeModel[];
     currentCostumeIndex: number = 0;
-    currentCostume: CostumeModel;
 
     runtime: ObjectRuntime;
 
     showCostume(costumeIndex: number) {
         this.currentCostumeIndex = costumeIndex;
-        this.currentCostume = this.costumes[costumeIndex];
-        this.runtime.showCostume(this.currentCostume);
+        this.runtime.showCostume(this.costumes[costumeIndex]);
     }
 
     indexOfCostumeNamed(costumeName: string): number {

@@ -196,9 +196,15 @@ export class LooksPrims {
     private primChangeSize(b:  BlockModel, interp: Interpreter): void {
         let s: SpriteModel = interp.targetSprite();
         if (s === null) return;
-        let oldScale: number = s.runtime.scaleX;
-        s.runtime.setSize(s.runtime.getSize() + interp.numarg(b, 0));
+        // let oldScale: number = s.scale;
+        let oldSize = s.runtime.getSize();
+        let oldScale = s.scale;
+        let newSize = oldSize + interp.numarg(b, 0);
+        let newScale = newSize * oldScale / oldSize;
+        s.scale = newScale;
+        //s.runtime.setSize(s.runtime.getSize() + interp.numarg(b, 0));
         if (s.visible && (s.runtime.scaleX !== oldScale)) interp.redraw();
+        s.runtime.redraw();
     }
 
     private primSetRotationStyle(b:  BlockModel, interp: Interpreter): void {

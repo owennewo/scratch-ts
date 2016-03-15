@@ -71,6 +71,7 @@ export class MotionAndPenPrims {
         let s: SpriteModel = interp.targetSprite();
         if (s != null) {
             s.direction = s.direction - interp.numarg(b, 0);
+            s.runtime.redraw();
             if (s.visible) interp.redraw();
         }
     }
@@ -79,6 +80,7 @@ export class MotionAndPenPrims {
         let s: SpriteModel = interp.targetSprite();
         if (s != null) {
             s.direction = interp.numarg(b, 0);
+            s.runtime.redraw();
             if (s.visible) interp.redraw();
         }
     }
@@ -284,10 +286,13 @@ export class MotionAndPenPrims {
     }
 
     private static moveSpriteTo(s: SpriteModel, interp: Interpreter, newX: number, newY: number): void {
-        if (!(s.parent instanceof StageModel)) return; // don "t move while being dragged
+        if (!(s.stage instanceof StageModel)) return; // don "t move while being dragged
         let oldX: number = s.x;
         let oldY: number = s.y;
-        s.runtime.setXY(newX, newY);
+        s.x = newX;
+        s.y = newY;
+        s.runtime.redraw();
+        //s.runtime.setXY(newX, newY);
         s.runtime.keepOnStage();
         if (s.runtime.penIsDown) MotionAndPenPrims.stroke(s, interp, oldX, oldY, s.x, s.y);
         if ((s.runtime.penIsDown) || (s.visible)) interp.redraw();

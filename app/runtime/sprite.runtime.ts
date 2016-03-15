@@ -57,9 +57,12 @@ export class SpriteRuntime extends ObjectRuntime {
         this.penShade = color;
     }
 
-    setXY(newX, newY) {
-        this.x = newX;
-        this.y = newY;
+    redraw() {
+      let s = this.sprite;
+      // let trans = "translate(" + s.x + "," + s.y + ") rotate(" + s.direction + " " + s.x + " " + s.y + ") scale(" + s.scale + ")";
+      let trans = "translate(" + s.x + "," + (-s.y) + ") rotate(" + (s.direction - 90) + ") scale(" + s.scale + ")";
+      s.runtime.svg.transform(trans);
+      // s.runtime.svg.transform("translate(" + s.direction + "deg)");
     }
 
     setPenSize(size: number) {
@@ -79,8 +82,9 @@ export class SpriteRuntime extends ObjectRuntime {
     }
 
     getSize(): number {
-      console.log("todo getSize spriteruntime");
-      return this.size;
+      let rect = this.bounds();
+      if (rect.width > rect.height) return rect.width;
+      else return rect.height;
     }
 
     setSize(size: number) {
@@ -97,6 +101,7 @@ export class SpriteRuntime extends ObjectRuntime {
                                         }, this );
       }
       console.log("show costume");
+      this.redraw();
     }
 
 }

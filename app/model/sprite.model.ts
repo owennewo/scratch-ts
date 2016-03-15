@@ -14,7 +14,6 @@ export class SpriteModel extends ObjectModel {
     visible: boolean;
     info: SpriteInfoModel;  // spriteInfo
     videomotion = {};
-    parent: StageModel;
     runtime: SpriteRuntime;
 
     constructor(stage: StageModel) {

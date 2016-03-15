@@ -31,7 +31,7 @@ export class ProjectIO {
         object.scripts = this.readScripts(jsonProject.scripts);
         object.sounds = this.readSounds(jsonProject.sounds);
         object.costumes = this.readCostumes(jsonProject.costumes);
-        object.currentCostume = object.costumes[jsonProject.currentCostumeIndex];
+        object.currentCostumeIndex = jsonProject.currentCostumeIndex;
     }
 
     /** SPRITES READ */

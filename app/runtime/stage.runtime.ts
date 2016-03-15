@@ -17,6 +17,7 @@ export class StageRuntime extends ObjectRuntime {
     keyIsDown: any[] = new Array(128); // records key up/down state
     shiftIsDown: boolean;
     mouseIsDown: boolean;
+    background: Snap.Element;
 
     lastAnswer: string = "todo";
 
@@ -132,7 +133,18 @@ export class StageRuntime extends ObjectRuntime {
 
     showCostume(costume: CostumeModel) {
       let backgroundUrl = "http://cdn.assets.scratch.mit.edu/internalapi/asset/" + costume.md5 + "/get/";
-      this.svg.image(backgroundUrl, -240, -180, 480, 360);
+
+      if (this.background) {
+        this.background.attr({
+          href: backgroundUrl
+        });
+      } else {
+        this.background = this.svg.image(backgroundUrl, -240, -180, 480, 360);
+        this.background.attr({
+          id: "stage-background-image"
+        });
+      }
+
     }
 
     showCostumeNamed(costumeName: string) {
@@ -158,14 +170,14 @@ export class StageRuntime extends ObjectRuntime {
 
     start() {
       console.log("Display initial stage");
-      this.stage.showCostume(0);
+      this.stage.showCostume(this.stage.currentCostumeIndex);
 
       this.stage.children.forEach(sprite => {
-        sprite.runtime.showCostume(sprite.currentCostume);
+        sprite.runtime.showCostume(sprite.costumes[sprite.currentCostumeIndex]);
       });
 
       setInterval(() => {
-          console.log("timer loop (replace with requestAnimationFrame??)");
+          // console.log("timer loop (replace with requestAnimationFrame??)");
           this.interp.stepThreads();
       }, 2000);
 

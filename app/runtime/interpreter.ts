@@ -491,13 +491,13 @@ export class Interpreter {
         }
     }
 
-    private primForLoop(b: BlockModel): void {
+    private primForLoop(b: BlockModel, interp: Interpreter): void {
         let list: any[] = [];
         let loopVar: ScratchVariable;
 
-        if (this.activeThread.firstTime) {
-            if (!(this.arg(b, 0) instanceof String)) return;
-            let listArg: any = this.arg(b, 1);
+        if (interp.activeThread.firstTime) {
+            if (!(interp.arg(b, 0) instanceof String)) return;
+            let listArg: any = interp.arg(b, 1);
             if (listArg instanceof Array) {
                 list = listArg;
             }
@@ -512,57 +512,57 @@ export class Interpreter {
                     for (let i: number = 0; i < last; i++) list[i] = i + 1;
                 }
             }
-            let looplet = this.activeThread.target.lookupOrCreateVar(this.arg(b, 0));
-            this.activeThread.args = [list, loopVar];
-            this.activeThread.tmp = 0;
-            this.activeThread.firstTime = false;
+            let looplet = interp.activeThread.target.lookupOrCreateVar(interp.arg(b, 0));
+            interp.activeThread.args = [list, loopVar];
+            interp.activeThread.tmp = 0;
+            interp.activeThread.firstTime = false;
         }
 
-        list = this.activeThread.args[0];
-        let looplet = this.activeThread.args[1];
-        if (this.activeThread.tmp < list.length) {
-            loopVar.value = list[this.activeThread.tmp++];
-            this.startCmdList(b.stack1, true);
+        list = interp.activeThread.args[0];
+        let looplet = interp.activeThread.args[1];
+        if (interp.activeThread.tmp < list.length) {
+            loopVar.value = list[interp.activeThread.tmp++];
+            interp.startCmdList(b.stack1, true);
         } else {
-            this.activeThread.args = null;
-            this.activeThread.tmp = 0;
-            this.activeThread.firstTime = true;
+            interp.activeThread.args = null;
+            interp.activeThread.tmp = 0;
+            interp.activeThread.firstTime = true;
         }
     }
 
-    private primOldWarpSpeed(b: BlockModel): void {
+    private primOldWarpSpeed(b: BlockModel, interp: Interpreter): void {
         // Semi-support for old warp BlockModel: run substack at normal speed.
         if (!b.stack1) return;
-        this.startCmdList(b.stack1);
+        interp.startCmdList(b.stack1);
     }
 
-    private primRepeat(b: BlockModel): void {
-        if (this.activeThread.firstTime) {
-            let repeatCount: number = Math.max(0, Math.min(Math.round(this.numarg(b, 0)), 2147483647)); // clip to range: 0 to 2^31-1
-            this.activeThread.tmp = repeatCount;
-            this.activeThread.firstTime = false;
+    private primRepeat(b: BlockModel, interp: Interpreter): void {
+        if (interp.activeThread.firstTime) {
+            let repeatCount: number = Math.max(0, Math.min(Math.round(interp.numarg(b, 0)), 2147483647)); // clip to range: 0 to 2^31-1
+            interp.activeThread.tmp = repeatCount;
+            interp.activeThread.firstTime = false;
         }
-        if (this.activeThread.tmp > 0) {
-            this.activeThread.tmp--; // decrement count
-            this.startCmdList(b.stack1, true);
+        if (interp.activeThread.tmp > 0) {
+            interp.activeThread.tmp--; // decrement count
+            interp.startCmdList(b.stack1, true);
         } else {
-            this.activeThread.firstTime = true;
+            interp.activeThread.firstTime = true;
         }
     }
 
-    private primStop(b: BlockModel): void {
-        let type: string = this.arg(b, 0);
-        if (type === "all") { this.stage.runtime.stopAll(); this.yield = true; }
-        if (type === "this script") this.primReturn(b);
-        if (type === "other scripts in sprite") this.stopThreadsFor(this.activeThread.target, true);
-        if (type === "other scripts in stage") this.stopThreadsFor(this.activeThread.target, true);
+    private primStop(b: BlockModel, interp: Interpreter): void {
+        let type: string = interp.arg(b, 0);
+        if (type === "all") { interp.stage.runtime.stopAll(); interp.yield = true; }
+        if (type === "this script") interp.primReturn(b, interp);
+        if (type === "other scripts in sprite") interp.stopThreadsFor(interp.activeThread.target, true);
+        if (type === "other scripts in stage") interp.stopThreadsFor(interp.activeThread.target, true);
     }
 
-    private primWait(b: BlockModel): void {
-        if (this.activeThread.firstTime) {
-            this.startTimer(this.numarg(b, 0));
-            this.redraw();
-        } else this.checkTimer();
+    private primWait(b: BlockModel, interp: Interpreter): void {
+        if (interp.activeThread.firstTime) {
+            interp.startTimer(interp.numarg(b, 0));
+            interp.redraw();
+        } else interp.checkTimer();
     }
 
     // Broadcast and scene starting
@@ -626,14 +626,14 @@ export class Interpreter {
 
     // Procedure call/return
 
-    private primCall(b: BlockModel): void {
+    private primCall(b: BlockModel, interp: Interpreter): void {
         // Call a procedure. Handle recursive calls and"warp" procedures.
         // The activeThread.firstTime flag is used to mark the first call
         // to a procedure running in warp mode. activeThread.firstTime is
         // false for subsequent calls to warp mode procedures.
 
         // Lookup the procedure and cache for future use
-        let obj: ObjectModel = this.activeThread.target;
+        let obj: ObjectModel = interp.activeThread.target;
         // let code: string = b.spec.code;
         // let proc: BlockModel = obj.procCache[code];
         // if (!proc) {
@@ -641,7 +641,7 @@ export class Interpreter {
         //     obj.procCache[code] = proc;
         // }
         if (!b.proc) {
-          b.proc = this.primTable[b.spec.code];
+          b.proc = interp.primTable[b.spec.code];
         }
 
         if (!b.proc) {
@@ -649,33 +649,33 @@ export class Interpreter {
           return;
         }
 
-        if (this.warpThread) {
-            this.activeThread.firstTime = false;
-            if ((this.currentMSecs - this.startTime) > this.warpMSecs) this.yield = true;
+        if (interp.warpThread) {
+            interp.activeThread.firstTime = false;
+            if ((interp.currentMSecs - interp.startTime) > interp.warpMSecs) interp.yield = true;
         } else {
           console.log("todo support warp and yield");
             // if (proc.warpProcFlag) {
             //     // Start running in warp mode.
-            //     this.warpBlock = b;
-            //     this.warpThread = this.activeThread;
-            //     this.activeThread.firstTime = true;
+            //     interp.warpBlock = b;
+            //     interp.warpThread = interp.activeThread;
+            //     interp.activeThread.firstTime = true;
             // }
             // else
-            // if (this.activeThread.isRecursiveCall(b, b.proc)) {
-            //     this.yield = true;
+            // if (interp.activeThread.isRecursiveCall(b, b.proc)) {
+            //     interp.yield = true;
             // }
         }
         let argCount: number = b.parameterNames.length;
         let argList: any[] = [];
-        for (let i: number = 0; i < argCount; ++i) argList.push(this.arg(b, i));
-        this.startCmdList(b, false, argList);
+        for (let i: number = 0; i < argCount; ++i) argList.push(interp.arg(b, i));
+        interp.startCmdList(b, false, argList);
     }
 
-    private primReturn(b: BlockModel): void {
+    private primReturn(b: BlockModel, interp: Interpreter): void {
         // Return from the innermost procedure. If not in a procedure, stop the ScratchThread.
-        if (!this.activeThread.returnFromProcedure()) {
-            this.activeThread.stop();
-            this.yield = true;
+        if (!interp.activeThread.returnFromProcedure()) {
+            interp.activeThread.stop();
+            interp.yield = true;
         }
     }
 
@@ -683,9 +683,9 @@ export class Interpreter {
     // Optimization: to avoid the cost of looking up the ScratchVariable every ScratchTime,
     // a reference to the ScratchVariable object is cached in the target object.
 
-    private primVarGet(b: BlockModel): any {
+    private primVarGet(b: BlockModel, interp: Interpreter): any {
       console.log("todo primVarGet");
-        // let target: ObjectModel = this.stage.runtime.currentDoObject ? this.stage.runtime.currentDoObject : this.activeThread.target;
+        // let target: ObjectModel = interp.stage.runtime.currentDoObject ? interp.stage.runtime.currentDoObject : interp.activeThread.target;
         //
         // let v: ScratchVariable = target.varCache[b.spec];
         // if (v === null) {
@@ -696,37 +696,37 @@ export class Interpreter {
         // return v.value;
     }
 
-    protected primVarSet(b: BlockModel): ScratchVariable {
-        let name: string = this.arg(b, 0);
-        let v: ScratchVariable = this.activeThread.target.varCache[name];
+    protected primVarSet(b: BlockModel, interp: Interpreter): ScratchVariable {
+        let name: string = interp.arg(b, 0);
+        let v: ScratchVariable = interp.activeThread.target.varCache[name];
         if (!v) {
-            v = this.activeThread.target.varCache[name] = this.activeThread.target.lookupOrCreateVar(name);
+            v = interp.activeThread.target.varCache[name] = interp.activeThread.target.lookupOrCreateVar(name);
             if (!v) return null;
         }
         let oldvalue: any = v.value;
-        v.value = this.arg(b, 1);
+        v.value = interp.arg(b, 1);
         return v;
     }
 
-    protected primVarChange(b: BlockModel): ScratchVariable {
-        let name: string = this.arg(b, 0);
-        let v: ScratchVariable = this.activeThread.target.varCache[name];
+    protected primVarChange(b: BlockModel, interp: Interpreter): ScratchVariable {
+        let name: string = interp.arg(b, 0);
+        let v: ScratchVariable = interp.activeThread.target.varCache[name];
         if (!v) {
-            v = this.activeThread.target.varCache[name] = this.activeThread.target.lookupOrCreateVar(name);
+            v = interp.activeThread.target.varCache[name] = interp.activeThread.target.lookupOrCreateVar(name);
             if (!v) return null;
         }
-        v.value = Number(v.value) + this.numarg(b, 1);
+        v.value = Number(v.value) + interp.numarg(b, 1);
         return v;
     }
 
-    private primGetParam(b: BlockModel): any {
+    private primGetParam(b: BlockModel, interp: Interpreter): any {
         if (b.parameterIndex < 0) {
             let proc: BlockModel = b.topBlock();
             if (proc.parameterNames) b.parameterIndex = proc.parameterNames.indexOf(b.spec);
             if (b.parameterIndex < 0) return 0;
         }
-        if ((!this.activeThread.args) || (b.parameterIndex >= this.activeThread.args.length)) return 0;
-        return this.activeThread.args[b.parameterIndex];
+        if ((!interp.activeThread.args) || (b.parameterIndex >= interp.activeThread.args.length)) return 0;
+        return interp.activeThread.args[b.parameterIndex];
     }
 
 }
