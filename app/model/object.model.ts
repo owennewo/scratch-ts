@@ -13,15 +13,17 @@ export class ObjectModel {
     runtime: ObjectRuntime;
 
     showCostume(costumeIndex: number) {
+        if (costumeIndex >= this.costumes.length) costumeIndex = 0;
+        if (costumeIndex < 0) costumeIndex = this.costumes.length - 1;
         this.currentCostumeIndex = costumeIndex;
         this.runtime.showCostume(this.costumes[costumeIndex]);
     }
 
     indexOfCostumeNamed(costumeName: string): number {
         for (let index = 0; index < this.costumes.length; index++) {
-          if (this.costumes[index].name === costumeName) {
-            return index;
-          }
+            if (this.costumes[index].name === costumeName) {
+                return index;
+            }
         }
         return -1;
     }

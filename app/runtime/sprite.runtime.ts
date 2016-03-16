@@ -6,10 +6,6 @@ import {Rectangle} from "../shapes/geometry";
 
 export class SpriteRuntime extends ObjectRuntime {
 
-    x: number = 0;
-    y: number = 0;
-    w: number = 30;
-    h: number = 30;
     scaleX: number;
     sprite: SpriteModel;
     svg: Snap.Element;
@@ -59,8 +55,16 @@ export class SpriteRuntime extends ObjectRuntime {
 
     redraw() {
       let s = this.sprite;
+      // removing the transform in order to get an accurate bbox width/height.  Is there a better way?
+      s.runtime.svg.transform("rotate(0)");
+      let spriteBox = this.svg.getBBox();
+
+      let x = Math.floor(this.sprite.x - spriteBox.w / 2);
+
+      let y = Math.floor(-(this.sprite.y + spriteBox.h / 2));  // scratch y coordinate system is upside down compared to svg hence the negation
+
       // let trans = "translate(" + s.x + "," + s.y + ") rotate(" + s.direction + " " + s.x + " " + s.y + ") scale(" + s.scale + ")";
-      let trans = "translate(" + s.x + "," + (-s.y) + ") rotate(" + (s.direction - 90) + ") scale(" + s.scale + ")";
+      let trans = "rotate(" + (s.direction - 90) + " " + this.sprite.x + " " + (-this.sprite.y) + ") scale(" + s.scale + ") translate(" + x + "," + y + ")";
       s.runtime.svg.transform(trans);
       // s.runtime.svg.transform("translate(" + s.direction + "deg)");
     }
@@ -93,15 +97,22 @@ export class SpriteRuntime extends ObjectRuntime {
     }
 
     showCostume(costume: CostumeModel) {
+      let backgroundUrl = "http://cdn.assets.scratch.mit.edu/internalapi/asset/" + costume.md5 + "/get/";
       if (!this.svg) {
-        let backgroundUrl = "http://cdn.assets.scratch.mit.edu/internalapi/asset/" + costume.md5 + "/get/";
         this.svg = this.sprite.stage.runtime.svg.group();
+      } else {
+        this.svg.clear();
+      }
         Snap.load(backgroundUrl, function ( loadedFragment ) {
                                                 this.svg.append( loadedFragment );
                                         }, this );
-      }
-      console.log("show costume");
-      this.redraw();
+
+      setTimeout(() => {
+          // zero timeout will allow the svg to be placed and it should have bbox dimensions
+          this.redraw();
+      }, 0);
+
+
     }
 
 }

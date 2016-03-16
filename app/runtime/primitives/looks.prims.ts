@@ -99,7 +99,7 @@ export class LooksPrims {
 
     private primCostumeName(b:  BlockModel, interp: Interpreter): string {
         let s: ObjectModel = interp.targetObj();
-        return (s === null) ? "" : s.currentCostume.name;
+        return (s === null) ? "" : s.costumes[s.currentCostumeIndex].name;
     }
 
     private primSceneIndex(b:  BlockModel, interp: Interpreter): number {
@@ -107,7 +107,7 @@ export class LooksPrims {
     }
 
     private primSceneName(b:  BlockModel, interp: Interpreter): string {
-        return interp.stage.currentCostume.name;
+        return interp.stage.costumes[interp.stage.currentCostumeIndex].name;
     }
 
     private startScene(interp: Interpreter, s: string, waitFlag: boolean): void {
