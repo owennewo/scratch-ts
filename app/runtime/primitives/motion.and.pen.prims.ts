@@ -291,9 +291,10 @@ export class MotionAndPenPrims {
         let oldY: number = s.y;
         s.x = newX;
         s.y = newY;
-        s.runtime.redraw();
-        //s.runtime.setXY(newX, newY);
+
         s.runtime.keepOnStage();
+        s.runtime.redraw();
+
         if (s.runtime.penIsDown) MotionAndPenPrims.stroke(s, interp, oldX, oldY, s.x, s.y);
         if ((s.runtime.penIsDown) || (s.visible)) interp.redraw();
     }

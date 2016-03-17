@@ -1,3 +1,4 @@
+import {StageModel} from "../model/stage.model";
 import {SpriteModel} from "../model/sprite.model";
 import {CostumeModel} from "../model/costume.model";
 import {BlockModel} from "../model/block.model";
@@ -74,7 +75,15 @@ export class SpriteRuntime extends ObjectRuntime {
     }
 
     keepOnStage() {
-        console.log("todo: keep on stage");
+      let box = this.svg.getBBox();
+
+      if (box.x > ((StageModel.STAGEW / 2) - 20)) this.sprite.x = (StageModel.STAGEW / 2) - 20;
+      if (box.x2 < ((-StageModel.STAGEW / 2) + 20)) this.sprite.x = (-StageModel.STAGEW / 2) + 20;
+
+      // y maths is odd as y coordinates between scratch and svg is flipped
+      if (box.y > ((StageModel.STAGEH / 2) - 20)) this.sprite.y = (-StageModel.STAGEH / 2) + 20;
+      if (box.y2 < ((-StageModel.STAGEH / 2) + 20)) this.sprite.y = (StageModel.STAGEH / 2) - 20;
+
     }
 
     setDirection(direction: number) {
