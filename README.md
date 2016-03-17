@@ -1,6 +1,8 @@
 # scratch-ts
 Unofficial scratch.mit.edu port from flash to typescript/html5
 
+Very early demo here http://owennewo.github.io/
+
 ## Rationale:
 Scratch is based on flash and flash is dying.  Flash isn't support on android or IOS and browser vendors are treating flash as a deprecated feature
 
