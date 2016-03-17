@@ -39,16 +39,17 @@ export class StageComponent {
     modelService.onProjectLoaded.subscribe(data => {
       this.stage = <StageModel> data;
       console.log("StageComponent is starting threads");
-      this.stage.runtime.start();
+      this.stage.runtime.initStage();
     });
   }
 
     start() {
+        this.stop();
         console.log("greenFlag clicked");
         this.stage.runtime.startGreenFlags(true);
     }
     stop() {
-        console.log("todo: stop");
+        this.stage.runtime.stopAll();
     }
 
     resizeStage() {

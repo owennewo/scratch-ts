@@ -1,3 +1,4 @@
+import {ScratchTime} from "./scratch.time";
 import {CostumeModel} from "../model/costume.model";
 import {ScriptModel} from "../model/script.model";
 import {ObjectModel} from "../model/object.model";
@@ -76,10 +77,10 @@ export class StageRuntime extends ObjectRuntime {
     }
 
     public startGreenFlags(firstTime: boolean = false): void {
+        ScratchTime.startStepping(this.interp);
         function startIfGreenFlag(stack: BlockModel, target: ObjectModel): void {
             if (stack.spec.code === "whenGreenFlag") this.interp.toggleThread(stack, target);
         }
-        this.stopAll();
 
         // if (firstTime && this.app.stage.info.videoOn) {
         //     // turn on video the first time if project was saved with camera on
@@ -91,6 +92,7 @@ export class StageRuntime extends ObjectRuntime {
     }
 
     public stopAll(): void {
+        ScratchTime.stopStepping();
         this.interp.stopAllThreads();
         // this.clearRunFeedback();
         this.stage.runtime.deleteClones();
@@ -168,7 +170,7 @@ export class StageRuntime extends ObjectRuntime {
       console.log("todo clearRunFeedback");
     }
 
-    start() {
+    initStage() {
       console.log("Display initial stage");
       this.stage.showCostume(this.stage.currentCostumeIndex);
 
@@ -176,10 +178,12 @@ export class StageRuntime extends ObjectRuntime {
         sprite.runtime.showCostume(sprite.costumes[sprite.currentCostumeIndex]);
       });
 
-      setInterval(() => {
-          // console.log("timer loop (replace with requestAnimationFrame??)");
-          this.interp.stepThreads();
-      }, 2000);
+      // setInterval(() => {
+      //     // console.log("timer loop (replace with requestAnimationFrame??)");
+      //     this.interp.stepThreads();
+      // }, 2000);
+      //
+
 
     }
 
