@@ -1,3 +1,4 @@
+import {StageRuntime} from "./stage.runtime";
 import {StageModel} from "../model/stage.model";
 import {SpriteModel} from "../model/sprite.model";
 import {CostumeModel} from "../model/costume.model";
@@ -20,10 +21,12 @@ export class SpriteRuntime extends ObjectRuntime {
     penShade: number;
     bubble: any;
     bubbleSource: any;
+    lastScale: number;
+    lastSpriteBox: Snap.BBox;
 
-    constructor(sprite: SpriteModel) {
-      super();
-      this.sprite = sprite;
+    constructor(sprite: SpriteModel, stage: StageRuntime) {
+        super(stage.paper);
+        this.sprite = sprite;
     }
 
     clearFilters() {
@@ -31,7 +34,7 @@ export class SpriteRuntime extends ObjectRuntime {
     }
 
     showBubble(text: string, type: string, block: BlockModel) {
-      console.log("todo: Sprite runtime show bubble");
+        console.log("todo: Sprite runtime show bubble");
     }
 
     hideBubble() {
@@ -39,7 +42,7 @@ export class SpriteRuntime extends ObjectRuntime {
     }
 
     updateBubble() {
-      console.log("todo: SpriteRuntime updateBubbles");
+        console.log("todo: SpriteRuntime updateBubbles");
     }
 
     setPenColor(color: number) {
@@ -55,19 +58,26 @@ export class SpriteRuntime extends ObjectRuntime {
     }
 
     redraw() {
-      let s = this.sprite;
-      // removing the transform in order to get an accurate bbox width/height.  Is there a better way?
-      s.runtime.svg.transform("rotate(0)");
-      let spriteBox = this.svg.getBBox();
+        let s = this.sprite;
 
-      let x = Math.floor(this.sprite.x - spriteBox.w / 2);
+        if (this.lastScale !== s.scale) {
+            // removing the transform in order to get an accurate bbox width/height.  Is there a better way?
+            s.runtime.svg.transform("rotate(0)");
+            let spriteBox = this.svg.getBBox();
+            this.lastSpriteBox = spriteBox;
+            this.lastScale = s.scale;
+        }
 
-      let y = Math.floor(-(this.sprite.y + spriteBox.h / 2));  // scratch y coordinate system is upside down compared to svg hence the negation
+        let x = Math.floor(this.sprite.x - this.lastSpriteBox.w / 2);
 
-      // let trans = "translate(" + s.x + "," + s.y + ") rotate(" + s.direction + " " + s.x + " " + s.y + ") scale(" + s.scale + ")";
-      let trans = "rotate(" + (s.direction - 90) + " " + this.sprite.x + " " + (-this.sprite.y) + ") scale(" + s.scale + ") translate(" + x + "," + y + ")";
-      s.runtime.svg.transform(trans);
-      // s.runtime.svg.transform("translate(" + s.direction + "deg)");
+        let y = Math.floor(-(this.sprite.y + this.lastSpriteBox.h / 2));  // scratch y coordinate system is upside down compared to svg hence the negation
+
+        console.log("sprite:" + x + ":" + y);
+
+        // let trans = "translate(" + s.x + "," + s.y + ") rotate(" + s.direction + " " + s.x + " " + s.y + ") scale(" + s.scale + ")";
+        let trans = "rotate(" + (s.direction - 90) + " " + this.sprite.x + " " + (-this.sprite.y) + ") scale(" + s.scale + ") translate(" + x + "," + y + ")";
+        s.runtime.svg.transform(trans);
+        // s.runtime.svg.transform("translate(" + s.direction + "deg)");
     }
 
     setPenSize(size: number) {
@@ -75,14 +85,14 @@ export class SpriteRuntime extends ObjectRuntime {
     }
 
     keepOnStage() {
-      let box = this.svg.getBBox();
+        let box = this.svg.getBBox();
 
-      if (box.x > ((StageModel.STAGEW / 2) - 20)) this.sprite.x = (StageModel.STAGEW / 2) - 20;
-      if (box.x2 < ((-StageModel.STAGEW / 2) + 20)) this.sprite.x = (-StageModel.STAGEW / 2) + 20;
+        if (box.x > ((StageModel.STAGEW / 2) - 20)) this.sprite.x = (StageModel.STAGEW / 2) - 20;
+        if (box.x2 < ((-StageModel.STAGEW / 2) + 20)) this.sprite.x = (-StageModel.STAGEW / 2) + 20;
 
-      // y maths is odd as y coordinates between scratch and svg is flipped
-      if (box.y > ((StageModel.STAGEH / 2) - 20)) this.sprite.y = (-StageModel.STAGEH / 2) + 20;
-      if (box.y2 < ((-StageModel.STAGEH / 2) + 20)) this.sprite.y = (StageModel.STAGEH / 2) - 20;
+        // y maths is odd as y coordinates between scratch and svg is flipped
+        if (box.y > ((StageModel.STAGEH / 2) - 20)) this.sprite.y = (-StageModel.STAGEH / 2) + 20;
+        if (box.y2 < ((-StageModel.STAGEH / 2) + 20)) this.sprite.y = (StageModel.STAGEH / 2) - 20;
 
     }
 
@@ -95,33 +105,17 @@ export class SpriteRuntime extends ObjectRuntime {
     }
 
     getSize(): number {
-      let rect = this.bounds();
-      if (rect.width > rect.height) return rect.width;
-      else return rect.height;
+        let rect = this.bounds();
+        if (rect.width > rect.height) return rect.width;
+        else return rect.height;
     }
 
     setSize(size: number) {
-      console.log("todo getSize spriteruntime");
-      this.size = size;
+        console.log("todo getSize spriteruntime");
+        this.size = size;
     }
 
-    showCostume(costume: CostumeModel) {
-      let backgroundUrl = "http://cdn.assets.scratch.mit.edu/internalapi/asset/" + costume.md5 + "/get/";
-      if (!this.svg) {
-        this.svg = this.sprite.stage.runtime.svg.group();
-      } else {
-        this.svg.clear();
-      }
-        Snap.load(backgroundUrl, function ( loadedFragment ) {
-                                                this.svg.append( loadedFragment );
-                                        }, this );
-
-      setTimeout(() => {
-          // zero timeout will allow the svg to be placed and it should have bbox dimensions
-          this.redraw();
-      }, 0);
-
-
+    type(): string {
+      return "sprite";
     }
-
 }

@@ -20,7 +20,6 @@ export class SpecLayout {
 
         SpecCategoryModel.CATEGORIES.forEach(category => {
 
-            console.log(" + " + category.name);
             let row = index % rows;
             let col = Math.floor(index / rows);
             let x = 20 + col * 110;
@@ -53,7 +52,6 @@ export class SpecLayout {
 
     static drawCategory(category: SpecCategoryModel) {
         category.svg.addClass("active");
-        console.log("drawing " + category.name);
 
         let oldCategoryBlocks = Graphics.ScriptPane.paper.select("#script-pane-categories-blocks");
         if (oldCategoryBlocks) {

@@ -18,7 +18,8 @@ export class StageRuntime extends ObjectRuntime {
     keyIsDown: any[] = new Array(128); // records key up/down state
     shiftIsDown: boolean;
     mouseIsDown: boolean;
-    background: Snap.Element;
+    // background: Snap.Element;
+    paper: Snap.Paper;
 
     lastAnswer: string = "todo";
 
@@ -31,11 +32,9 @@ export class StageRuntime extends ObjectRuntime {
 
 
     constructor(stage: StageModel) {
-        super();
+        super(Snap("#svg-stage"));
         this.stage = stage;
         this.interp = new Interpreter(stage);
-        this.svg = Snap("#svg-stage");
-
     }
 
     step() {
@@ -133,29 +132,38 @@ export class StageRuntime extends ObjectRuntime {
         this.currentDoObject = null;
     }
 
-    showCostume(costume: CostumeModel) {
-      let backgroundUrl = "http://cdn.assets.scratch.mit.edu/internalapi/asset/" + costume.md5 + "/get/";
-
-      if (this.background) {
-        this.background.attr({
-          href: backgroundUrl
-        });
-      } else {
-        this.background = this.svg.image(backgroundUrl, -240, -180, 480, 360);
-        this.background.attr({
-          id: "stage-background-image"
-        });
-      }
-
-    }
+    // showCostume(costume: CostumeModel) {
+    //   let backgroundUrl = "http://cdn.assets.scratch.mit.edu/internalapi/asset/" + costume.md5 + "/get/";
+    //
+    //   if (this.background) {
+    //     this.background = this.svg.group();
+    //     this.background.attr({
+    //       id: "stage-background-image"
+    //     });
+    //   } else {
+    //     this.background.clear();
+    //   }
+    //     this.background.attr({
+    //       href: backgroundUrl
+    //     });
+    //   } else {
+    //     this.background = this.svg.image(backgroundUrl, -240, -180, 480, 360);
+    //
+    //   }
+    //
+    // }
 
     showCostumeNamed(costumeName: string) {
         this.stage.costumes.forEach ((costume, index) => {
             if (costume.name === costumeName) {
-              this.showCostume(this.stage.costumes[index]);
+              super.showCostume(this.stage.costumes[index]);
             }
         });
 
+    }
+
+    redraw() {
+      // do nothing
     }
 
     threadStarted() {
@@ -215,6 +223,10 @@ export class StageRuntime extends ObjectRuntime {
     getBooleanSensor(arg: any): number {
       console.log("todo stage runtime getBooleanSensor");
       return -1;
+    }
+
+    type(): string {
+      return "stage";
     }
 
 }

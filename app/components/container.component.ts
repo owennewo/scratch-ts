@@ -75,9 +75,6 @@ export class ContainerComponent {
   // stage: StageModel;
 
   constructor(@Inject(ModelService) private modelService: ModelService) {
-    modelService.onProjectLoaded.subscribe(res => {
-      console.log("_+_+_+:" + res);
-    });
 
     modelService.onObjectSelected.subscribe(res => {
       let scratchObject = <ObjectModel> res;

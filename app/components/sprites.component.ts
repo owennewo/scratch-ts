@@ -31,9 +31,7 @@ export class SpritesComponent {
     modelService.onProjectLoaded.subscribe(data => {
       let project = <StageModel> data;
       this.sprites = project.children;
-      project.children.forEach(sprite => {
-          console.log("sprite: " + sprite.name);
-      });
+
       modelService.selectObject(project.children[0]);
     });
   }

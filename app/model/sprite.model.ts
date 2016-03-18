@@ -19,7 +19,7 @@ export class SpriteModel extends ObjectModel {
     constructor(stage: StageModel) {
       super();
       this.stage = stage;
-      this.runtime = new SpriteRuntime(this);
+      this.runtime = new SpriteRuntime(this, stage.runtime);
     }
 
     setRotationStyle(style: string) {

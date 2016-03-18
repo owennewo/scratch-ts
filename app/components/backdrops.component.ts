@@ -2,7 +2,7 @@ import {CostumeModel} from "../model/costume.model";
 import {SpriteModel} from "../model/sprite.model";
 import {ModelService} from "./model.service";
 import {ObjectModel} from "../model/object.model";
-import {ProjectModel} from "../model/project.model";
+import {StageModel} from "../model/stage.model";
 import {Inject, Component, Input, Output, EventEmitter} from "angular2/core";
 
 @Component({
@@ -31,12 +31,12 @@ export class BackdropsComponent {
 
   constructor(@Inject(ModelService) private modelService: ModelService) {
     modelService.onProjectLoaded.subscribe(data => {
-      let project = <ProjectModel> data;
+      let project = <StageModel> data;
       this.project = project;
       this.backgrounds = project.costumes;
-      project.costumes.forEach(sprite => {
-          console.log("background: " + sprite.name);
-      });
+      // project.costumes.forEach(sprite => {
+      //     console.log("background: " + sprite.name);
+      // });
       // modelService.selectObject(project.children[0]);
     });
 
