@@ -15,6 +15,8 @@ export class Geometry {
     static NotchR1: number = Geometry.NotchL2 + 8;
     static NotchR2: number = Geometry.NotchR1 + Geometry.NotchDepth;
 
+    static SubstackInset: number = 15;
+
 }
 
 export class Rectangle {

@@ -241,13 +241,13 @@ export class SensingPrims {
             if ("y position" === attribute) return s.y;
             if ("direction" === attribute) return s.direction;
             if ("costume #" === attribute) return s.currentCostumeIndex;
-            if ("costume name" === attribute) return s.currentCostume.name;
+            if ("costume name" === attribute) return s.costumes[s.currentCostumeIndex].name;
             if ("size" === attribute) return s.runtime.getSize();
             if ("volume" === attribute) return s.runtime.volume;
         } if (obj instanceof StageModel) {
             if ("background #" === attribute) return obj.currentCostumeIndex; // support for old 1.4 BlockModels
             if ("backdrop #" === attribute) return obj.currentCostumeIndex;
-            if ("backdrop name" === attribute) return obj.currentCostume.name;
+            if ("backdrop name" === attribute) return obj.costumes[obj.currentCostumeIndex].name;
             if ("volume" === attribute) return obj.runtime.volume;
         }
         console.log("todo ownsVar/lookup vars");

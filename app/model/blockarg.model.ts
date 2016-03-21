@@ -85,22 +85,22 @@ export class BlockArgModel {
               this.editable = true;
               this.menuName = part.slice(3);
               this.addMenuIcon();
-              this.shape = new NumberShape(spec, undefined);
+              this.shape = new NumberShape(spec, this);
               // this.addEventListener(MouseEvent.MOUSE_DOWN, this.invokeMenu);
               return;
             case "m":
               this.type = ArgType.Menu;
               this.menuName = part.slice(3);
-              this.shape = new RectangleShape(spec, undefined);
+              this.shape = new RectangleShape(spec, this);
               this.addMenuIcon();
               // this.addEventListener(MouseEvent.MOUSE_DOWN, this.invokeMenu);
 
               return;
             case "n":
               this.type = ArgType.Number;
-              this.shape = new NumberShape(spec, undefined);
+              this.shape = new NumberShape(spec, this);
               this.numberType = BlockArgModel.NT_FLOAT;
-              this.shape = new NumberShape(spec, undefined);
+              this.shape = new NumberShape(spec, this);
               this.numberType = BlockArgModel.NT_FLOAT;
               this.argValue = 0;
               return;

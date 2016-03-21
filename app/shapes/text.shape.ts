@@ -1,3 +1,4 @@
+import {Shape} from "./shape";
 import {SpecModel} from "../model/spec.model";
 import {Graphics} from "../utils/graphics";
 import {BaseShape} from "./base.shape";
@@ -5,6 +6,7 @@ import {BaseShape} from "./base.shape";
 export class TextShape extends BaseShape {
 
   text: string = "unspecified";
+//  group: Snap.Element;
 
   constructor(spec: SpecModel, args: any[], text: string) {
       super(spec, args);
@@ -17,7 +19,11 @@ export class TextShape extends BaseShape {
     }
 
     draw(parentGroup: Snap.Element) {
-        super.draw(parentGroup);
-        this.group.append(Graphics.ScriptPane.drawText(0, 0, this.text, this.args));
+        // super.draw(parentGroup);
+        this.group = parentGroup;
+        let text = Graphics.ScriptPane.drawText(this.x, this.y, this.text); //, this.args);
+        parentGroup.append(text);
     }
+
+
 }

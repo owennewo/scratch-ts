@@ -1,4 +1,4 @@
-import {ProjectModel} from "./project.model";
+import {StageModel} from "./stage.model";
 import {describe, it, beforeEach, expect} from "angular2/testing";
 
 
@@ -7,7 +7,7 @@ import {describe, it, beforeEach, expect} from "angular2/testing";
  */
 describe("project.model", () => {
 
-    let initial: ProjectModel = new ProjectModel();
+    let initial: StageModel = new StageModel();
     initial.tempo = 60;
     initial.videoAlpha = 1.0;
     let duplicate = initial.duplicate();

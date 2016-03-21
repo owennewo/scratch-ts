@@ -1,3 +1,5 @@
+import {Geometry} from "../shapes/geometry";
+import {StackShape} from "../shapes/stack.shape";
 import {Graphics} from "../utils/graphics";
 import {BlockArgModel} from "../model/blockarg.model";
 import {ScriptModel} from "../model/script.model";
@@ -18,19 +20,60 @@ export class ScriptLayout {
         // let previous = undefined;
         // let next = undefined;
 
-        let newScript = Graphics.ScriptPane.group("script" + script.index, script.x, script.y);
-        scriptWorkArea.append(newScript);
+        let scriptGroup = Graphics.ScriptPane.group("script" + script.index, script.x, script.y);
+        scriptWorkArea.append(scriptGroup);
 
-        let y = 0;
+        // let y = 0;
 
-        while (current) {
-            current.shape.move(0, y);
-            current.shape.draw(newScript);
-            current.shape.setDraggable(false);
-            let shapeHeight = current.shape.getGroup().getBBox().h;
-            y += shapeHeight - 2;
-            current = current.nextBlock;
-        }
+        this.drawBlock(current, scriptGroup, 0, 0);
+
+        // while (current) {
+        //     current.shape.move(0, y);
+        //     current.shape.draw(newScript);
+        //     current.shape.setDraggable(false);
+        //     if (current.stack1) {
+        //       let subcurrent = current.stack1;
+        //       let suby = y;
+        //       subcurrent.shape.move(20, y);
+        //       subcurrent.shape.draw(newScript);
+        //       subcurrent.shape.setDraggable(false);
+        //     }
+        //
+        //     let shapeHeight = current.shape.getGroup().getBBox().h;
+        //     y += shapeHeight - 2;
+        //
+        //     current = current.nextBlock;
+        // }
+
+    }
+
+    static drawBlock(b: BlockModel, scriptGroup: Snap.Element, x: number, y: number): number {
+
+      let stackHeight: number = 0;
+      if (b.shape instanceof StackShape) {
+        let stackShape = <StackShape> b.shape;
+        let subStackHeight = this.drawBlock(b.stack1, scriptGroup, x + Geometry.SubstackInset, y + stackShape.stack1y);
+        // let subcurrent = b.stack1;
+        // let suby = y;
+        // subcurrent.shape.move(20, y);
+        // subcurrent.shape.draw(scriptGroup);
+        // subcurrent.shape.setDraggable(false);
+        stackShape.stack1h = subStackHeight;
+      }
+
+      b.shape.move(x, y);
+      b.shape.drawHeader(b);
+      b.shape.draw(scriptGroup, true);
+      b.shape.setDraggable(false);
+
+      let shapeHeight = b.shape.getGroup().getBBox().h;
+      // y += shapeHeight - 2;
+      stackHeight += shapeHeight - 3;
+
+      if (b.nextBlock) {
+        stackHeight += this.drawBlock(b.nextBlock, scriptGroup, x, y + stackHeight);
+      }
+      return stackHeight;
 
     }
 

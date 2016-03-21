@@ -8,7 +8,7 @@ import {SpecModel} from "../model/spec.model";
 
 export class StackShape extends BaseShape {
     stack1h: number = Geometry.EmptyStackH;
-    stack1y: number;
+    stack1y: number = 24;
     hasLoopArrow: boolean = true;
     isFinal: boolean;
 
@@ -37,10 +37,10 @@ export class StackShape extends BaseShape {
         if (this.hasLoopArrow) {
             builder.drawLoopArrow(this.w, h1 + Geometry.BottomBarH);
         }
-        let path = builder.build();
-        this.group.append(Graphics.ScriptPane.drawPath(path, this.spec.category.name.toLowerCase()));
+        let pathString = builder.build();
+        let path = Graphics.ScriptPane.drawPath(pathString, this.spec.category.name.toLowerCase());
+        this.group.append(path);
         this.group.append(text);
-
     }
 
 }

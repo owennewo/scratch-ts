@@ -66,7 +66,7 @@ export class BlockModel {
     shape: Shape;
 
     private suppressLayout: boolean; // used to avoid extra layouts during block initialization
-    private labelsAndArgs: BlockArgModel[] = [];
+    labelsAndArgs: BlockArgModel[] = [];
     // private argTypes: any[] = [];
     // private elseLabel:TextField;
 

@@ -1,8 +1,11 @@
+import {BlockArgModel} from "../model/blockarg.model";
+import {BlockModel} from "../model/block.model";
 import {PathBuilder} from "../utils/path.builder";
 import {Shape} from "./shape";
 import {Graphics} from "../utils/graphics";
 import {SpecCategoryModel} from "../model/spec.category.model";
 import {SpecModel} from "../model/spec.model";
+import {ArgType} from "../model/blockarg.model";
 
 
 export abstract class BaseShape implements Shape {
@@ -10,7 +13,7 @@ export abstract class BaseShape implements Shape {
     spec: SpecModel;
 
     group: Snap.Element; // svg group
-    args: any[];
+    arg: BlockArgModel;
 
     /* dimensio attributes */
     x: number;
@@ -24,27 +27,40 @@ export abstract class BaseShape implements Shape {
 
     draggable: boolean;
 
-    constructor(spec: SpecModel, args: any[]) {
+    constructor(spec: SpecModel, arg: BlockArgModel) {
         this.spec = spec;
         this.id = this.spec.category.name + "_" + spec.code.replace(new RegExp(":", "g"), "_");
-        this.args = args;
+        this.arg = arg;
     }
 
     move(x: number, y: number) {
         this.x = x;
         this.y = y;
-        if (this.group) {
-          this.group.transform("t" + x + "," + y);
-        }
+        this.group = Graphics.ScriptPane.group(this.id, this.x, this.y);
+        this.group.transform("t" + x + "," + y);
+
     }
 
     getGroup(): any {
       return this.group;
     }
 
+    drawHeader(b: BlockModel) {
+
+        let x = 5;
+        let y = 15 + this.indentTop;
+        for (let arg of b.labelsAndArgs) {
+          arg.shape.move(x, y);
+          arg.shape.draw(this.group);
+          x = arg.shape.getBBox().w + 10;
+        }
+
+        this.w = x;
+    }
 
     draw(parentGroup?: Snap.Element) {
-      this.group = Graphics.ScriptPane.group(this.id, this.x, this.y);
+
+
       if (this.draggable) {
         this.makeDraggable();
         this.group.addClass("draggable");
@@ -66,6 +82,10 @@ export abstract class BaseShape implements Shape {
     setDraggable(draggable: boolean) {
       this.draggable = draggable;
 
+    }
+
+    getBBox(): Snap.BBox {
+        return this.group.getBBox();
     }
 
     private makeDraggable() {

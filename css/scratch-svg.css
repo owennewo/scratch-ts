@@ -8,6 +8,11 @@
 #script-pane-categories g rect.main:hover { opacity: 0.75; }
 #script-pane-categories rect { cursor: pointer; }
 
+#script-work-area path { stroke-width: 1px; stroke: grey; }
+
+rect.blockarg { fill: white; }
+text.blockarg { fill: black; }
+
 svg text { fill: white; }
 
 .draggable { cursor: move; }

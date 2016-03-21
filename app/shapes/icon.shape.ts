@@ -15,11 +15,11 @@ export class IconShape extends BaseShape {
     }
 
     draw(parentGroup: Snap.Element) {
-        super.draw(parentGroup);
-        this.centerY = this.topH / 2;
+        this.group = parentGroup;
+        // this.centerY = this.topH / 2;
 
-        let text = Graphics.ScriptPane.drawText(10, 18, this.iconName, this.args);
-        this.w = text.getBBox().width + 20;
+        let text = Graphics.ScriptPane.drawText(this.x, this.y, this.iconName); //, this.args);
+        // this.w = text.getBBox().width + 20;
 
 
         this.group.append(text);

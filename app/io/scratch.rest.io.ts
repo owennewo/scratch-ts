@@ -3,7 +3,7 @@ import {Http, Response, HTTP_PROVIDERS} from "angular2/http";
 import {Inject, Injectable} from "angular2/core";
 import {ProjectIO} from "../io/project.io";
 import {Log} from "../logging/Log";
-import {ProjectModel} from "../model/project.model";
+import {StageModel} from "../model/stage.model";
 import {SpriteModel} from "../model/sprite.model";
 import {SpecLayout} from "../ui/spec.layout";
 import {SpecModel} from "../model/spec.model";

@@ -27,8 +27,8 @@ export class SpecLayout {
 
             let groupCategory = Graphics.ScriptPane.group(category.name + "-categories", x, y, category.name.toLowerCase());
 
-            let rectStub = Graphics.ScriptPane.drawRect(0, 0, 10, 20, "stub");
-            let rectMain = Graphics.ScriptPane.drawRect(10, 0, 90, 20, "main");
+            let rectStub = Graphics.ScriptPane.drawRect(0, 0, 10, 20, 0, 0, "stub");
+            let rectMain = Graphics.ScriptPane.drawRect(10, 0, 90, 20, 0, 0, "main");
 
             groupCategory.click((event: MouseEvent) => {
               let categorySvgs: Snap.Element[] = Snap.selectAll("#script-pane-categories g");

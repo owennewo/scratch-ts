@@ -1,3 +1,4 @@
+import {BlockArgModel} from "../model/blockarg.model";
 import {Shape} from "./shape";
 import {BooleanShape} from "./boolean.shape";
 import {CommandOutlineShape} from "./command.outline.shape";
@@ -25,7 +26,7 @@ export class ShapeFactory {
             case "r":
             case "R":
             case "rR":
-                return new NumberShape(spec, args);
+                return new NumberShape(spec, new BlockArgModel("%n", spec));
             case "h":
                 return new HatShape(spec, args);
             case "c":

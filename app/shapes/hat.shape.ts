@@ -13,24 +13,23 @@ export class HatShape extends BaseShape {
         this.indentTop = 12;
     }
 
-    draw(parentGroup: Snap.Element) {
+    draw(parentGroup: Snap.Element, prepend: boolean = false) {
         super.draw(parentGroup);
-        let text = Graphics.ScriptPane.drawText(5, 25, this.spec.label, this.args);
 
-        this.w = text.getBBox().width + 20;
         this.topH = 35;
-// .curve(40, 0, 80, 10, 0.12)
-//             .curve(10, 12, 40, 0, 0.15)
         let path = PathBuilder.create()
             .moveTo(0, 12)
             .curveBezier(0, 12, 27.5, 0, 52.5, 0, 80, 10)
             .lineTo(this.w - Geometry.CornerInset, 10)
             .lineTo(this.w, 10 + Geometry.CornerInset)
             .drawRightAndBottom(this.topH, this.w, true)
+            .lineTo(0, 12)
             .build();
-        this.group.append(Graphics.ScriptPane.drawPath(path, this.spec.category.name.toLowerCase()));
-        this.group.append(text);
-
+        if (prepend){
+            this.group.prepend(Graphics.ScriptPane.drawPath(path, this.spec.category.name.toLowerCase()));
+        } else {
+          this.group.append(Graphics.ScriptPane.drawPath(path, this.spec.category.name.toLowerCase()));
+        }
 
     }
 

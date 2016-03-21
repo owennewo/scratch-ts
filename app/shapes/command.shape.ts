@@ -14,18 +14,22 @@ export class CommandShape extends BaseShape {
         this.indentTop = 3;
     }
 
-    draw(parentGroup: Snap.Element) {
+    draw(parentGroup: Snap.Element, prepend?: boolean) {
         super.draw(parentGroup);
-        let text = Graphics.ScriptPane.drawText(5, 18, this.spec.label, this.args);
-
-        this.w = text.getBBox().width + 20;
 
         let path = PathBuilder.create()
             .drawTop(this.w)
             .drawRightAndBottom(this.topH, this.w, this.hasNotch)
             .build();
-            this.group.append(Graphics.ScriptPane.drawPath(path, this.spec.category.name.toLowerCase()));
-            this.group.append(text);
+
+            if (prepend) {
+                this.group.prepend(Graphics.ScriptPane.drawPath(path, this.spec.category.name.toLowerCase()));
+            } else {
+                this.group.append(Graphics.ScriptPane.drawPath(path, this.spec.category.name.toLowerCase()));
+            }
+
+
+
     }
 
 }

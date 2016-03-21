@@ -1,10 +1,9 @@
 import {Geometry} from "../shapes/geometry";
 export class PathBuilder {
 
-  path: string;
+  path: string = "";
 
-  static create(): PathBuilder
-  {
+  static create(): PathBuilder {
       return new PathBuilder();
   }
 

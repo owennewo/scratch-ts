@@ -59,9 +59,9 @@ export class Graphics {
       return false;
     }
 
-    drawRect(x: number, y: number, width: number, height: number, categoryClass?: string): Snap.Element {
+    drawRect(x: number, y: number, width: number, height: number, rx: number, ry: number, categoryClass?: string): Snap.Element {
 
-        let r = this.paper.rect(x, y, width, height);
+        let r = this.paper.rect(x, y, width, height, rx, ry);
 
         if (categoryClass) {
             r.addClass(categoryClass);
@@ -70,7 +70,7 @@ export class Graphics {
         return r;
     }
 
-    drawText(x: number, y: number, text: string, args: any[], textClass?: string): any {
+    drawText(x: number, y: number, text: string, args?: any[], textClass?: string): Snap.Element {
 
         let result;
         if (!args || args.length === 0) {
