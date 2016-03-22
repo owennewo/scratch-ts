@@ -38,7 +38,7 @@ export class SpecLayout {
 
             groupCategory.append(rectStub);
             groupCategory.append(rectMain);
-            groupCategory.append(Graphics.ScriptPane.drawText(15, 15, category.name, [], "#FFF"));
+            groupCategory.append(Graphics.ScriptPane.drawText(15, 15, category.name, "#FFF"));
             category.svg = groupCategory;
             groupCategories.append(groupCategory);
 
@@ -66,10 +66,11 @@ export class SpecLayout {
             yPos += 10;
             return;
           }
-            let shape = ShapeFactory.createShape(spec);
+            let shape = ShapeFactory.createShape(spec, spec.labelsAndArgs);
             shape.setDraggable(true);
             shape.move(20, yPos);
-            shape.draw(newCategoryBlocks);
+            shape.drawHeader(spec.labelsAndArgs);
+            shape.draw(newCategoryBlocks, true);
             let shapeHeight = shape.getGroup().getBBox().h;
             yPos += shapeHeight + 5;
         });

@@ -1,3 +1,4 @@
+import {BlockArgModel} from "../model/blockarg.model";
 import {PathBuilder} from "../utils/path.builder";
 import {Graphics} from "../utils/graphics";
 import {SpecModel} from "../model/spec.model";
@@ -18,9 +19,7 @@ export class IconShape extends BaseShape {
         this.group = parentGroup;
         // this.centerY = this.topH / 2;
 
-        let text = Graphics.ScriptPane.drawText(this.x, this.y, this.iconName); //, this.args);
-        // this.w = text.getBBox().width + 20;
-
+        let text = Graphics.ScriptPane.drawText(this.x, this.y, this.iconName);
 
         this.group.append(text);
 

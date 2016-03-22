@@ -13,7 +13,7 @@ export abstract class BaseShape implements Shape {
     spec: SpecModel;
 
     group: Snap.Element; // svg group
-    arg: BlockArgModel;
+    args: BlockArgModel[];
 
     /* dimensio attributes */
     x: number;
@@ -27,10 +27,10 @@ export abstract class BaseShape implements Shape {
 
     draggable: boolean;
 
-    constructor(spec: SpecModel, arg: BlockArgModel) {
+    constructor(spec: SpecModel, args: any[]) {
         this.spec = spec;
         this.id = this.spec.category.name + "_" + spec.code.replace(new RegExp(":", "g"), "_");
-        this.arg = arg;
+        this.args = args;
     }
 
     move(x: number, y: number) {
@@ -45,11 +45,11 @@ export abstract class BaseShape implements Shape {
       return this.group;
     }
 
-    drawHeader(b: BlockModel) {
+    drawHeader(args: BlockArgModel[]) {
 
         let x = 5;
         let y = 15 + this.indentTop;
-        for (let arg of b.labelsAndArgs) {
+        for (let arg of args) {
           arg.shape.move(x, y);
           arg.shape.draw(this.group);
           x = arg.shape.getBBox().w + 10;
@@ -107,5 +107,7 @@ export abstract class BaseShape implements Shape {
         this.group.drag(move, start, stop);
 
     }
+
+
 
 }

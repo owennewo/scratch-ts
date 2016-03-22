@@ -62,7 +62,7 @@ export class ScriptLayout {
       }
 
       b.shape.move(x, y);
-      b.shape.drawHeader(b);
+      b.shape.drawHeader(b.labelsAndArgs);
       b.shape.draw(scriptGroup, true);
       b.shape.setDraggable(false);
 

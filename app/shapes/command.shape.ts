@@ -1,3 +1,4 @@
+import {BlockArgModel} from "../model/blockarg.model";
 import {PathBuilder} from "../utils/path.builder";
 import {BaseShape} from "./base.shape";
 import {Graphics} from "../utils/graphics";
@@ -22,13 +23,11 @@ export class CommandShape extends BaseShape {
             .drawRightAndBottom(this.topH, this.w, this.hasNotch)
             .build();
 
-            if (prepend) {
-                this.group.prepend(Graphics.ScriptPane.drawPath(path, this.spec.category.name.toLowerCase()));
-            } else {
-                this.group.append(Graphics.ScriptPane.drawPath(path, this.spec.category.name.toLowerCase()));
-            }
-
-
+        if (prepend) {
+            this.group.prepend(Graphics.ScriptPane.drawPath(path, this.spec.category.name.toLowerCase()));
+        } else {
+            this.group.append(Graphics.ScriptPane.drawPath(path, this.spec.category.name.toLowerCase()));
+        }
 
     }
 

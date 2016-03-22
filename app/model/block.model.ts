@@ -110,7 +110,7 @@ export class BlockModel {
         if (!spec) {
             console.error("error: spec is null");
         }
-        this.shape = ShapeFactory.createShape(spec, this.args);
+        this.shape = ShapeFactory.createShape(spec, this.labelsAndArgs);
         // if ((type === " ") || (type === "") || (type === "w")) {
         //     this.shape = new BlockShapeModel(BlockShapeModel.CmdShape, color);
         //     this.indentTop = 3;
@@ -183,7 +183,7 @@ export class BlockModel {
         } else {
             // loop
 
-            this.addLabelsAndArgs();
+            this.labelsAndArgs = this.spec.cloneLabelAndArgs();
 
 
         }
@@ -294,16 +294,7 @@ export class BlockModel {
     // 	this.fixArgLayout();
     // }
 
-    private addLabelsAndArgs() {
-        let specParts: any[] = ReadStream.tokenize(this.spec.label);
-        let i: number;
-        this.labelsAndArgs = [];
 
-        for (i = 0; i < specParts.length; i++) {
-            let arg =  new BlockArgModel(specParts[i], this.spec);
-            this.labelsAndArgs.push(arg);
-        }
-    }
 
     // argType(arg:DisplayObject):string {
     // 	let i:number = this.labelsAndArgs.indexOf(arg);

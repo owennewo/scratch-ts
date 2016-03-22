@@ -1,3 +1,4 @@
+import {BlockArgModel} from "../model/blockarg.model";
 import {PathBuilder} from "../utils/path.builder";
 import {BaseShape} from "./base.shape";
 import {Graphics} from "../utils/graphics";
@@ -17,7 +18,7 @@ export class BooleanShape extends BaseShape {
         super.draw(parentGroup);
         this.centerY = this.topH / 2;
 
-        let text = Graphics.ScriptPane.drawText(10, 18, this.spec.label, this.args);
+        let text = Graphics.ScriptPane.drawText(10, 18, this.spec.label, this.args[0].argValue.toString());
         this.w = text.getBBox().width + 20;
 
         let path = PathBuilder.create()

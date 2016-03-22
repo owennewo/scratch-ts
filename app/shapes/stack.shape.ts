@@ -1,3 +1,4 @@
+import {BlockArgModel} from "../model/blockarg.model";
 import {PathBuilder} from "../utils/path.builder";
 import {BaseShape} from "./base.shape";
 import {Graphics} from "../utils/graphics";
@@ -21,13 +22,10 @@ export class StackShape extends BaseShape {
         // this.base.hasLoopArrow = (loopBlocks.indexOf(this.op) >= 0);
     }
 
-    draw(parentGroup: Snap.Element) {
+    draw(parentGroup: Snap.Element, prepend: boolean = false) {
         super.draw(parentGroup);
+
         let h1: number = this.topH + this.stack1h - Geometry.NotchDepth;
-
-        let text = Graphics.ScriptPane.drawText(5, 18, this.spec.label, this.args);
-
-        this.w = text.getBBox().width + 20;
 
         let builder = PathBuilder.create()
             .drawTop(this.w)
@@ -39,8 +37,11 @@ export class StackShape extends BaseShape {
         }
         let pathString = builder.build();
         let path = Graphics.ScriptPane.drawPath(pathString, this.spec.category.name.toLowerCase());
-        this.group.append(path);
-        this.group.append(text);
+        if (prepend) {
+            this.group.prepend(path);
+        } else {
+            this.group.append(path);
+        }
     }
 
 }

@@ -1,3 +1,4 @@
+import {BlockArgModel} from "../model/blockarg.model";
 import {PathBuilder} from "../utils/path.builder";
 import {BaseShape} from "./base.shape";
 import {Graphics} from "../utils/graphics";
@@ -25,7 +26,7 @@ export class HatShape extends BaseShape {
             .drawRightAndBottom(this.topH, this.w, true)
             .lineTo(0, 12)
             .build();
-        if (prepend){
+        if (prepend) {
             this.group.prepend(Graphics.ScriptPane.drawPath(path, this.spec.category.name.toLowerCase()));
         } else {
           this.group.append(Graphics.ScriptPane.drawPath(path, this.spec.category.name.toLowerCase()));

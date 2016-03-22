@@ -13,7 +13,7 @@ import {SpecModel} from "../model/spec.model";
 import {SpecCategoryModel} from "../model/spec.category.model";
 
 export class ShapeFactory {
-    static createShape(spec: SpecModel, args?: any[]): Shape {
+    static createShape(spec: SpecModel, args?: BlockArgModel[]): Shape {
       if (!args) args = spec.defaultArgs;
         // var id = category.name  + "_" + spec.code.replace(new RegExp(":", "g"), "_");
         switch (spec.shapeType) {
@@ -26,7 +26,7 @@ export class ShapeFactory {
             case "r":
             case "R":
             case "rR":
-                return new NumberShape(spec, new BlockArgModel("%n", spec));
+                return new NumberShape(spec, args);
             case "h":
                 return new HatShape(spec, args);
             case "c":

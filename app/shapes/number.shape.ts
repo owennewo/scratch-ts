@@ -7,8 +7,8 @@ import {SpecModel} from "../model/spec.model";
 
 
 export class NumberShape extends BaseShape {
-    constructor(spec: SpecModel, arg: BlockArgModel) {
-        super(spec, arg);
+    constructor(spec: SpecModel, args: BlockArgModel[]) {
+        super(spec, args);
         this.indentTop = 2;
         // this.indentBottom = 2;
         // this.indentLeft = 6;
@@ -28,7 +28,7 @@ export class NumberShape extends BaseShape {
         // super.draw(parentGroup);
         this.centerY = this.topH / 2;
 
-        let text = Graphics.ScriptPane.drawText(this.x, this.y, this.arg.argValue, null, "blockarg");
+        let text = Graphics.ScriptPane.drawText(this.x, this.y, this.args[0].argValue.toString(), "blockarg");
 
         this.w = text.getBBox().width + 10;
 

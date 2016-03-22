@@ -1,3 +1,5 @@
+import {ReadStream} from "../utils/read.stream";
+import {BlockArgModel} from "./blockarg.model";
 import {SpecCategoryModel} from "./spec.category.model";
 import {BlockShapeModel} from "./block.shape.model";
 
@@ -10,6 +12,7 @@ export class SpecModel {
     category: SpecCategoryModel;
     shapeType: string;
     defaultArgs: any[];
+    labelsAndArgs: BlockArgModel[] = [];
 
     constructor(code: string, label: string, argCount: number, category: SpecCategoryModel, shapeType: string, defaultArgs: any[]) {
         this.code = code;
@@ -19,7 +22,28 @@ export class SpecModel {
         this.shapeType = shapeType;
         this.defaultArgs = defaultArgs;
         // this.shape = new BlockShapeModel()
+        this.addLabelsAndArgs();
     }
+
+    private addLabelsAndArgs() {
+        let specParts: any[] = ReadStream.tokenize(this.label);
+        let i: number;
+        this.labelsAndArgs = [];
+
+        for (i = 0; i < specParts.length; i++) {
+            let arg =  new BlockArgModel(specParts[i], this);
+            this.labelsAndArgs.push(arg);
+        }
+    }
+
+    cloneLabelAndArgs(): BlockArgModel[] {
+        let clonedArgs = [];
+        for (let arg of this.labelsAndArgs) {
+            clonedArgs.push(arg.clone());
+        }
+        return clonedArgs;
+    }
+
 
     static initialize() {
         // block specification					type, cat, opcode			default args (optional)
@@ -316,8 +340,6 @@ export class SpecModel {
         category.addSpec(spec);
         SpecModel.SPECS.set(spec.code, spec);
     }
-
-
 
     static addSpacer(category: SpecCategoryModel, spaces: number) {
         let spec = new SpecSpacerModel(category, spaces);

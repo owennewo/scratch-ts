@@ -1,3 +1,4 @@
+import {BlockArgModel} from "../model/blockarg.model";
 import {Shape} from "./shape";
 import {SpecModel} from "../model/spec.model";
 import {Graphics} from "../utils/graphics";
@@ -21,7 +22,7 @@ export class TextShape extends BaseShape {
     draw(parentGroup: Snap.Element) {
         // super.draw(parentGroup);
         this.group = parentGroup;
-        let text = Graphics.ScriptPane.drawText(this.x, this.y, this.text); //, this.args);
+        let text = Graphics.ScriptPane.drawText(this.x, this.y, this.text);
         parentGroup.append(text);
     }
 

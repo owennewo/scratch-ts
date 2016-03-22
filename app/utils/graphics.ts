@@ -70,31 +70,11 @@ export class Graphics {
         return r;
     }
 
-    drawText(x: number, y: number, text: string, args?: any[], textClass?: string): Snap.Element {
+    drawText(x: number, y: number, text: string, textClass?: string): Snap.Element {
 
-        let result;
-        if (!args || args.length === 0) {
-            result = this.paper.text(x, y, text);
-            if (textClass) {
-                result.addClass(textClass);
-            }
-        } else {
-          result = Graphics.ScriptPane.group(undefined, x, y, textClass);
-          let parts = ReadStream.tokenize(text);
-          let argIndex = 0;
-          let xPos = 0;
-          for (let part of parts)
-          {
-            if (part.startsWith("%")) {
-                part = args[argIndex];
-                argIndex++;
-            }
-            let textPart = this.paper.text(xPos, 0, part);
-            xPos += textPart.getBBox().width + 3;
-            result.append(textPart);
-
-          }
-
+        let result = this.paper.text(x, y, text);
+        if (textClass) {
+            result.addClass(textClass);
         }
 
         return result;

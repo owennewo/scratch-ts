@@ -30,6 +30,8 @@ import {Translator} from "../utils/translator";
  * John Maloney, August 2009
  */
 export class BlockArgModel {
+    part: string;
+    spec: SpecModel;
 
     public static epsilon: number = 1 / 4294967296;
     public static NT_NOT_NUMBER: number = 0;
@@ -57,7 +59,8 @@ export class BlockArgModel {
     // s - string (rectangular)
     // none of the above - custom subclass of BlockArgModel
     constructor(part: string, spec: SpecModel) {
-
+      this.spec = spec;
+      this.part = part;
       // Possible token formats:
       // 	%<single letter>
       // 	%m.<menuName>
@@ -85,28 +88,28 @@ export class BlockArgModel {
               this.editable = true;
               this.menuName = part.slice(3);
               this.addMenuIcon();
-              this.shape = new NumberShape(spec, this);
+              this.shape = new NumberShape(spec, [this]);
               // this.addEventListener(MouseEvent.MOUSE_DOWN, this.invokeMenu);
               return;
             case "m":
               this.type = ArgType.Menu;
               this.menuName = part.slice(3);
-              this.shape = new RectangleShape(spec, this);
+              this.shape = new RectangleShape(spec, [this]);
               this.addMenuIcon();
               // this.addEventListener(MouseEvent.MOUSE_DOWN, this.invokeMenu);
 
               return;
             case "n":
               this.type = ArgType.Number;
-              this.shape = new NumberShape(spec, this);
+              this.shape = new NumberShape(spec, [this]);
               this.numberType = BlockArgModel.NT_FLOAT;
-              this.shape = new NumberShape(spec, this);
+              this.shape = new NumberShape(spec, [this]);
               this.numberType = BlockArgModel.NT_FLOAT;
               this.argValue = 0;
               return;
             case "s":
               this.type = ArgType.UnknownS;
-              this.shape = new RectangleShape(spec, undefined);
+              this.shape = new RectangleShape(spec, [this]);
               return;
             default:
               // custom type; subclass is responsible for adding
@@ -136,6 +139,7 @@ export class BlockArgModel {
         this.shape.setWidthAndTopHeight(30, 15); // BlockModel.argTextFormat.size + 6); // 15 for normal arg font
       }
 
+
 //
 //
 //         if (this.editable || this.numberType || (this.type === "m")) { // add a string field
@@ -154,6 +158,14 @@ export class BlockArgModel {
 //         } else {
 //             this.shape.draw();
 //         }
+    }
+
+    clone(): BlockArgModel {
+       let clone = new BlockArgModel(this.part, this.spec);
+       clone.type = this.type;
+       clone.menuName = this.menuName;
+       clone.iconName = this.iconName;
+       return clone;
     }
 
     addMenuIcon() {
