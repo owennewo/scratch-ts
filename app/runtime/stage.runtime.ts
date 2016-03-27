@@ -38,6 +38,31 @@ export class StageRuntime extends ObjectRuntime {
         super(Snap("#svg-stage"));
         this.stage = stage;
         this.interp = new Interpreter(stage);
+
+        this.paper.mousedown(() => {
+            this.mouseDownCount++;
+            console.log("mouseDownCount:" + this.mouseDownCount);
+            if (this.mouseDownCount === 1) {
+                this.mouseIsDown = true;
+            }
+        });
+        this.paper.mouseup(() => {
+            this.mouseDownCount++;
+            console.log("mouseDownCount:" + this.mouseDownCount);
+            if (this.mouseDownCount === 1) {
+                this.mouseIsDown = true;
+            }
+        });
+
+        this.paper.mousemove((event) => {
+            let target: any = event.currentTarget;
+            let x = (event.layerX * target.offsetWidth / target.viewBox.baseVal.width) + target.viewBox.baseVal.x;
+            let y = -((event.layerY * target.offsetHeight / target.viewBox.baseVal.height) + target.viewBox.baseVal.y);
+            this.mouseX = x;
+            this.mouseY = y;
+        });
+
+
     }
 
     step() {

@@ -21,7 +21,11 @@ export class ScratchTime {
 
     static stopStepping() {
       ScratchTime.isStepping = false;
-      window.cancelAnimationFrame(ScratchTime.callbackId);
+      if (ScratchTime.callbackId) {
+          window.cancelAnimationFrame(ScratchTime.callbackId);
+          ScratchTime.callbackId = undefined;
+      }
+
     }
 
     static getTimer(): number {

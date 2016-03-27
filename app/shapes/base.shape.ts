@@ -1,3 +1,4 @@
+import {ScriptLayout} from "../ui/script.layout";
 import {BlockArgModel} from "../model/blockarg.model";
 import {BlockModel} from "../model/block.model";
 import {PathBuilder} from "../utils/path.builder";
@@ -51,7 +52,11 @@ export abstract class BaseShape implements Shape {
         let y = 15 + this.indentTop;
         for (let arg of args) {
           arg.shape.move(x, y);
-          arg.shape.draw(this.group);
+          //if (arg instanceof BlockModel) {
+              // ScriptLayout.drawBlock(<BlockModel> arg, this.group, x, y);
+          //} else {
+            arg.shape.draw(this.group);
+          //}
           x = arg.shape.getBBox().w + 10;
         }
 
