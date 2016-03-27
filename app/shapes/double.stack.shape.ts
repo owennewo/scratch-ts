@@ -21,7 +21,7 @@ export class DoubleStackShape extends StackShape {
         let h1: number = this.topH + this.stack1h - Geometry.NotchDepth;
         let h2: number = h1 + Geometry.DividerH + this.stack2h - Geometry.NotchDepth;
 
-        let text = Graphics.ScriptPane.drawText(5, 18, this.spec.label, this.args[0]);
+        let text = Graphics.ScriptPane.drawText(5, 18, this.spec.label);
 
         this.w = text.getBBox().width + 20;
 
