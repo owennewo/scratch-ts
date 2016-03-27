@@ -15,23 +15,19 @@ export class BooleanShape extends BaseShape {
     }
 
     draw(parentGroup: Snap.Element) {
-        super.draw(parentGroup);
+        this.group = parentGroup;
         this.centerY = this.topH / 2;
 
-        let text = Graphics.ScriptPane.drawText(10, 18, this.spec.label, this.args[0].argValue.toString());
-        this.w = text.getBBox().width + 20;
-
         let path = PathBuilder.create()
-            .moveTo(0, this.centerY)
-            .lineTo(this.centerY, 0)
-            .lineTo(this.w - this.centerY, 0)
-            .lineTo(this.w , this.centerY)
-            .lineTo(this.w - this.centerY, this.topH)
-            .lineTo(this.centerY, this.topH)
-            .lineTo(0, this.centerY)
+            .moveTo(this.x, this.centerY)
+            .lineTo(this.x + this.centerY, 0)
+            .lineTo(this.x + this.w - this.centerY, 0)
+            .lineTo(this.x + this.w , this.centerY)
+            .lineTo(this.x + this.w - this.centerY, this.topH)
+            .lineTo(this.x + this.centerY, this.topH)
+            .lineTo(this.x, this.centerY)
             .build();
         this.group.append(Graphics.ScriptPane.drawPath(path, this.spec.category.name.toLowerCase()));
-        this.group.append(text);
 
     }
 

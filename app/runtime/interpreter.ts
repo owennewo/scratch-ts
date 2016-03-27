@@ -75,6 +75,8 @@ export class Interpreter {
 
     protected debugFunc: Function;
 
+    private noThreadCount: number = 0; // tracking whether there are any active threads
+
     constructor(stage: StageModel) {
         this.stage = stage;
         this.initPrims();
@@ -207,8 +209,15 @@ export class Interpreter {
         this.doRedraw = false;
         this.currentMSecs = ScratchTime.getTimer();
         if (this.threads.length === 0) {
-          console.log("No threads, nothing to do");
-          return;
+          this.noThreadCount++;
+          if (this.noThreadCount > 1) {
+              console.log("No threads, shutting down animation frame");
+              ScratchTime.stopStepping();
+          }
+           return;
+        } else {
+            this.noThreadCount = 0;
+
         }
         while ((this.currentMSecs - this.startTime) < workTime) {
             if (this.warpThread && (!this.warpThread.block)) this.clearWarpBlock();
@@ -435,20 +444,20 @@ export class Interpreter {
         this.primTable["whenClicked"] = this.primTable["noop"];
         this.primTable["whenSceneStarts"] = this.primTable["noop"];
         this.primTable["wait:elapsed:from:"] = this.primWait;
-        this.primTable["doForever"] = function(b: any): any { this.startCmdList(this.b.stack1, true); };
+        this.primTable["doForever"] = function(b: BlockModel, interp: Interpreter): any { interp.startCmdList(b.stack1, true); };
         this.primTable["doRepeat"] = this.primRepeat;
-        this.primTable["broadcast:"] = function(b: any): any { this.broadcast(this.arg(this.b, 0), false); };
-        this.primTable["doBroadcastAndWait"] = function(b: any): any { this.broadcast(this.arg(this.b, 0), true); };
+        this.primTable["broadcast:"] = function(b: BlockModel, interp: Interpreter): any { interp.broadcast(this.arg(b, 0), false); };
+        this.primTable["doBroadcastAndWait"] = function(b: BlockModel, interp: Interpreter): any { interp.broadcast(this.arg(b, 0), true); };
         this.primTable["whenIReceive"] = this.primTable["noop"];
-        this.primTable["doForeverIf"] = function(b: any): any { if (this.arg(this.b, 0)) this.startCmdList(this.b.stack1, true); else this.yield = true; };
+        this.primTable["doForeverIf"] = function(b: BlockModel, interp: Interpreter): any { if (interp.arg(b, 0)) interp.startCmdList(b.stack1, true); else interp.yield = true; };
         this.primTable["doForLoop"] = this.primForLoop;
-        this.primTable["doIf"] = function(b: any): any { if (this.arg(this.b, 0)) this.startCmdList(this.b.stack1); };
-        this.primTable["doIfElse"] = function(b: any): any { if (this.arg(this.b, 0)) this.startCmdList(this.b.stack1); else this.startCmdList(this.b.subStack2); };
-        this.primTable["doWaitUntil"] = function(b: any): any { if (!this.arg(this.b, 0)) this.yield = true; };
-        this.primTable["doWhile"] = function(b: any): any { if (this.arg(this.b, 0)) this.startCmdList(this.b.stack1, true); };
-        this.primTable["doUntil"] = function(b: any): any { if (!this.arg(this.b, 0)) this.startCmdList(this.b.stack1, true); };
+        this.primTable["doIf"] = function(b: BlockModel, interp: Interpreter): any { if (interp.arg(b, 0)) interp.startCmdList(b.stack1); };
+        this.primTable["doIfElse"] = function(b: BlockModel, interp: Interpreter): any { if (interp.arg(b, 0)) interp.startCmdList(b.stack1); else interp.startCmdList(b.stack2); };
+        this.primTable["doWaitUntil"] = function(b: BlockModel, interp: Interpreter): any { if (!interp.arg(b, 0)) this.yield = true; };
+        this.primTable["doWhile"] = function(b: BlockModel, interp: Interpreter): any { if (interp.arg(b, 0)) interp.startCmdList(b.stack1, true); };
+        this.primTable["doUntil"] = function(b: BlockModel, interp: Interpreter): any { if (!interp.arg(b, 0)) interp.startCmdList(b.stack1, true); };
         this.primTable["doReturn"] = this.primReturn;
-        this.primTable["stopAll"] = function(b: any): any { this.stage.runtime.stopAll(); this.yield = true; };
+        this.primTable["stopAll"] = function(b: BlockModel, interp: Interpreter): any { interp.stage.runtime.stopAll(); interp.yield = true; };
         this.primTable["stopScripts"] = this.primStop;
         this.primTable["warpSpeed"] = this.primOldWarpSpeed;
 

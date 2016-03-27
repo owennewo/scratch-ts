@@ -188,7 +188,7 @@ export class SpecModel {
         SpecModel.add("wait %n secs", 1, " ", SpecCategoryModel.CONTROL_STAGE, "wait:elapsed:from:", [1]);
         SpecModel.addSpacer(SpecCategoryModel.CONTROL_STAGE, 1);
         SpecModel.add("repeat %n", 1, "c", SpecCategoryModel.CONTROL_STAGE, "doRepeat", [10]);
-        SpecModel.add("forever", 1, "cf", SpecCategoryModel.CONTROL_STAGE, "doForever");
+        SpecModel.add("forever", 0, "cf", SpecCategoryModel.CONTROL_STAGE, "doForever");
         SpecModel.addSpacer(SpecCategoryModel.CONTROL_STAGE, 1);
         SpecModel.add("if %b then", 1, "c", SpecCategoryModel.CONTROL_STAGE, "doIf");
         SpecModel.add("if %b then", 1, "e", SpecCategoryModel.CONTROL_STAGE, "doIfElse");

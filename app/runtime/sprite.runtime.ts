@@ -72,12 +72,9 @@ export class SpriteRuntime extends ObjectRuntime {
 
         let y = Math.floor(-(this.sprite.y + this.lastSpriteBox.h / 2));  // scratch y coordinate system is upside down compared to svg hence the negation
 
-        console.log("sprite:" + x + ":" + y);
-
-        // let trans = "translate(" + s.x + "," + s.y + ") rotate(" + s.direction + " " + s.x + " " + s.y + ") scale(" + s.scale + ")";
         let trans = "rotate(" + (s.direction - 90) + " " + this.sprite.x + " " + (-this.sprite.y) + ") scale(" + s.scale + ") translate(" + x + "," + y + ")";
         s.runtime.svg.transform(trans);
-        // s.runtime.svg.transform("translate(" + s.direction + "deg)");
+
     }
 
     setPenSize(size: number) {
@@ -118,4 +115,12 @@ export class SpriteRuntime extends ObjectRuntime {
     type(): string {
       return "sprite";
     }
+
+    isTouching(other: SpriteRuntime) {
+        let box1 = this.svg.getBBox();
+        let box2 = other.svg.getBBox();
+        // this is a rough approximation to check if touching.  Not sure if its good enough, but there is no simple alternative
+        return Snap.path.isPointInsideBBox(box1, box2.cx, box2.cy) || Snap.path.isPointInsideBBox(box2, box1.cx, box1.cy);
+    }
+
 }

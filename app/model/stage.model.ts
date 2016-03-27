@@ -32,6 +32,14 @@ export class StageModel extends ObjectModel {
       console.error("can't find sprite: " + spriteName);
     }
 
+    spritesAndClonesNamed(spriteName): SpriteModel[] {
+      // todo check for clones
+      let sprites = [];
+      let sprite = this.spriteNamed(spriteName);
+      if (sprite) sprites.push(sprite);
+      return sprites;
+    }
+
     objNamed(objectName: string): ObjectModel {
       let obj = this.spriteNamed(objectName);
       if (obj !== null) {

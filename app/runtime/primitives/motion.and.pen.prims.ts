@@ -142,7 +142,7 @@ export class MotionAndPenPrims {
     private static mouseOrSpritePosition(arg: string, interp: Interpreter): Point {
         if (arg === "_mouse_") {
             let w: StageModel = interp.stage;
-            return new Point(w.runtime.mouseX(), w.runtime.mouseY());
+            return new Point(w.runtime.mouseX, w.runtime.mouseY);
         } else {
             let s: SpriteModel = interp.stage.spriteNamed(arg);
             if (s === null) return null;

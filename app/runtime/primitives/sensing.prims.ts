@@ -27,8 +27,8 @@ export class SensingPrims {
         primTable["answer"] = function(b: any, interp: Interpreter): any { return interp.stage.runtime.lastAnswer; };
 
         primTable["mousePressed"] = function(b: any, interp: Interpreter): any { return interp.stage.runtime.mouseIsDown; };
-        primTable["mouseX"] = function(b: any, interp: Interpreter): any { return interp.stage.runtime.mouseX(); };
-        primTable["mouseY"] = function(b: any, interp: Interpreter): any { return interp.stage.runtime.mouseY(); };
+        primTable["mouseX"] = function(b: any, interp: Interpreter): any { return interp.stage.runtime.mouseX; };
+        primTable["mouseY"] = function(b: any, interp: Interpreter): any { return interp.stage.runtime.mouseY; };
         primTable["timer"] = function(b: any, interp: Interpreter): any { return interp.stage.runtime.timer(); };
         primTable["timerReset"] = function(b: any, interp: Interpreter): any { interp.stage.runtime.timerReset(); };
         primTable["keyPressed:"] = this.primKeyPressed;
@@ -54,27 +54,28 @@ export class SensingPrims {
     // TODO: move to stage
     private static stageRect: Rectangle = new Rectangle(0, 0, 480, 360);
     private primTouching(b: BlockModel, interp: Interpreter): boolean {
-      console.log("todo primTouching");
-        // let s: SpriteModel = interp.targetSprite();
-        // if (s === null) return false;
-        // let arg: any = interp.arg(b, 0);
-        // if ("_edge_" === arg) {
-        //     if (SensingPrims.stageRect.containsRect(s.getBounds(s.parent))) return false;
-        //
-        //     let r: Rectangle = s.runtime.bounds();
-        //     return (r.left < 0) || (r.right > StageModel.STAGEW) ||
-        //         (r.top < 0) || (r.bottom > StageModel.STAGEH);
-        // }
-        // if ("_mouse_" === arg) {
-        //     return this.mouseTouches(s);
-        // }
-        // if (!s.visible) return false;
-        //
-        // ;
-        // let sBM: BitmapData = s.bitmap(true);
-        // for (let s2 of interp.stage.stage.spritesAndClonesNamed(arg))
-        //     if (s2.visible && sBM.hitTest(s.runtime.bounds().topLeft, 1, s2.bitmap(true), s2.bounds().topLeft, 1))
-        //         return true;
+
+        let s: SpriteModel = interp.targetSprite();
+        if (s === null) return false;
+        let arg: any = interp.arg(b, 0);
+        if ("_edge_" === arg) {
+          console.log("todo check edge touching");
+            // if (SensingPrims.stageRect.containsRect(s.getBounds(s.parent))) return false;
+            //
+            // let r: Rectangle = s.runtime.bounds();
+            // return (r.left < 0) || (r.right > StageModel.STAGEW) ||
+            //     (r.top < 0) || (r.bottom > StageModel.STAGEH);
+        }
+        if ("_mouse_" === arg) {
+          console.log("todo mouse touches");
+            return this.mouseTouches(s);
+        }
+        if (!s.visible) return false;
+
+        for (let s2 of interp.stage.spritesAndClonesNamed(arg)) {
+          if (s2.visible && s2.runtime.isTouching(s.runtime ))
+              return true;
+        }
 
         return false;
     }
@@ -257,7 +258,7 @@ export class SensingPrims {
 
     private mouseOrSpritePosition(interp: Interpreter, arg: string): Point {
         if (arg === "_mouse_") {
-            return new Point(interp.stage.runtime.mouseX(), interp.stage.runtime.mouseY());
+            return new Point(interp.stage.runtime.mouseX, interp.stage.runtime.mouseY);
         } else {
             let s: SpriteModel = interp.stage.spriteNamed(arg);
             if (s === null) return null;

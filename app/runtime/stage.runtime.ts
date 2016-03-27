@@ -18,6 +18,9 @@ export class StageRuntime extends ObjectRuntime {
     keyIsDown: any[] = new Array(128); // records key up/down state
     shiftIsDown: boolean;
     mouseIsDown: boolean;
+    mouseDownCount: number = 0;
+    mouseX: number = 0;
+    mouseY: number = 0;
     // background: Snap.Element;
     paper: Snap.Paper;
 
@@ -59,16 +62,6 @@ export class StageRuntime extends ObjectRuntime {
 
     clearPenStrokes() {
         console.log("todo: clear pen strokes");
-    }
-
-    mouseX(): number {
-        console.log("todo: get mousex");
-        return -1;
-    }
-
-    mouseY(): number {
-        console.log("todo: getMouseY");
-        return -1;
     }
 
     stampSprite(sprite: SpriteModel, alpha: number) {
