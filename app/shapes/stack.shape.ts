@@ -1,3 +1,4 @@
+import {BlockBaseModel} from "../model/block.base.model";
 import {BlockArgModel} from "../model/blockarg.model";
 import {PathBuilder} from "../utils/path.builder";
 import {BaseShape} from "./base.shape";
@@ -13,8 +14,8 @@ export class StackShape extends BaseShape {
     hasLoopArrow: boolean = true;
     isFinal: boolean;
 
-    constructor(spec: SpecModel, args: any[], isFinal: boolean = false) {
-        super(spec, args);
+    constructor(spec: SpecModel, arg: BlockBaseModel, isFinal: boolean = false, group?: Snap.Element) {
+        super(spec, arg, group);
         this.isFinal = isFinal;
         // let loopBlocks: string[] = ["doForever", "doForeverIf", "doRepeat", "doUntil"];
 
@@ -22,8 +23,8 @@ export class StackShape extends BaseShape {
         // this.base.hasLoopArrow = (loopBlocks.indexOf(this.op) >= 0);
     }
 
-    draw(parentGroup: Snap.Element, prepend: boolean = false) {
-        super.draw(parentGroup);
+    draw(x: number, y: number, prepend: boolean = false) {
+        super.draw(x, y);
 
         let h1: number = this.topH + this.stack1h - Geometry.NotchDepth;
 

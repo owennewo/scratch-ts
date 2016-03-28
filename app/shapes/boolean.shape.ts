@@ -1,3 +1,4 @@
+import {BlockBaseModel} from "../model/block.base.model";
 import {BlockArgModel} from "../model/blockarg.model";
 import {PathBuilder} from "../utils/path.builder";
 import {BaseShape} from "./base.shape";
@@ -7,15 +8,16 @@ import {SpecModel} from "../model/spec.model";
 
 
 export class BooleanShape extends BaseShape {
-    constructor(spec: SpecModel, args: any[]) {
-        super(spec, args);
+    constructor(spec: SpecModel, arg: BlockBaseModel, group?: Snap.Element) {
+        super(spec, arg, group);
         // this.isReporter = true;
         // this.indentLeft = 9;
         // this.indentRight = 7;
     }
 
-    draw(parentGroup: Snap.Element) {
-        this.group = parentGroup;
+    draw(x: number, y: number) {
+        super.draw(x, y);
+        // this.group = parentGroup;
         this.centerY = this.topH / 2;
 
         let path = PathBuilder.create()

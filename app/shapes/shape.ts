@@ -1,10 +1,13 @@
+import {BlockBaseModel} from "../model/block.base.model";
 import {BlockArgModel} from "../model/blockarg.model";
 export interface Shape {
     h: number;
     y: number;
     getGroup(): any;
-    draw(parentGroup: Snap.Element, prepend?: boolean);
-    drawHeader(args: BlockArgModel[]);
+    setGroup(group: Snap.Element);
+    newGroup(parentGoup: Snap.Element, x: number, y: number);
+    draw(x: number, y: number, prepend?: boolean);
+    drawHeader(args: BlockBaseModel[]);
     move(x: number, y: number);
     setWidthAndTopHeight(w: number, h: number);
     setColor(color: any);

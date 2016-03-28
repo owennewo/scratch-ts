@@ -1,3 +1,4 @@
+import {BlockBaseModel} from "./block.base.model";
 import {IconShape} from "../shapes/icon.shape";
 import {TextShape} from "../shapes/text.shape";
 import {NumberShape} from "../shapes/number.shape";
@@ -29,7 +30,7 @@ import {Translator} from "../utils/translator";
  *
  * John Maloney, August 2009
  */
-export class BlockArgModel {
+export class BlockArgModel extends BlockBaseModel {
     part: string;
     spec: SpecModel;
 
@@ -39,7 +40,6 @@ export class BlockArgModel {
     public static NT_INT: number = 2;
 
     public type: ArgType;
-    public shape: Shape;
     public argValue: any = "";
     public numberType: number = BlockArgModel.NT_NOT_NUMBER;
     public editable: boolean = false;
@@ -59,6 +59,7 @@ export class BlockArgModel {
     // s - string (rectangular)
     // none of the above - custom subclass of BlockArgModel
     constructor(part: string, spec: SpecModel) {
+      super();
       this.spec = spec;
       this.part = part;
       // Possible token formats:
@@ -72,44 +73,43 @@ export class BlockArgModel {
 
           switch (argCode) {
             case "b":
-              this.type = ArgType.Boolean;
-              this.shape = new BooleanShape(spec, undefined);
               this.argValue = false;
+              this.type = ArgType.Boolean;
+              this.shape = new BooleanShape(spec, this);
               return;
             case "c":
               this.type = ArgType.ColorPicker;
-              this.shape = new RectangleShape(spec, undefined);
+              this.shape = new RectangleShape(spec, this);
               this.menuName = "colorPicker";
               // this.addEventListener(MouseEvent.MOUSE_DOWN, this.invokeMenu);
 
               return;
             case "d":
+              this.argValue = 0;
               this.type = ArgType.NumberMenu;
               this.editable = true;
               this.menuName = part.slice(3);
               this.addMenuIcon();
-              this.shape = new NumberShape(spec, [this]);
+              this.shape = new NumberShape(spec, this);
               // this.addEventListener(MouseEvent.MOUSE_DOWN, this.invokeMenu);
               return;
             case "m":
               this.type = ArgType.Menu;
               this.menuName = part.slice(3);
-              this.shape = new RectangleShape(spec, [this]);
+              this.shape = new RectangleShape(spec, this);
               this.addMenuIcon();
               // this.addEventListener(MouseEvent.MOUSE_DOWN, this.invokeMenu);
 
               return;
             case "n":
-              this.type = ArgType.Number;
-              this.shape = new NumberShape(spec, [this]);
-              this.numberType = BlockArgModel.NT_FLOAT;
-              this.shape = new NumberShape(spec, [this]);
-              this.numberType = BlockArgModel.NT_FLOAT;
               this.argValue = 0;
+              this.type = ArgType.Number;
+              this.shape = new NumberShape(spec, this);
+              this.numberType = BlockArgModel.NT_FLOAT;
               return;
             case "s":
               this.type = ArgType.UnknownS;
-              this.shape = new RectangleShape(spec, [this]);
+              this.shape = new RectangleShape(spec, this);
               return;
             default:
               // custom type; subclass is responsible for adding
@@ -243,6 +243,11 @@ export class BlockArgModel {
     private argTextInsets(type: string = ""): any[] {
         if (type === "b") return [5, 0];
         return this.numberType ? [3, 0] : [2, -1];
+    }
+
+    drawBlock(group: Snap.Element, x: number, y: number) {
+      this.shape.setGroup(group);
+      this.shape.draw(x, y);
     }
 
     // private textChanged(evt:any):void {

@@ -1,3 +1,4 @@
+import {BlockBaseModel} from "../model/block.base.model";
 import {BlockArgModel} from "../model/blockarg.model";
 import {PathBuilder} from "../utils/path.builder";
 import {BaseShape} from "./base.shape";
@@ -12,12 +13,12 @@ export class DoubleStackShape extends StackShape {
     stack2h: number = Geometry.EmptyStackH;
     stack2y: number;
 
-    constructor(spec: SpecModel, args: any[]) {
-        super(spec, args);
+    constructor(spec: SpecModel, arg: BlockBaseModel, group?: Snap.Element) {
+        super(spec, arg, false, group);
     }
 
-    draw(parentGroup: Snap.Element) {
-        super.draw(parentGroup);
+    draw(x: number, y: number) {
+        super.draw(x, y);
         let h1: number = this.topH + this.stack1h - Geometry.NotchDepth;
         let h2: number = h1 + Geometry.DividerH + this.stack2h - Geometry.NotchDepth;
 

@@ -1,3 +1,5 @@
+import {ScriptLayout} from "../ui/script.layout";
+import {BlockBaseModel} from "./block.base.model";
 import {Primitives} from "../runtime/primitives/primitives";
 import {DoubleStackShape} from "../shapes/double.stack.shape";
 import {StackShape} from "../shapes/stack.shape";
@@ -13,7 +15,7 @@ import {Translator} from "../utils/translator";
 import {BlockIO} from "../io/block.io";
 import {ReadStream} from "../utils/read.stream";
 
-export class BlockModel {
+export class BlockModel extends BlockBaseModel {
 
     private x: number;
     private y: number;
@@ -63,10 +65,8 @@ export class BlockModel {
     stack1: BlockModel;
     stack2: BlockModel;
 
-    shape: Shape;
-
     private suppressLayout: boolean; // used to avoid extra layouts during block initialization
-    labelsAndArgs: BlockArgModel[] = [];
+    labelsAndArgs: BlockBaseModel[] = [];
     // private argTypes: any[] = [];
     // private elseLabel:TextField;
 
@@ -88,6 +88,7 @@ export class BlockModel {
     // private originalPosition:Point;
 
     constructor(spec: SpecModel, defaultArgs: any[] = null) {
+        super();
 
         // this.specC = Translator.map(specCode);
         this.spec = spec;
@@ -110,55 +111,10 @@ export class BlockModel {
         if (!spec) {
             console.error("error: spec is null");
         }
-        this.shape = ShapeFactory.createShape(spec, this.labelsAndArgs);
-        // if ((type === " ") || (type === "") || (type === "w")) {
-        //     this.shape = new BlockShapeModel(BlockShapeModel.CmdShape, color);
-        //     this.indentTop = 3;
-        // } else if (type === "b") {
-        //     this.shape = new BlockShapeModel(BlockShapeModel.BooleanShape, color);
-        //     this.isReporter = true;
-        //     this.indentLeft = 9;
-        //     this.indentRight = 7;
-        // } else if (type === "r" || type === "R" || type === "rR") {
-        //     this.type = "r";
-        //     this.shape = new BlockShapeModel(BlockShapeModel.NumberShape, color);
-        //     this.isReporter = true;
-        //     this.isRequester = ((type === "R") || (type === "rR"));
-        //     this.forcedRequester = (type === "rR");
-        //     this.indentTop = 2;
-        //     this.indentBottom = 2;
-        //     this.indentLeft = 6;
-        //     this.indentRight = 4;
-        // } else if (type === "h") {
-        //     this.shape = new BlockShapeModel(BlockShapeModel.HatShape, color);
-        //     this.isHat = true;
-        //     this.indentTop = 12;
-        // } else if (type === "c") {
-        //     this.shape = new BlockShapeModel(BlockShapeModel.LoopShape, color);
-        // } else if (type === "cf") {
-        //     this.shape = new BlockShapeModel(BlockShapeModel.FinalLoopShape, color);
-        //     this.isTerminal = true;
-        // } else if (type === "e") {
-        //     this.shape = new BlockShapeModel(BlockShapeModel.IfElseShape, color);
-        //     // this.addChild(this.elseLabel = this.makeLabel(Translator.map('else')));
-        // } else if (type === "f") {
-        //     this.shape = new BlockShapeModel(BlockShapeModel.FinalCmdShape, color);
-        //     this.isTerminal = true;
-        //     this.indentTop = 5;
-        // } else if (type === "o") { // cmd outline for proc definition
-        //     this.shape = new BlockShapeModel(BlockShapeModel.CmdOutlineShape, color);
-        //     // this.shape.filters = []; // no bezel
-        //     this.indentTop = 3;
-        // } else if (type === "p") {
-        //     this.shape = new BlockShapeModel(BlockShapeModel.ProcHatShape, color);
-        //     this.isHat = true;
-        // } else {
-        //     this.shape = new BlockShapeModel(BlockShapeModel.RectShape, color);
-        // }
-        //        this.addChildAt(this.shape, 0);
+
         this.setArgs(defaultArgs);
 
-        ///this.addEventListener(FocusEvent.KEY_FOCUS_CHANGE, this.focusChange);
+
     }
 
     setArgs(defaultArgs: any[] = null) {
@@ -889,6 +845,31 @@ export class BlockModel {
 
     showRunFeedback() {
         console.log("todo showRunFeedback");
+    }
+
+    drawBlock(group: Snap.Element, x: number, y: number) {
+      // let clone = this.clone();
+      // clone.shape.move(x, y);
+      ScriptLayout.drawBlock(this, group, x, y);
+    }
+
+    clone(): BlockModel {
+        let clone = new BlockModel(this.spec, this.defaultArgValues);
+        return clone;
+    }
+
+    isStack(): boolean {
+      if (this.spec.shapeType === "cf" || this.spec.shapeType === "c" || this.spec.shapeType === "e")  {
+        return true;
+      }
+      return false;
+    }
+
+    isDoubleStack(): boolean {
+      if (this.spec.shapeType === "e")  {
+        return true;
+      }
+      return false;
     }
 
 }

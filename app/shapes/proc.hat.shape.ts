@@ -1,3 +1,4 @@
+import {BlockBaseModel} from "../model/block.base.model";
 import {BlockArgModel} from "../model/blockarg.model";
 import {PathBuilder} from "../utils/path.builder";
 import {BaseShape} from "./base.shape";
@@ -7,13 +8,13 @@ import {SpecModel} from "../model/spec.model";
 
 
 export class ProcHatShape extends BaseShape {
-    constructor(spec: SpecModel, args: any[]) {
-        super(spec, args);
+    constructor(spec: SpecModel, arg: BlockBaseModel, group?: Snap.Element) {
+        super(spec, arg, group);
         // this.isHat = true;
     }
 
-    draw(parentGroup: Snap.Element) {
-        super.draw(parentGroup);
+    draw(x: number, y: number) {
+        super.draw(x, y);
         let trimColor = "#8E2EC2"; // 0xcf4ad9;
         let archRoundness: number = Math.min(0.2, 35 / this.w);
 

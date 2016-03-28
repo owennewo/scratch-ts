@@ -1,3 +1,4 @@
+import {BlockBaseModel} from "../model/block.base.model";
 import {BlockArgModel} from "../model/blockarg.model";
 import {PathBuilder} from "../utils/path.builder";
 import {BaseShape} from "./base.shape";
@@ -9,13 +10,13 @@ import {SpecModel} from "../model/spec.model";
 
 export class HatShape extends BaseShape {
 
-    constructor(spec: SpecModel, args: any[]) {
-        super(spec, args);
+    constructor(spec: SpecModel, arg: BlockBaseModel, group?: Snap.Element) {
+        super(spec, arg, group);
         this.indentTop = 12;
     }
 
-    draw(parentGroup: Snap.Element, prepend: boolean = false) {
-        super.draw(parentGroup);
+    draw(x: number, y: number) {
+        super.draw(x, y);
 
         this.topH = 35;
         let path = PathBuilder.create()
@@ -26,11 +27,7 @@ export class HatShape extends BaseShape {
             .drawRightAndBottom(this.topH, this.w, true)
             .lineTo(0, 12)
             .build();
-        if (prepend) {
-            this.group.prepend(Graphics.ScriptPane.drawPath(path, this.spec.category.name.toLowerCase()));
-        } else {
-          this.group.append(Graphics.ScriptPane.drawPath(path, this.spec.category.name.toLowerCase()));
-        }
+        this.group.prepend(Graphics.ScriptPane.drawPath(path, this.spec.category.name.toLowerCase()));
 
     }
 

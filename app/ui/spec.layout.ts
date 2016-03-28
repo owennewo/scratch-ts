@@ -60,17 +60,19 @@ export class SpecLayout {
 
         let newCategoryBlocks = Graphics.ScriptPane.group("script-pane-categories-blocks", 10, 200);
 
+        let xPos = 0;
         let yPos = 0;
         category.specs.forEach(spec => {
           if (spec instanceof SpecSpacerModel) {
             yPos += 10;
             return;
           }
-            let shape = ShapeFactory.createShape(spec, spec.labelsAndArgs);
+            let shape = ShapeFactory.createShape(spec);// , spec.defaultArgs[0]);
             shape.setDraggable(true);
-            shape.move(20, yPos);
+            shape.newGroup(newCategoryBlocks, xPos, yPos );
             shape.drawHeader(spec.labelsAndArgs);
-            shape.draw(newCategoryBlocks, true);
+            shape.draw(xPos, yPos, true);
+//            shape.move(20, yPos);
             let shapeHeight = shape.getGroup().getBBox().h;
             yPos += shapeHeight + 5;
         });

@@ -1,3 +1,4 @@
+import {BlockBaseModel} from "../model/block.base.model";
 import {BlockArgModel} from "../model/blockarg.model";
 import {Shape} from "./shape";
 import {BooleanShape} from "./boolean.shape";
@@ -13,36 +14,37 @@ import {SpecModel} from "../model/spec.model";
 import {SpecCategoryModel} from "../model/spec.category.model";
 
 export class ShapeFactory {
-    static createShape(spec: SpecModel, args?: BlockArgModel[]): Shape {
-      if (!args) args = spec.defaultArgs;
+    static createShape(spec: SpecModel, arg?: BlockBaseModel, group?: Snap.Element): Shape {
+      // if (!args) args = spec.defaultArgs;
         // var id = category.name  + "_" + spec.code.replace(new RegExp(":", "g"), "_");
         switch (spec.shapeType) {
             case " ":
             case "":
             case "w":
-                return new CommandShape(spec, args);
+                return new CommandShape(spec, arg, group);
             case "b":
-                return new BooleanShape(spec, args);
+                return new BooleanShape(spec, arg, group);
             case "r":
             case "R":
             case "rR":
-                return new NumberShape(spec, args);
+              if (arg instanceof BlockArgModel && !arg.argValue) (<BlockArgModel> arg).argValue = 0;
+                return new NumberShape(spec, arg, group);
             case "h":
-                return new HatShape(spec, args);
+                return new HatShape(spec, arg, group);
             case "c":
-                return new StackShape(spec, args);
+                return new StackShape(spec, arg, false, group);
             case "cf":
-                return new StackShape(spec, args, true);
+                return new StackShape(spec, arg, true, group);
             case "e":
-                return new DoubleStackShape(spec, args);
+                return new DoubleStackShape(spec, arg, group);
             case "f":
-                return new CommandOutlineShape(spec, args, false);
+                return new CommandOutlineShape(spec, arg, false, group);
             case "o":
-                return new ProcHatShape(spec, args);
+                return new ProcHatShape(spec, arg, group);
             case "p":
-                return new ProcHatShape(spec, args);
+                return new ProcHatShape(spec, arg, group);
             default:
-                return new RectangleShape(spec, args);
+                return new RectangleShape(spec, arg, group);
 
         }
 

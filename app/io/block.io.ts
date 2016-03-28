@@ -1,5 +1,3 @@
-import {DoubleStackShape} from "../shapes/double.stack.shape";
-import {StackShape} from "../shapes/stack.shape";
 import {SpecModel} from "../model/spec.model";
 import {SpecCategoryModel} from "../model/spec.category.model";
 import {BlockModel} from "../model/block.model";
@@ -72,8 +70,10 @@ export class BlockIO {
                 result.push(argVal);
             }
         }
-        if (b.shape instanceof StackShape) result.push(BlockIO.stackToArray(b.stack1));
-        if (b.shape instanceof DoubleStackShape) result.push(BlockIO.stackToArray(b.stack2));
+        if (b.isStack())
+          result.push(BlockIO.stackToArray(b.stack1));
+        if (b.isDoubleStack())
+          result.push(BlockIO.stackToArray(b.stack2));
         return result;
     }
 
@@ -111,8 +111,10 @@ export class BlockIO {
             // }
             b.setArg(i, a);
         }
-        if (substacks[0] && (b.shape instanceof StackShape)) b.insertBlockSub1(substacks[0]);
-        if (substacks[1] && (b.shape instanceof DoubleStackShape)) b.insertBlockSub2(substacks[1]);
+        if (substacks[0] && b.isStack())
+            b.insertBlockSub1(substacks[0]);
+        if (substacks[1] && b.isDoubleStack())
+            b.insertBlockSub2(substacks[1]);
         // if hadSpriteRef is true, don't call fixMouseEdgeRefs() to avoid converting references
         // to sprites named 'mouse' or 'edge' to '_mouse_' or '_edge_'.
         if (!hadSpriteRef) BlockIO.fixMouseEdgeRefs(b);

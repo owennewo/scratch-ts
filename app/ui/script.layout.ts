@@ -1,3 +1,4 @@
+import {ShapeFactory} from "../shapes/shape.factory";
 import {Geometry} from "../shapes/geometry";
 import {StackShape} from "../shapes/stack.shape";
 import {Graphics} from "../utils/graphics";
@@ -50,6 +51,7 @@ export class ScriptLayout {
     static drawBlock(b: BlockModel, scriptGroup: Snap.Element, x: number, y: number): number {
 
       let stackHeight: number = 0;
+      b.shape = ShapeFactory.createShape(b.spec); // , b.labelsAndArgs);
       if (b.shape instanceof StackShape) {
         let stackShape = <StackShape> b.shape;
         let subStackHeight = this.drawBlock(b.stack1, scriptGroup, x + Geometry.SubstackInset, y + stackShape.stack1y);
@@ -61,9 +63,10 @@ export class ScriptLayout {
         stackShape.stack1h = subStackHeight;
       }
 
-      b.shape.move(x, y);
+      b.shape.newGroup(scriptGroup, x, y);
       b.shape.drawHeader(b.labelsAndArgs);
-      b.shape.draw(scriptGroup, true);
+      b.shape.draw(x, y, true);
+      // b.shape.move(x, y);
       b.shape.setDraggable(false);
 
       let shapeHeight = b.shape.getGroup().getBBox().h;

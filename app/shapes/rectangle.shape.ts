@@ -1,3 +1,4 @@
+import {BlockBaseModel} from "../model/block.base.model";
 import {BlockArgModel} from "../model/blockarg.model";
 import {PathBuilder} from "../utils/path.builder";
 import {BaseShape} from "./base.shape";
@@ -7,13 +8,13 @@ import {SpecModel} from "../model/spec.model";
 
 
 export class RectangleShape extends BaseShape {
-    constructor(spec: SpecModel, args: any[]) {
-        super(spec, args);
+    constructor(spec: SpecModel, arg: BlockBaseModel, group?: Snap.Element) {
+        super(spec, arg, group);
     }
 
-    draw(parentGroup: Snap.Element) {
-        this.group = parentGroup;
-        this.group.append(Graphics.ScriptPane.drawRect(this.x, 0, this.w, this.topH, 0, 0, this.spec.category.name.toLowerCase()));
+    draw(x: number, y: number) {
+        // this.group = parentGroup;
+        this.group.append(Graphics.ScriptPane.drawRect(x, y, this.w, this.topH, 0, 0, this.spec.category.name.toLowerCase()));
     }
 
 }
