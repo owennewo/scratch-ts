@@ -23,6 +23,7 @@ export abstract class BaseShape implements Shape {
     w: number = 100;
     topH: number = 25;  // this is the height of the top bar.  most shape only have top bar but things like loops are more complex
     indentTop: number = 0;
+    indentLeft: number = 5;
     centerY: number;
     h: number;
 
@@ -59,7 +60,7 @@ export abstract class BaseShape implements Shape {
 
     drawHeader(args: BlockBaseModel[]) {
 
-        let x = 5;
+        let x = this.indentLeft;
         let y = this.indentTop;
         for (let arg of args) {
           arg.drawBlock(this.group, x, y);
@@ -69,7 +70,7 @@ export abstract class BaseShape implements Shape {
     //      } else {
 //            ScriptLayout.drawBlock(<BlockModel> arg, this.group, x, y);
       //    }
-          x = arg.shape.getBBox().w + 10;
+          x = arg.shape.getBBox().w + this.indentLeft + 5;
         }
 
         this.w = x;

@@ -8,6 +8,9 @@ import {SpecModel} from "../model/spec.model";
 
 
 export class BooleanShape extends BaseShape {
+
+  indentLeft: number = 15;
+
     constructor(spec: SpecModel, arg: BlockBaseModel, group?: Snap.Element) {
         super(spec, arg, group);
         // this.isReporter = true;
@@ -29,7 +32,7 @@ export class BooleanShape extends BaseShape {
             .lineTo(this.x + this.centerY, this.topH)
             .lineTo(this.x, this.centerY)
             .build();
-        this.group.append(Graphics.ScriptPane.drawPath(path, this.spec.category.name.toLowerCase()));
+        this.group.prepend(Graphics.ScriptPane.drawPath(path, this.spec.category.name.toLowerCase()));
 
     }
 

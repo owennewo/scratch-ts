@@ -70,6 +70,17 @@ export class Graphics {
         return r;
     }
 
+    drawDropDown(x: number, y: number, width: number, height: number, rx: number, ry: number, text: string): Snap.Element {
+
+        // let r = this.paper.rect(x, y, width, height, rx, ry);
+        let textBox = this.paper.text(x, y, text + "[v]");
+
+        textBox.attr({y: textBox.getBBox().h});
+
+
+        return textBox;
+    }
+
     drawText(x: number, y: number, text: string, textClass?: string): Snap.Element {
 
         let result = this.paper.text(x, y, text);

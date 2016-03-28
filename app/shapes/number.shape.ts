@@ -45,7 +45,7 @@ export class NumberShape extends BaseShape {
 
         this.w = text.getBBox().width + 10;
 
-        let rect = Graphics.ScriptPane.drawRect(textBox.x - 4, this.y - 2 , textBox.w + 8, textBox.h + 4, this.centerY, this.centerY, "blockarg");
+        let rect = Graphics.ScriptPane.drawRect(textBox.x - 4, this.y - 2 , textBox.w + 8, textBox.h + 4, this.centerY, this.centerY, this.spec.category.name.toLowerCase() + " blockarg");
 
         // let path = PathBuilder.create()
         //     .moveTo(this.x + this.centerY, this.topH - 2)

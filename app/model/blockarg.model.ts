@@ -1,3 +1,4 @@
+import {DropDownShape} from "../shapes/dropdown.shape";
 import {BlockBaseModel} from "./block.base.model";
 import {IconShape} from "../shapes/icon.shape";
 import {TextShape} from "../shapes/text.shape";
@@ -96,7 +97,7 @@ export class BlockArgModel extends BlockBaseModel {
             case "m":
               this.type = ArgType.Menu;
               this.menuName = part.slice(3);
-              this.shape = new RectangleShape(spec, this);
+              this.shape = new DropDownShape(spec, this);
               this.addMenuIcon();
               // this.addEventListener(MouseEvent.MOUSE_DOWN, this.invokeMenu);
 
