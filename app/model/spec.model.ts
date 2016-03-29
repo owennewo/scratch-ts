@@ -29,9 +29,17 @@ export class SpecModel {
         let specParts: any[] = ReadStream.tokenize(this.label);
         let i: number;
         this.labelsAndArgs = [];
+        let argIndex = 0;
 
         for (i = 0; i < specParts.length; i++) {
             let arg =  new BlockArgModel(specParts[i], this);
+            if (arg.isArgument) {
+              if (this.defaultArgs && argIndex < this.defaultArgs.length) {
+                  arg.defaultArgValue = this.defaultArgs[argIndex];
+              }
+
+              argIndex++;
+            }
             this.labelsAndArgs.push(arg);
         }
     }

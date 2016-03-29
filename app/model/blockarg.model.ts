@@ -1,9 +1,9 @@
+import {TextBoxShape} from "../shapes/text.box.shape";
 import {DropDownShape} from "../shapes/dropdown.shape";
 import {BlockBaseModel} from "./block.base.model";
 import {IconShape} from "../shapes/icon.shape";
 import {TextShape} from "../shapes/text.shape";
 import {NumberShape} from "../shapes/number.shape";
-import {RectangleShape} from "../shapes/rectangle.shape";
 import {Shape} from "../shapes/shape";
 import {SpecModel} from "./spec.model";
 import {BooleanShape} from "../shapes/boolean.shape";
@@ -41,7 +41,8 @@ export class BlockArgModel extends BlockBaseModel {
     public static NT_INT: number = 2;
 
     public type: ArgType;
-    public argValue: any = "";
+    public argValue: any = undefined;
+    public defaultArgValue: any = "";
     public numberType: number = BlockArgModel.NT_NOT_NUMBER;
     public editable: boolean = false;
     public field; // :TextField;
@@ -80,7 +81,7 @@ export class BlockArgModel extends BlockBaseModel {
               return;
             case "c":
               this.type = ArgType.ColorPicker;
-              this.shape = new RectangleShape(spec, this);
+              this.shape = new TextBoxShape(spec, this);
               this.menuName = "colorPicker";
               // this.addEventListener(MouseEvent.MOUSE_DOWN, this.invokeMenu);
 
@@ -110,7 +111,7 @@ export class BlockArgModel extends BlockBaseModel {
               return;
             case "s":
               this.type = ArgType.UnknownS;
-              this.shape = new RectangleShape(spec, this);
+              this.shape = new TextBoxShape(spec, this);
               return;
             default:
               // custom type; subclass is responsible for adding
@@ -166,6 +167,7 @@ export class BlockArgModel extends BlockBaseModel {
        clone.type = this.type;
        clone.menuName = this.menuName;
        clone.iconName = this.iconName;
+       clone.defaultArgValue = this.defaultArgValue;
        return clone;
     }
 

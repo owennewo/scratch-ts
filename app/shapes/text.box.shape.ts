@@ -7,15 +7,23 @@ import {SpecCategoryModel} from "../model/spec.category.model";
 import {SpecModel} from "../model/spec.model";
 
 
-export class RectangleShape extends BaseShape {
+export class TextBoxShape extends BaseShape {
     constructor(spec: SpecModel, arg: BlockBaseModel, group?: Snap.Element) {
         super(spec, arg, group);
     }
 
     draw(x: number, y: number) {
-        // this.group = parentGroup;
+        let value = (<BlockArgModel> this.arg).argValue;
+        if (!value) value = (<BlockArgModel> this.arg).defaultArgValue;
 
-        this.group.append(Graphics.ScriptPane.drawRect(x, y, this.w, this.topH, 0, 0, this.spec.category.name.toLowerCase()));
+        let text = Graphics.ScriptPane.drawText(x, y, value);
+        let textBox = text.getBBox();
+        text.attr({
+            y: textBox.h
+        });
+
+        this.group.append(Graphics.ScriptPane.drawRect(x, y, textBox.w, textBox.h, 0, 0, this.spec.category.name.toLowerCase()));
+        this.group.append(text);
     }
 
 }

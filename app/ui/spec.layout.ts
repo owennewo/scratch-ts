@@ -71,7 +71,7 @@ export class SpecLayout {
             shape.setDraggable(true);
             shape.newGroup(newCategoryBlocks, xPos, yPos );
             shape.drawHeader(spec.labelsAndArgs);
-            shape.draw(xPos, yPos, true);
+            shape.draw(0, 0, true);
 //            shape.move(20, yPos);
             let shapeHeight = shape.getGroup().getBBox().h;
             yPos += shapeHeight + 5;

@@ -1,3 +1,4 @@
+import {TextBoxShape} from "./text.box.shape";
 import {BlockBaseModel} from "../model/block.base.model";
 import {BlockArgModel} from "../model/blockarg.model";
 import {Shape} from "./shape";
@@ -44,7 +45,7 @@ export class ShapeFactory {
             case "p":
                 return new ProcHatShape(spec, arg, group);
             default:
-                return new RectangleShape(spec, arg, group);
+                return new TextBoxShape(spec, arg, group);
 
         }
 
