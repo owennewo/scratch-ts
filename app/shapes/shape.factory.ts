@@ -10,7 +10,6 @@ import {DoubleStackShape} from "./double.stack.shape";
 import {StackShape} from "./stack.shape";
 import {NumberShape} from "./number.shape";
 import {ProcHatShape} from "./proc.hat.shape";
-import {RectangleShape} from "./rectangle.shape";
 import {SpecModel} from "../model/spec.model";
 import {SpecCategoryModel} from "../model/spec.category.model";
 

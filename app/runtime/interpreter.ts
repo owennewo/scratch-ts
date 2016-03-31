@@ -210,7 +210,8 @@ export class Interpreter {
         this.currentMSecs = ScratchTime.getTimer();
         if (this.threads.length === 0) {
           this.noThreadCount++;
-          if (this.noThreadCount > 1) {
+          if (this.noThreadCount > 5) {
+              this.noThreadCount = 0;
               console.log("No threads, shutting down animation frame");
               ScratchTime.stopStepping();
           }

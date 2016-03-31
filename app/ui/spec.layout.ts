@@ -67,7 +67,7 @@ export class SpecLayout {
             yPos += 10;
             return;
           }
-            let shape = ShapeFactory.createShape(spec);// , spec.defaultArgs[0]);
+            let shape = ShapeFactory.createShape(spec); // , spec.defaultArgs[0]);
             shape.setDraggable(true);
             shape.newGroup(newCategoryBlocks, xPos, yPos );
             shape.drawHeader(spec.labelsAndArgs);

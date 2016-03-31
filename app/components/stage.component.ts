@@ -5,18 +5,19 @@ import {Component, Inject} from "angular2/core";
 @Component({
     selector: "section[id=stage]",
     template: `
-
-        <div id="stage-header" class="input-group">
-          <span class="input-group-btn">
-            <button type="button" class="btn btn-default" (click)="resize()">[+]</button>
-          </span>
-          <input type="text" class="form-control" id="project-name" aria-label="" value="untitled">
-          <div class="input-group-btn" role="group" aria-label="">
-            <button type="button" class="btn btn-default" (click)="start()">Start</button>
-            <button type="button" class="btn btn-default" (click)="stop()">Stop</button>
+        <div class="inner">
+          <div id="stage-header" class="input-group">
+            <span class="input-group-btn">
+              <button type="button" class="btn btn-default" (click)="resizeStage()">[+]</button>
+            </span>
+            <input type="text" class="form-control" id="project-name" aria-label="" value="untitled">
+            <div class="input-group-btn" role="group" aria-label="">
+              <button type="button" class="btn btn-default" (click)="start()">Start</button>
+              <button type="button" class="btn btn-default" (click)="stop()">Stop</button>
+            </div>
           </div>
+          <svg id="svg-stage" class="svg-stage" viewBox="-240 -160 480 320"></svg>
         </div>
-        <div id="stage-content"><svg id="svg-stage" viewBox=\"-240 -180 480 360\"></svg></div>
 
   `,
     styles: [`
@@ -53,7 +54,8 @@ export class StageComponent {
     }
 
     resizeStage() {
-        console.log("todo resizeStage");
+      let runtime = document.querySelector("#stage");
+      runtime.classList.toggle("fullscreen");
     }
 
 }

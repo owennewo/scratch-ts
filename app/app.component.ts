@@ -10,12 +10,9 @@ import {Graphics} from "./utils/graphics";
 @Component({
   selector: "body",
   template: `
-    <nav id="menu-bar" class="navbar navbar-inverse navbar-fixed-top"></nav>
+    <nav id="menu-bar" class="navbar navbar-inverse navbar-top"></nav>
     <div id="container" class="container-fluid"></div>
   `,
-  styles: [`
-    #container { top:50px; position: fixed; width: 100%; }
-  `],
   directives: [MenuBarComponent, ContainerComponent]
 })
 export class AppComponent {

@@ -56,8 +56,10 @@ export class StageRuntime extends ObjectRuntime {
 
         this.paper.mousemove((event) => {
             let target: any = event.currentTarget;
-            let x = (event.layerX * target.offsetWidth / target.viewBox.baseVal.width) + target.viewBox.baseVal.x;
-            let y = -((event.layerY * target.offsetHeight / target.viewBox.baseVal.height) + target.viewBox.baseVal.y);
+            let mysvg = this.svg.parent().node;
+            let x = ((event.layerX - mysvg.offsetLeft) / mysvg.offsetWidth * 480) - 240;
+            let y = -(((event.layerY - mysvg.offsetTop) / mysvg.offsetHeight * 320) - 160);
+//            console.log(x + ":" + y);
             this.mouseX = x;
             this.mouseY = y;
         });

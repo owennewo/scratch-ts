@@ -11,7 +11,6 @@ export class ScratchTime {
     }
 
     static doStep(timestamp: number) {
-      console.log("doStep");
       ScratchTime.lastTimestamp = timestamp;
       ScratchTime.interp.stepThreads();
       if (ScratchTime.isStepping) {
