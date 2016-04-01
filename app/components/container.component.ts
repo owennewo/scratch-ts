@@ -19,6 +19,7 @@ import {SpritesComponent} from "./sprites.component";
 
             <section id="stage" class="col-sm-6 col-md-12">stage</section>
             <div id="stage-objects" class="col-sm-6 col-md-12">
+              <div id="runtime-info">fps: <span id="fps">0</span>, x:<span id="x">0</span>, y:<span id="y">0</span></div>
               <ul class="nav nav-tabs">
                   <li class="active"><a data-toggle="tab" href="#sprites">Sprites</a></li>
                   <li><a data-toggle="tab" href="#backdrops">Backdrops</a></li>

@@ -1,7 +1,7 @@
 import {Interpreter} from "./interpreter";
 export class ScratchTime {
     static interp: Interpreter;
-    static lastTimestamp: number = 0;
+    static lastTimestamp: number = undefined;
     static callbackId: number;
     static isStepping = false;
     static startStepping(interp: Interpreter) {
@@ -11,6 +11,12 @@ export class ScratchTime {
     }
 
     static doStep(timestamp: number) {
+      if (ScratchTime.lastTimestamp) {
+          let delta = timestamp - ScratchTime.lastTimestamp;
+          let fps = Math.floor(1000 / delta);
+          window.document.getElementById("fps").innerHTML=fps;
+      }
+
       ScratchTime.lastTimestamp = timestamp;
       ScratchTime.interp.stepThreads();
       if (ScratchTime.isStepping) {

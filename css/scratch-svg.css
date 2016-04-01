@@ -63,6 +63,12 @@ html, body {
 
 }
 
+#runtime-info {
+    position: absolute;
+    right: 0px;
+    top: 0px;
+}
+
 #svg-script-pane {
   width: 100%;
 }
