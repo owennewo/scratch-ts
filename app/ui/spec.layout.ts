@@ -58,7 +58,7 @@ export class SpecLayout {
           oldCategoryBlocks.remove();
         }
 
-        let newCategoryBlocks = Graphics.ScriptPane.group("script-pane-categories-blocks", 10, 200);
+        let newCategoryBlocks = Graphics.ScriptPane.group("script-pane-categories-blocks", 10, 200, "spec-categories");
 
         let xPos = 0;
         let yPos = 0;
@@ -68,8 +68,8 @@ export class SpecLayout {
             return;
           }
             let shape = ShapeFactory.createShape(spec); // , spec.defaultArgs[0]);
+            shape.newGroup(newCategoryBlocks, xPos, yPos, );
             shape.setDraggable(true);
-            shape.newGroup(newCategoryBlocks, xPos, yPos );
             shape.drawHeader(spec.labelsAndArgs);
             shape.draw(0, 0, true);
 //            shape.move(20, yPos);

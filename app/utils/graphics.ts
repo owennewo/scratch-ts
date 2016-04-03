@@ -1,6 +1,10 @@
-import {ReadStream} from "./read.stream";
+import {ScriptModel} from "../model/script.model";
+import {Shape} from "../shapes/shape";
+import {BlockModel} from "../model/block.model";
 /// <reference path="../definitelytyped/snapsvg.d.ts" />
 
+import {BaseShape} from "../shapes/base.shape";
+import {ReadStream} from "./read.stream";
 import {Geometry} from "../shapes/geometry";
 import {Color} from "../utils/color";
 
@@ -10,6 +14,8 @@ export class Graphics {
 
     id: string;
     paper: Snap.Paper;
+    onDragOverCallback: Function;
+    onDragEndCallback: Function;
     //    color: string;
     // path: string = "";
 
@@ -100,5 +106,48 @@ export class Graphics {
 
         return p;
     }
+
+    makeDraggable(group: Snap.Element) {
+      let move = function(dx, dy, mouseX, mouseY) {
+
+          let findScriptBlock = function(child: any) {
+              if (!child || child === null) {
+                  return null;
+              }
+              let parent = child.parent();
+              if (!parent || parent === null) {
+                  return null;
+              } if ((!parent.node || !parent.node.id)) {
+                // not an instance of Snap.Element
+                return null;
+              } else if (parent.node.id.startsWith("scratch-script-")) {
+                  return child;
+              }
+              else {
+                return findScriptBlock(parent);
+              }
+
+          };
+
+          group.attr({
+              transform: group.data("origTransform") + (group.data("origTransform") ? "T" : "t") + [dx, dy]
+          });
+          let element = Snap.getElementByPoint(mouseX, mouseY);
+          let scriptElement = findScriptBlock(element);
+          this.onDragOverCallback(group, scriptElement);
+
+      };
+
+      let start = function() {
+          group.data("origTransform", group.transform().local);
+      };
+      let stop = function(mouseEvent) {
+          this.onDragEndCallback(group);
+          console.log("finished dragging: " + group.getBBox().x + ":" + group.getBBox().y);
+      };
+
+      group.drag(move, start, stop, this, this, this);
+    }
+
 
 }

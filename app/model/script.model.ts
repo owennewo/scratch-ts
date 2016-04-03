@@ -1,3 +1,4 @@
+import {Shape} from "../shapes/shape";
 import {BlockModel} from "./block.model";
 
 export class ScriptModel {

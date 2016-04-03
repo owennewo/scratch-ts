@@ -13,7 +13,7 @@ export class CommandShape extends BaseShape {
 
     constructor(spec: SpecModel, arg: BlockBaseModel, group?: Snap.Element) {
         super(spec, arg, group);
-        this.indentTop = 3;
+        this.indentTop = 0;
     }
 
     draw(x: number, y: number) {

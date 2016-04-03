@@ -40,7 +40,6 @@ export abstract class BaseShape implements Shape {
     move(x: number, y: number) {
         this.x = x;
         this.y = y;
-//        this.group = Graphics.ScriptPane.group(this.id, this.x, this.y);
         this.group.transform("t" + x + "," + y);
 
     }
@@ -53,8 +52,10 @@ export abstract class BaseShape implements Shape {
       this.group = group;
     }
 
-    newGroup(parentGroup: Snap.Element, x: number, y: number) {
+    newGroup(parentGroup: Snap.Element, x: number, y: number, b: BlockModel) {
       this.group = Graphics.ScriptPane.group(this.id, x, y);
+      this.group.data("block", b);
+      this.group.data("shape", this);
       parentGroup.append(this.group);
     }
 
@@ -65,11 +66,6 @@ export abstract class BaseShape implements Shape {
         for (let arg of args) {
           arg.drawBlock(this.group, x, y);
 
-  //        if (arg instanceof BlockArgModel) {
-              // arg.shape.draw(this.group);
-    //      } else {
-//            ScriptLayout.drawBlock(<BlockModel> arg, this.group, x, y);
-      //    }
           x = arg.shape.getBBox().w + this.indentLeft + 5;
         }
 
@@ -83,9 +79,6 @@ export abstract class BaseShape implements Shape {
         this.makeDraggable();
         this.group.addClass("draggable");
       }
-      // if (parentGroup) {
-      //   parentGroup.append(this.group);
-      // }
     }
 
     setWidthAndTopHeight(w: number, h: number) {
@@ -107,23 +100,9 @@ export abstract class BaseShape implements Shape {
     }
 
     private makeDraggable() {
-
-        let move = function(dx, dy) {
-            this.attr({
-                transform: this.data("origTransform") + (this.data("origTransform") ? "T" : "t") + [dx, dy]
-            });
-        };
-
-        let start = function() {
-            this.data("origTransform", this.transform().local);
-        };
-        let stop = function(mouseEvent) {
-
-            console.log("finished dragging: " + this.getBBox().x + ":" + this.getBBox().y);
-        };
-
-        this.group.drag(move, start, stop);
-
+      this.group.data("spec", this.spec);
+      this.group.data("shape", this);
+      Graphics.ScriptPane.makeDraggable(this.group, this.script);
     }
 
 }

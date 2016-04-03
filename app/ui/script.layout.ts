@@ -1,3 +1,4 @@
+import {Shape} from "../shapes/shape";
 import {ShapeFactory} from "../shapes/shape.factory";
 import {Geometry} from "../shapes/geometry";
 import {StackShape} from "../shapes/stack.shape";
@@ -9,6 +10,25 @@ import {BlockModel} from "../model/block.model";
 export class ScriptLayout {
 
     static drawScripts(scripts: ScriptModel[]) {
+      Graphics.ScriptPane.onDragOverCallback = function(draggedElement: Snap.Element, targetElement: Snap.Element) {
+        this.targetElement = targetElement;
+        if (targetElement) {
+          let block: BlockModel = targetElement.data("block");
+          let shape: Shape = targetElement.data("shape");
+          console.log("dragover: " + shape.id);
+        }
+      };
+
+      Graphics.ScriptPane.onDragEndCallback = function(draggedElement: Snap.Element) {
+        if (this.targetElement) {
+          let block: BlockModel = this.targetElement.data("block");
+          let shape: Shape = this.targetElement.data("shape");
+
+            alert("draggedElement:" + draggedElement.id + " over " + shape.id);
+        }
+
+      };
+
       Graphics.ScriptPane.remove("#script-work-area");
       let scriptWorkArea = Graphics.ScriptPane.group("script-work-area", 220, 0);
       scripts.forEach( script => {
@@ -18,33 +38,12 @@ export class ScriptLayout {
 
     static drawScript(script: ScriptModel, scriptWorkArea: Snap.Element) {
         let current = script.firstBlock;
-        // let previous = undefined;
-        // let next = undefined;
 
-        let scriptGroup = Graphics.ScriptPane.group("script" + script.index, script.x, script.y);
+        let scriptGroup = Graphics.ScriptPane.group("scratch-script-" + script.index, script.x, script.y, "draggable svg-script");
+        scriptGroup.data("script", script);
+        Graphics.ScriptPane.makeDraggable(scriptGroup);
         scriptWorkArea.append(scriptGroup);
-
-        // let y = 0;
-
         this.drawBlock(current, scriptGroup, 0, 0);
-
-        // while (current) {
-        //     current.shape.move(0, y);
-        //     current.shape.draw(newScript);
-        //     current.shape.setDraggable(false);
-        //     if (current.stack1) {
-        //       let subcurrent = current.stack1;
-        //       let suby = y;
-        //       subcurrent.shape.move(20, y);
-        //       subcurrent.shape.draw(newScript);
-        //       subcurrent.shape.setDraggable(false);
-        //     }
-        //
-        //     let shapeHeight = current.shape.getGroup().getBBox().h;
-        //     y += shapeHeight - 2;
-        //
-        //     current = current.nextBlock;
-        // }
 
     }
 
@@ -55,22 +54,15 @@ export class ScriptLayout {
       if (b.shape instanceof StackShape) {
         let stackShape = <StackShape> b.shape;
         let subStackHeight = this.drawBlock(b.stack1, scriptGroup, x + Geometry.SubstackInset, y + stackShape.stack1y);
-        // let subcurrent = b.stack1;
-        // let suby = y;
-        // subcurrent.shape.move(20, y);
-        // subcurrent.shape.draw(scriptGroup);
-        // subcurrent.shape.setDraggable(false);
         stackShape.stack1h = subStackHeight;
       }
 
-      b.shape.newGroup(scriptGroup, x, y);
+      b.shape.newGroup(scriptGroup, x, y, b);
       b.shape.drawHeader(b.labelsAndArgs);
       b.shape.draw(0, 0, true);
-      // b.shape.move(x, y);
       b.shape.setDraggable(false);
 
       let shapeHeight = b.shape.getGroup().getBBox().h;
-      // y += shapeHeight - 2;
       stackHeight += shapeHeight - 3;
 
       if (b.nextBlock) {

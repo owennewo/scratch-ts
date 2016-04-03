@@ -26,10 +26,10 @@ export class TextShape extends BaseShape {
         super.draw(x, y);
         // super.draw(parentGroup);
         // this.group = parentGroup;
-        let text = Graphics.ScriptPane.drawText(this.x, this.y + TextShape.LineHeight, this.text);
+        let text = Graphics.ScriptPane.drawText(this.x, 0, this.text);
 
         text.attr( {
-          y: text.getBBox().h
+          y: text.getBBox().h + this.y
         });
         this.group.append(text);
     }

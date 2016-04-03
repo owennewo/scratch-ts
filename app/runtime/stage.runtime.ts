@@ -59,8 +59,8 @@ export class StageRuntime extends ObjectRuntime {
             let mysvg = this.svg.parent().node;
             let x = Math.floor(((event.layerX - mysvg.offsetLeft) / mysvg.offsetWidth * 480) - 240);
             let y = Math.floor(-(((event.layerY - mysvg.offsetTop) / mysvg.offsetHeight * 320) - 160));
-            window.document.getElementById("x").innerHTML=x;
-            window.document.getElementById("y").innerHTML=y;
+            window.document.getElementById("x").innerHTML = x;
+            window.document.getElementById("y").innerHTML = y;
 //            console.log(x + ":" + y);
             this.mouseX = x;
             this.mouseY = y;

@@ -23,7 +23,7 @@ export class IconShape extends BaseShape {
 
         let text = Graphics.ScriptPane.drawText(this.x, this.y, "[" + this.iconName + "]");
         text.attr( {
-          y: text.getBBox().h
+          y: text.getBBox().h + this.y
         });
         this.group.append(text);
 
