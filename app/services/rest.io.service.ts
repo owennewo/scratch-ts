@@ -1,17 +1,17 @@
-import {ScriptLayout} from "../ui/script.layout";
+import {ScriptLayoutService} from "../services/script.layout.service";
 import {Http, Response, HTTP_PROVIDERS} from "angular2/http";
 import {Inject, Injectable} from "angular2/core";
-import {ProjectIO} from "../io/project.io";
+import {ProjectIOService} from "../services/project.io.service";
 import {Log} from "../logging/Log";
 import {StageModel} from "../model/stage.model";
 import {SpriteModel} from "../model/sprite.model";
-import {SpecLayout} from "../ui/spec.layout";
+import {SpecLayoutService} from "../services/spec.layout.service";
 import {SpecModel} from "../model/spec.model";
 import {SpecCategoryModel} from "../model/spec.category.model";
 import {Graphics} from "../utils/graphics";
 
 @Injectable()
-export class ScratchRestIO {
+export class RestIOService {
     id: number;
     name: string;
     lastProjectDir: string;
@@ -25,15 +25,15 @@ export class ScratchRestIO {
         Log.info("Reading project", JSON.stringify(json));
 
         // var scratch: Scratch = new Scratch();
-        let projectIO: ProjectIO = new ProjectIO();
+        let projectIO: ProjectIOService = new ProjectIOService();
         let project = projectIO.readProject(json);
 
-        SpecLayout.drawCategories();
+        SpecLayoutService.drawCategories();
 
         if (project.children.length > 0) {
           let sprite = project.children[0];
           if (sprite.scripts && sprite.scripts.length > 0) {
-            ScriptLayout.drawScripts(sprite.scripts);
+            ScriptLayoutService.drawScripts(sprite.scripts);
           }
         }
 

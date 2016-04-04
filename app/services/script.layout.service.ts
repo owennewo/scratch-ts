@@ -1,3 +1,5 @@
+import {SpecModel} from "../model/spec.model";
+import {VisibleModel} from "../model/visible.model";
 import {Shape} from "../shapes/shape";
 import {ShapeFactory} from "../shapes/shape.factory";
 import {Geometry} from "../shapes/geometry";
@@ -7,24 +9,38 @@ import {BlockArgModel} from "../model/blockarg.model";
 import {ScriptModel} from "../model/script.model";
 import {BlockModel} from "../model/block.model";
 
-export class ScriptLayout {
+export class ScriptLayoutService {
 
     static drawScripts(scripts: ScriptModel[]) {
       Graphics.ScriptPane.onDragOverCallback = function(draggedElement: Snap.Element, targetElement: Snap.Element) {
-        this.targetElement = targetElement;
-        if (targetElement) {
-          let block: BlockModel = targetElement.data("block");
-          let shape: Shape = targetElement.data("shape");
-          console.log("dragover: " + shape.id);
-        }
+
+          this.overModel = ScriptLayoutService.findModel(targetElement);
+
       };
 
-      Graphics.ScriptPane.onDragEndCallback = function(draggedElement: Snap.Element) {
-        if (this.targetElement) {
-          let block: BlockModel = this.targetElement.data("block");
-          let shape: Shape = this.targetElement.data("shape");
 
-            alert("draggedElement:" + draggedElement.id + " over " + shape.id);
+      Graphics.ScriptPane.onDragEndCallback = function(draggedElement: Snap.Element) {
+        if (this.overModel) {
+          // let block: BlockModel = this.overScriptBlock.data("block");
+          // let shape: Shape = this.overScriptBlock.data("shape");
+            let draggedModel = ScriptLayoutService.findModel(draggedElement);
+            if (!draggedModel) {
+                return;
+            }
+
+            if (draggedModel instanceof SpecModel) {
+                console.log("add spec to model");
+                let spec = <SpecModel> draggedModel;
+                let newBlock = new BlockModel(spec, spec.defaultArgs);
+                let existingBlock = <BlockModel> this.overModel;
+
+                existingBlock.insertBlock(newBlock);
+                draggedElement.transform("translate(0,0)");
+
+            } else {
+                console.log("not spec:" + draggedModel);
+            }
+
         }
 
       };
@@ -32,15 +48,39 @@ export class ScriptLayout {
       Graphics.ScriptPane.remove("#script-work-area");
       let scriptWorkArea = Graphics.ScriptPane.group("script-work-area", 220, 0);
       scripts.forEach( script => {
-        ScriptLayout.drawScript(script, scriptWorkArea);
+        ScriptLayoutService.drawScript(script, scriptWorkArea);
       });
+    }
+
+    private static findModel(svgElement: Snap.Element): VisibleModel {
+          if (!svgElement || svgElement === null) {
+              return null;
+          }
+          if (svgElement.data) {
+              let model = svgElement.data("model");
+              if (model) return model;
+          }
+
+          let parent = svgElement.parent();
+          if (!parent || parent === null) {
+              return null;
+          } if ((!parent.node || !parent.node.id)) {
+            // not an instance of Snap.Element
+            return null;
+          // } else if (parent.node.id.startsWith("scratch-script-")) {
+          //     return child;
+          // }
+          } else {
+              return ScriptLayoutService.findModel(parent);
+          }
+
     }
 
     static drawScript(script: ScriptModel, scriptWorkArea: Snap.Element) {
         let current = script.firstBlock;
 
         let scriptGroup = Graphics.ScriptPane.group("scratch-script-" + script.index, script.x, script.y, "draggable svg-script");
-        scriptGroup.data("script", script);
+        scriptGroup.data("model", script);
         Graphics.ScriptPane.makeDraggable(scriptGroup);
         scriptWorkArea.append(scriptGroup);
         this.drawBlock(current, scriptGroup, 0, 0);

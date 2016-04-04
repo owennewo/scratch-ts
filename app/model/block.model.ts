@@ -1,4 +1,4 @@
-import {ScriptLayout} from "../ui/script.layout";
+import {ScriptLayoutService} from "../services/script.layout.service";
 import {BlockBaseModel} from "./block.base.model";
 import {Primitives} from "../runtime/primitives/primitives";
 import {DoubleStackShape} from "../shapes/double.stack.shape";
@@ -12,7 +12,7 @@ import {Geometry} from "../shapes/geometry";
 import {BlockArgModel} from "./blockarg.model";
 import {ArgType} from "./blockarg.model";
 import {Translator} from "../utils/translator";
-import {BlockIO} from "../io/block.io";
+import {BlockIOService} from "../services/block.io.service";
 import {ReadStream} from "../utils/read.stream";
 
 export class BlockModel extends BlockBaseModel {
@@ -90,22 +90,7 @@ export class BlockModel extends BlockBaseModel {
     constructor(spec: SpecModel, defaultArgs: any[] = null) {
         super();
 
-        // this.specC = Translator.map(specCode);
         this.spec = spec;
-        //        this.op = op;
-
-
-
-        // if ((SpecOperation.Call === op) ||
-        //     (SpecOperation.GetList === op) ||
-        //     (SpecOperation.GetParam === op) ||
-        //     (SpecOperation.GetVar === op) ||
-        //     (SpecOperation.ProcedureDef === op) ||
-        //     (SpecOperation.ProcedureDeclaration === op)) {
-        //     this.spec = spec; // don't translate var/list/param reporters
-        // }
-
-        // if (!color) return; // copy for clone; omit graphics
 
         let shape: number;
         if (!spec) {
@@ -114,14 +99,10 @@ export class BlockModel extends BlockBaseModel {
 
         this.setArgs(defaultArgs);
 
-
     }
 
     setArgs(defaultArgs: any[] = null) {
-        // for (let o of this.labelsAndArgs) {
-        //     if (o.parent != null) o.parent.removeChild(o);
-        // }
-        // this.spec = newSpec;
+
         if (this.spec.code === SpecOperation.ProcedureDef) {
             // procedure hat: make an icon from my spec and use that as the label
             this.indentTop = 20;
@@ -130,17 +111,14 @@ export class BlockModel extends BlockBaseModel {
             this.indentRight = 5;
 
             this.labelsAndArgs = [];
-            // let label:TextField = this.makeLabel(Translator.map('define'));
-            // this.labelsAndArgs.push(label);
             let b: BlockModel;
-            // this.labelsAndArgs.push(b = this.declarationBlock());
+
         } else if (this.spec.code === SpecOperation.GetList || this.spec.code === SpecOperation.GetList) {
             // this.labelsAndArgs = [this.makeLabel(this.spec)];
         } else {
             // loop
 
             this.labelsAndArgs = this.spec.cloneLabelAndArgs();
-
 
         }
         this.rightToLeft = Translator.rightToLeft;
@@ -633,7 +611,7 @@ export class BlockModel extends BlockBaseModel {
     // duplicateStack(deltaX:number, deltaY:number):void {
     // 	if (this.isProcDef() || this.op === 'proc_declaration') return; // don't duplicate procedure definition
     // 	let forStage:boolean = Scratch.app.viewedObj() && Scratch.app.viewedObj().isStage;
-    // 	let newStack:BlockModel = this.BlockIO.stringToStack(this.BlockIO.stackToString(this), forStage);
+    // 	let newStack:BlockModel = this.BlockIOService.stringToStack(this.BlockIOService.stackToString(this), forStage);
     // 	let p:Point = this.localToGlobal(new Point(0, 0));
     // 	newStack.x = p.x + deltaX;
     // 	newStack.y = p.y + deltaY;
@@ -850,7 +828,7 @@ export class BlockModel extends BlockBaseModel {
     drawBlock(group: Snap.Element, x: number, y: number) {
       // let clone = this.clone();
       // clone.shape.move(x, y);
-      ScriptLayout.drawBlock(this, group, x, y);
+      ScriptLayoutService.drawBlock(this, group, x, y);
     }
 
     clone(): BlockModel {

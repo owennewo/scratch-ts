@@ -1,3 +1,4 @@
+import {VisibleModel} from "../model/visible.model";
 import {BlockModel} from "../model/block.model";
 import {BlockBaseModel} from "../model/block.base.model";
 import {BlockArgModel} from "../model/blockarg.model";
@@ -8,7 +9,7 @@ export interface Shape {
     id: string;
     getGroup(): any;
     setGroup(group: Snap.Element);
-    newGroup(parentGoup: Snap.Element, x: number, y: number, b: BlockModel);
+    newGroup(parentGoup: Snap.Element, x: number, y: number, vis: VisibleModel);
     draw(x: number, y: number, prepend?: boolean);
     drawHeader(args: BlockBaseModel[]);
     move(x: number, y: number);

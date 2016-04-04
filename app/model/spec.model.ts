@@ -1,9 +1,10 @@
+import {VisibleModel} from "./visible.model";
 import {ReadStream} from "../utils/read.stream";
 import {BlockArgModel} from "./blockarg.model";
 import {SpecCategoryModel} from "./spec.category.model";
 import {BlockShapeModel} from "./block.shape.model";
 
-export class SpecModel {
+export class SpecModel implements VisibleModel {
     static SPECS: Map<String, SpecModel> = new Map<String, SpecModel>();
 
     code: string;

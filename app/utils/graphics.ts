@@ -110,31 +110,12 @@ export class Graphics {
     makeDraggable(group: Snap.Element) {
       let move = function(dx, dy, mouseX, mouseY) {
 
-          let findScriptBlock = function(child: any) {
-              if (!child || child === null) {
-                  return null;
-              }
-              let parent = child.parent();
-              if (!parent || parent === null) {
-                  return null;
-              } if ((!parent.node || !parent.node.id)) {
-                // not an instance of Snap.Element
-                return null;
-              } else if (parent.node.id.startsWith("scratch-script-")) {
-                  return child;
-              }
-              else {
-                return findScriptBlock(parent);
-              }
-
-          };
-
           group.attr({
               transform: group.data("origTransform") + (group.data("origTransform") ? "T" : "t") + [dx, dy]
           });
-          let element = Snap.getElementByPoint(mouseX, mouseY);
-          let scriptElement = findScriptBlock(element);
-          this.onDragOverCallback(group, scriptElement);
+          let targetElement = Snap.getElementByPoint(mouseX, mouseY);
+
+          this.onDragOverCallback(group, targetElement);
 
       };
 

@@ -1,3 +1,4 @@
+import {VisibleModel} from "../model/visible.model";
 import {BlockBaseModel} from "../model/block.base.model";
 import {ScriptLayout} from "../ui/script.layout";
 import {BlockArgModel} from "../model/blockarg.model";
@@ -52,10 +53,9 @@ export abstract class BaseShape implements Shape {
       this.group = group;
     }
 
-    newGroup(parentGroup: Snap.Element, x: number, y: number, b: BlockModel) {
+    newGroup(parentGroup: Snap.Element, x: number, y: number, vis: VisibleModel) {
       this.group = Graphics.ScriptPane.group(this.id, x, y);
-      this.group.data("block", b);
-      this.group.data("shape", this);
+      this.group.data("model", vis);
       parentGroup.append(this.group);
     }
 
@@ -102,7 +102,7 @@ export abstract class BaseShape implements Shape {
     private makeDraggable() {
       this.group.data("spec", this.spec);
       this.group.data("shape", this);
-      Graphics.ScriptPane.makeDraggable(this.group, this.script);
+      Graphics.ScriptPane.makeDraggable(this.group);
     }
 
 }

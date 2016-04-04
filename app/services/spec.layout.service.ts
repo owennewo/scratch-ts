@@ -7,7 +7,7 @@ import {ShapeFactory} from "../shapes/shape.factory";
 import {SpecSpacerModel} from "../model/spec.model";
 import {SpecOperation} from "../model/spec.model";
 
-export class SpecLayout {
+export class SpecLayoutService {
     static drawCategories() {
         if (Graphics.ScriptPane.has("#script-pane-categories")) {
           return; // categories already setup
@@ -67,12 +67,11 @@ export class SpecLayout {
             yPos += 10;
             return;
           }
-            let shape = ShapeFactory.createShape(spec); // , spec.defaultArgs[0]);
-            shape.newGroup(newCategoryBlocks, xPos, yPos, );
+            let shape = ShapeFactory.createShape(spec);
+            shape.newGroup(newCategoryBlocks, xPos, yPos, spec);
             shape.setDraggable(true);
             shape.drawHeader(spec.labelsAndArgs);
             shape.draw(0, 0, true);
-//            shape.move(20, yPos);
             let shapeHeight = shape.getGroup().getBBox().h;
             yPos += shapeHeight + 5;
         });

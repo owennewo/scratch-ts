@@ -1,8 +1,8 @@
 import {BackdropsComponent} from "./backdrops.component";
-import {ScriptLayout} from "../ui/script.layout";
-import {SpecLayout} from "../ui/spec.layout";
+import {ScriptLayoutService} from "../services/script.layout.service";
+import {SpecLayoutService} from "../services/spec.layout.service";
 import {ObjectModel} from "../model/object.model";
-import {ModelService} from "./model.service";
+import {ModelService} from "../services/model.service";
 import {StageModel} from "../model/stage.model";
 import {Component, Inject} from "angular2/core";
 import {StageComponent} from "./stage.component"  ;
@@ -66,10 +66,10 @@ export class ContainerComponent {
     modelService.onObjectSelected.subscribe(res => {
       let scratchObject = <ObjectModel> res;
       console.log("loading script for:" + scratchObject.name);
-      SpecLayout.drawCategories();
+      SpecLayoutService.drawCategories();
 
         if (scratchObject.scripts && scratchObject.scripts.length > 0) {
-          ScriptLayout.drawScripts(scratchObject.scripts);
+          ScriptLayoutService.drawScripts(scratchObject.scripts);
         }
 
 

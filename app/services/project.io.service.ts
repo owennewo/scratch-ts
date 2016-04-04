@@ -7,9 +7,9 @@ import {CostumeModel} from "../model/costume.model";
 import {BlockModel} from "../model/block.model";
 import {Graphics} from "../utils/graphics";
 
-import {BlockIO} from "./block.io";
+import {BlockIOService} from "./block.io.service";
 
-export class ProjectIO {
+export class ProjectIOService {
 
     readProject(jsonStage: any): StageModel {
 
@@ -71,7 +71,7 @@ export class ProjectIO {
             script.x = jsonScript[0];
             script.y = jsonScript[1];
             script.index = index;
-            script.firstBlock = BlockIO.arrayToStack(jsonScript[2]);
+            script.firstBlock = BlockIOService.arrayToStack(jsonScript[2]);
             scripts.push(script);
             index++;
         }

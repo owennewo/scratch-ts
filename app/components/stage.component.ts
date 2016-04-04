@@ -1,5 +1,5 @@
 import {StageModel} from "../model/stage.model";
-import {ModelService} from "./model.service";
+import {ModelService} from "../services/model.service";
 import {Component, Inject} from "angular2/core";
 
 @Component({

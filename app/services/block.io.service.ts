@@ -12,14 +12,14 @@ import {Translator} from "../utils/translator";
  *
  * John Maloney, September 2010
 */
-export class BlockIO {
+export class BlockIOService {
 
     public static stackToString(b: BlockModel): string {
-        return JSON.stringify(BlockIO.stackToArray(b));
+        return JSON.stringify(BlockIOService.stackToArray(b));
     }
 
     public static stringToStack(s: string, forStage: boolean = false): BlockModel {
-        return BlockIO.arrayToStack(JSON.parse(s), forStage);
+        return BlockIOService.arrayToStack(JSON.parse(s), forStage);
     }
 
     public static stackToArray(b: BlockModel): any[] {
@@ -27,7 +27,7 @@ export class BlockIO {
         if (b == null) return null;
         let result: any[] = [];
         while (b != null) {
-            result.push(BlockIO.blockToArray(b));
+            result.push(BlockIOService.blockToArray(b));
             b = b.nextBlock;
         }
         return result;
@@ -38,7 +38,7 @@ export class BlockIO {
         let topBlock: BlockModel, lastBlock: BlockModel;
         for (let cmd of cmdList) {
             let b: BlockModel = null;
-            try { b = BlockIO.arrayToBlock(cmd, "", forStage); } catch (e) {
+            try { b = BlockIOService.arrayToBlock(cmd, "", forStage); } catch (e) {
               console.error("error reading stack", e);
               b = new BlockModel(SpecModel.SPECS.get("undefined"));
             }
@@ -60,7 +60,7 @@ export class BlockIO {
         if (b.spec.code === SpecOperation.Call) result = [SpecOperation.Call, b.spec];			// procedure call - arguments follow spec
         for (let a of b.normalizedArgs()) {
             // Note: arguments are always saved in normalized (i.e. left-to-right) order
-            if (a instanceof BlockModel) result.push(BlockIO.blockToArray(a));
+            if (a instanceof BlockModel) result.push(BlockIOService.blockToArray(a));
             if (a instanceof BlockArgModel) {
                 let argVal: any = a.argValue;
                 // if (argVal instanceof ScratchObj) {
@@ -71,9 +71,9 @@ export class BlockIO {
             }
         }
         if (b.isStack())
-          result.push(BlockIO.stackToArray(b.stack1));
+          result.push(BlockIOService.stackToArray(b.stack1));
         if (b.isDoubleStack())
-          result.push(BlockIO.stackToArray(b.stack2));
+          result.push(BlockIOService.stackToArray(b.stack2));
         return result;
     }
 
@@ -82,26 +82,26 @@ export class BlockIO {
 
         // if (cmd[0] == 'getUserName') Scratch.app.usesUserNameBlock = true;
 
-        let special: BlockModel = BlockIO.specialCmd(cmd, forStage);
+        let special: BlockModel = BlockIOService.specialCmd(cmd, forStage);
         if (special) { return special; }
 
         let b: BlockModel;
-        b = BlockIO.convertOldCmd(cmd);
+        b = BlockIOService.convertOldCmd(cmd);
         if (b) { return b; }
 
         if (cmd[0] === SpecOperation.Call) {
             b = new BlockModel(SpecModel.SPECS.get(SpecOperation.Call.toString()));
             cmd.splice(0, 1);
         } else {
-            let spec: SpecModel = BlockIO.specForCmd(cmd, undefinedBlockType);
+            let spec: SpecModel = BlockIOService.specForCmd(cmd, undefinedBlockType);
             let label: string = spec[0];
             if (forStage && spec[3] === "whenClicked") label = "when Stage clicked";
             b = new BlockModel(spec); // TODO, Specs.blockColor(spec[2]), spec[3]);
         }
 
-        let args: any[] = BlockIO.argsForCmd(cmd, b.spec.argCount, b.rightToLeft);
+        let args: any[] = BlockIOService.argsForCmd(cmd, b.spec.argCount, b.rightToLeft);
         // console.log(b.spec.label + " with args " + args);
-        let substacks: any[] = BlockIO.substacksForCmd(cmd, args.length);
+        let substacks: any[] = BlockIOService.substacksForCmd(cmd, args.length);
         let hadSpriteRef: boolean;
         for (let i: number = 0; i < args.length; i++) {
             let a: any = args[i];
@@ -117,7 +117,7 @@ export class BlockIO {
             b.insertBlockSub2(substacks[1]);
         // if hadSpriteRef is true, don't call fixMouseEdgeRefs() to avoid converting references
         // to sprites named 'mouse' or 'edge' to '_mouse_' or '_edge_'.
-        if (!hadSpriteRef) BlockIO.fixMouseEdgeRefs(b);
+        if (!hadSpriteRef) BlockIOService.fixMouseEdgeRefs(b);
         // b.fixArgLayout();
         return b;
     }
@@ -149,7 +149,7 @@ export class BlockIO {
             let a: any = cmd[i];
             if (a instanceof Array) {
                 // block
-                result.push(BlockIO.arrayToBlock(a, "r"));
+                result.push(BlockIOService.arrayToBlock(a, "r"));
             } else {
                 // literal value
                 result.push(a);
@@ -165,7 +165,7 @@ export class BlockIO {
         for (let i: number = 1 + numArgs; i < cmd.length; i++) {
             let a: any = cmd[i];
             if (a instanceof Array) {
-              result.push(BlockIO.arrayToStack(a));
+              result.push(BlockIOService.arrayToStack(a));
             }
             else {
               result.push(null);
@@ -206,7 +206,7 @@ export class BlockIO {
                 if (b == null) return null;
                 let arg: any = cmd[3];
                 let undefinedBlockType: string = "r";
-                if (arg instanceof Array) arg = BlockIO.arrayToBlock(arg, undefinedBlockType);
+                if (arg instanceof Array) arg = BlockIOService.arrayToBlock(arg, undefinedBlockType);
                 b.setArg(0, cmd[1]);
                 b.setArg(1, arg);
                 return b;
@@ -250,12 +250,12 @@ export class BlockIO {
             case "abs":
                 b = new BlockModel(SpecModel.SPECS.get("computeFunction:of:"));
                 b.setArg(0, "abs");
-                b.setArg(1, BlockIO.convertArg(cmd[1]));
+                b.setArg(1, BlockIOService.convertArg(cmd[1]));
                 return b;
             case "sqrt":
                 b = new BlockModel(SpecModel.SPECS.get("computeFunction:of:"));
                 b.setArg(0, "sqrt");
-                b.setArg(1, BlockIO.convertArg(cmd[1]));
+                b.setArg(1, BlockIOService.convertArg(cmd[1]));
                 return b;
             case "doReturn":
                 b = new BlockModel(SpecModel.SPECS.get("stopScripts"));
@@ -267,15 +267,15 @@ export class BlockIO {
                 return b;
             case "showBackground:":
                 b = new BlockModel(SpecModel.SPECS.get("startScene"));
-                b.setArg(0, BlockIO.convertArg(cmd[1]));
+                b.setArg(0, BlockIOService.convertArg(cmd[1]));
                 return b;
             case "nextBackground":
                 b = new BlockModel(SpecModel.SPECS.get("nextScene"));
                 return b;
             case "doForeverIf":
                 let ifBlock: BlockModel = new BlockModel(SpecModel.SPECS.get("doIf"));
-                ifBlock.setArg(0, BlockIO.convertArg(cmd[1]));
-                if (cmd[2] instanceof Array) ifBlock.insertBlockSub1(BlockIO.arrayToStack(cmd[2]));
+                ifBlock.setArg(0, BlockIOService.convertArg(cmd[1]));
+                if (cmd[2] instanceof Array) ifBlock.insertBlockSub1(BlockIOService.arrayToStack(cmd[2]));
                 // ifBlock.fixArgLayout();
 
                 b = new BlockModel(SpecModel.SPECS.get("doForever"));
@@ -287,7 +287,7 @@ export class BlockIO {
 
     private static convertArg(arg: any): any {
         // If arg is an array, convert it to a block. Otherwise, return it unchanged.
-        return (arg instanceof Array) ? BlockIO.arrayToBlock(arg, "r") : arg;
+        return (arg instanceof Array) ? BlockIOService.arrayToBlock(arg, "r") : arg;
     }
 
     private static fixMouseEdgeRefs(b: BlockModel): void {

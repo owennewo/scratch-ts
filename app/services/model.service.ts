@@ -1,6 +1,6 @@
-import {ScriptLayout} from "../ui/script.layout";
-import {SpecLayout} from "../ui/spec.layout";
-import {ProjectIO} from "../io/project.io";
+import {ScriptLayoutService} from "../services/script.layout.service";
+import {SpecLayoutService} from "../services/spec.layout.service";
+import {ProjectIOService} from "../services/project.io.service";
 import {StageModel} from "../model/stage.model";
 import {ObjectModel} from "../model/object.model";
 import {Injectable, Inject} from "angular2/core";
@@ -31,19 +31,10 @@ export class ModelService {
       // console.log("Reading project", JSON.stringify(json));
 
       // var scratch: Scratch = new Scratch();
-      let projectIO: ProjectIO = new ProjectIO();
+      let projectIO: ProjectIOService = new ProjectIOService();
       let project = projectIO.readProject(json);
 
       this.onProjectLoaded.emit(project);
-
-      // SpecLayout.drawCategories();
-      //
-      // if (project.children.length > 0) {
-      //   let sprite = project.children[0];
-      //   if (sprite.scripts && sprite.scripts.length > 0) {
-      //     ScriptLayout.drawScripts(sprite.scripts);
-      //   }
-      // }
 
     });
   }
