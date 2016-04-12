@@ -69,7 +69,7 @@ export class ContainerComponent {
       SpecLayoutService.drawCategories();
 
         if (scratchObject.scripts && scratchObject.scripts.length > 0) {
-          ScriptLayoutService.drawScripts(scratchObject.scripts);
+          ScriptLayoutService.drawObject(scratchObject);
         }
 
 

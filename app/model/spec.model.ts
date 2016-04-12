@@ -4,7 +4,7 @@ import {BlockArgModel} from "./blockarg.model";
 import {SpecCategoryModel} from "./spec.category.model";
 import {BlockShapeModel} from "./block.shape.model";
 
-export class SpecModel implements VisibleModel {
+export class SpecModel extends VisibleModel {
     static SPECS: Map<String, SpecModel> = new Map<String, SpecModel>();
 
     code: string;
@@ -16,6 +16,7 @@ export class SpecModel implements VisibleModel {
     labelsAndArgs: BlockArgModel[] = [];
 
     constructor(code: string, label: string, argCount: number, category: SpecCategoryModel, shapeType: string, defaultArgs: any[]) {
+        super();
         this.code = code;
         this.category = category;
         this.label = label;

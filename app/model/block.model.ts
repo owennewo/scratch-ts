@@ -457,7 +457,7 @@ export class BlockModel extends BlockBaseModel {
     }
 
     fixStackLayout() {
-
+        console.log("fixing:" + this.spec.label);
     }
 
     insertBlockAbove(b: BlockModel): void {

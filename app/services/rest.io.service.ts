@@ -33,7 +33,7 @@ export class RestIOService {
         if (project.children.length > 0) {
           let sprite = project.children[0];
           if (sprite.scripts && sprite.scripts.length > 0) {
-            ScriptLayoutService.drawScripts(sprite.scripts);
+            ScriptLayoutService.drawObject(sprite);
           }
         }
 

@@ -250,6 +250,7 @@ export class BlockArgModel extends BlockBaseModel {
 
     drawBlock(group: Snap.Element, x: number, y: number) {
       this.shape.setGroup(group);
+
       this.shape.draw(x, y);
     }
 
