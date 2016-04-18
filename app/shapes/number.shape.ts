@@ -1,3 +1,4 @@
+import {ScriptLayoutService} from "../services/script.layout.service";
 import {BlockBaseModel} from "../model/block.base.model";
 import {BlockArgModel} from "../model/blockarg.model";
 import {PathBuilder} from "../utils/path.builder";
@@ -8,9 +9,11 @@ import {SpecModel} from "../model/spec.model";
 
 
 export class NumberShape extends BaseShape {
+    arg: BlockBaseModel;
+
     constructor(spec: SpecModel, arg: BlockBaseModel, group?: Snap.Element) {
         super(spec, arg, group);
-
+        this.arg = arg;
         this.indentTop = 2;
         // this.indentBottom = 2;
         // this.indentLeft = 6;
@@ -26,10 +29,7 @@ export class NumberShape extends BaseShape {
     }
 
     draw(x: number, y: number) {
-      super.draw (x, y);
-        // this.group = parentGroup;
-        // super.draw(parentGroup);
-
+        super.draw (x, y);
 
         let argValue = 0;
         let textBox = undefined;
@@ -40,11 +40,13 @@ export class NumberShape extends BaseShape {
           cssClass = "blockarg";
           textBox = text.getBBox();
           text.attr({y: textBox.h});
+          text.click(() => this.startEdit());
           this.group.append(text);
         } else {
           textBox = this.group.getBBox();
           cssClass = this.spec.category.name.toLowerCase();
         }
+
 
         let top = textBox.y;
         this.w = textBox.width + 10;
@@ -54,8 +56,19 @@ export class NumberShape extends BaseShape {
         this.x = textBox.x - 4;
         let rect = Graphics.ScriptPane.drawRect(this.x, this.y , this.w, this.topH, this.centerY, this.centerY, cssClass);
 
+        rect.click(() => this.startEdit());
+
         this.group.prepend(rect);
 
+    }
+
+    startEdit() {
+        let argValue = (<BlockArgModel> this.arg).argValue.toString();
+        let newValue = window.prompt("update arg:", argValue);
+        if (newValue) {
+            (<BlockArgModel> this.arg).argValue = newValue;
+        }
+        ScriptLayoutService.redrawScript(this.group);
     }
 
 }

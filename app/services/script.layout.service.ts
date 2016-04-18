@@ -49,8 +49,7 @@ export class ScriptLayoutService {
 
                 existingBlock.insertBlock(newBlock);
                 draggedElement.transform("translate(0,0)");
-                let script = ScriptLayoutService.findModel(existingBlock.shape.group, ScriptModel);
-                ScriptLayoutService.drawScript(script, script.group.parent());
+                ScriptLayoutService.redrawScript(existingBlock.shape.group);
 
             } else {
                 console.log("not spec:" + draggedModel);
@@ -66,6 +65,11 @@ export class ScriptLayoutService {
       obj.scripts.forEach( script => {
         ScriptLayoutService.drawScript(script, scriptWorkArea);
       });
+    }
+
+    public static redrawScript(childSvg: Snap.Element) {
+        let script = ScriptLayoutService.findModel(childSvg, ScriptModel);
+        ScriptLayoutService.drawScript(script, script.group.parent());
     }
 
     private static findModel<T extends VisibleModel>(svgElement: Snap.Element, constr?: { new(): T }): T {
