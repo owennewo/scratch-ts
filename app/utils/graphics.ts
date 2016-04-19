@@ -11,6 +11,7 @@ import {Color} from "../utils/color";
 
 export class Graphics {
     static ScriptPane = new Graphics("#svg-script-pane");
+    static StagePane = new Graphics("#svg-stage");
 
     id: string;
     paper: Snap.Paper;
@@ -105,6 +106,21 @@ export class Graphics {
         }
 
         return p;
+    }
+
+    drawStroke(oldX: number, oldY: number, newX: number, newY: number, color: any, width: number) {
+        let strokeGroup = Snap.select("#stroke-group");
+        if (!strokeGroup) strokeGroup = this.group("stroke-group", 0, 0, "");
+        let path = this.drawPath("M" + oldX + "," + (-oldY) + "L" + newX + "," + (-newY));
+        path.attr({
+            style: "stroke: " + color.hex + "; stroke-width:" + width
+        });
+        strokeGroup.append(path);
+    }
+
+    clearStrokes() {
+        let strokeGroup = Snap.select("#stroke-group");
+        if (strokeGroup) strokeGroup.remove();
     }
 
     makeDraggable(group: Snap.Element) {

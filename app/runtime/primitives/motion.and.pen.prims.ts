@@ -1,3 +1,4 @@
+import {Graphics} from "../../utils/graphics";
 import {StageModel} from "../../model/stage.model";
 import {Interpreter} from "../interpreter";
 import {Scratch} from "../scratch";
@@ -201,8 +202,7 @@ export class MotionAndPenPrims {
     }
 
     private primClear(b: BlockModel, interp: Interpreter): void {
-        interp.stage.runtime.clearPenStrokes()
-        ;
+        interp.stage.runtime.clearPenStrokes();
         interp.redraw();
     }
 
@@ -300,7 +300,10 @@ export class MotionAndPenPrims {
     }
 
     private static stroke(s: SpriteModel, interp: Interpreter, oldX: number, oldY: number, newX: number, newY: number): void {
-        console.log("todo stroke");
+        // console.log("todo stroke");
+        let color = interp.targetObj().runtime.penColor;
+        let width = interp.targetObj().runtime.penWidth;
+        Graphics.StagePane.drawStroke(oldX, oldY, newX, newY, color, width);
         // let g: Graphics = interp.stage.newPenStrokes.graphics;
         // let alpha: number = (0xFF & (s.runtime.penColorCache >> 24)) / 0xFF;
         // if (alpha === 0) alpha = 1;

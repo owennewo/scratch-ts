@@ -125,6 +125,7 @@ export class BlockArgModel extends BlockBaseModel {
         this.type = ArgType.Icon;
         this.iconName = part.slice(1);
         this.shape = new IconShape(spec, undefined, this.iconName);
+        this.isArgument = false;
           // let icon: any = Specs.IconNamed(s.slice(1));
           // return (icon) ? icon : this.makeLabel(s);
       }

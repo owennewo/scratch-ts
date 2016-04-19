@@ -1,3 +1,4 @@
+import {Graphics} from "../utils/graphics";
 import {ScratchTime} from "./scratch.time";
 import {CostumeModel} from "../model/costume.model";
 import {ScriptModel} from "../model/script.model";
@@ -90,6 +91,7 @@ export class StageRuntime extends ObjectRuntime {
     }
 
     clearPenStrokes() {
+        Graphics.StagePane.clearStrokes();
         console.log("todo: clear pen strokes");
     }
 

@@ -15,9 +15,9 @@ export class SpriteRuntime extends ObjectRuntime {
     size: number;
     penIsDown: boolean = false;
     penColorCache: number;
-    penWidth: number;
-    penColor: number;
-    penHue: number;
+    penWidth: number = 3;
+    penColor: any = Snap.hsl2rgb(this.penHue * 2, 100, 50);
+    penHue: number = 120;
     penShade: number;
     bubble: any;
     bubbleSource: any;
@@ -47,10 +47,15 @@ export class SpriteRuntime extends ObjectRuntime {
 
     setPenColor(color: number) {
         this.penColor = color;
+        console.log("color set to:" + color);
     }
 
     setPenHue(color: number) {
         this.penHue = color;
+        if (this.penHue > 360) this.penHue = this.penHue - 360;
+        if (this.penHue < 0) this.penHue = this.penHue + 360;
+        this.penColor = Snap.hsl2rgb(this.penHue * 2, 100, 50);
+
     }
 
     setPenShade(color: number) {
