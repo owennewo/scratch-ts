@@ -1,9 +1,10 @@
-import {Component} from 'angular2/core';
+import {ModelService} from "../services/model.service";
+import {Component, Inject} from "angular2/core";
 
 @Component({
-  selector: 'nav[id=menu-bar]',
+  selector: "nav[id=menu-bar]",
   template: `
-   
+
         <div class="container-fluid">
           <div class="navbar-header">
             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -19,15 +20,11 @@ import {Component} from 'angular2/core';
               <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">File <span class="caret"></span></a>
                 <ul class="dropdown-menu">
-                  <li><a href="#">New</a></li>
+                  <li><a href="#" (click)="promptProject()">Open project</a></li>
                   <li role="separator" class="divider"></li>
-                  <li><a href="#">Save Now</a></li>
-                  <li><a href="#">Save as a copy</a></li>
+                  <li class="dropdown-header">Recent projects</li>
+                  <li *ngFor="#project of recentProjects"><a href="#" (click)="openProject(project)">{{project}}</a></li>
                   <li role="separator" class="divider"></li>
-                  <li><a href="#">Upload from my computer</a></li>
-                  <li><a href="#">Download to my computer</a></li>
-                  <li role="separator" class="divider"></li>
-                  <li><a href="#">Record Project Video</a></li>
                   <li><a href="#">Revert</a></li>
                 </ul>
               </li>
@@ -57,12 +54,29 @@ import {Component} from 'angular2/core';
             </ul>
           </div><!--/.nav-collapse -->
         </div><!--/.container-fluid -->
-   
+
   `,
   styles: [`
-  
+
   `]
 })
 export class MenuBarComponent {
-  
+    recentProjects: string[] = ["97867080", "97763211"];
+    constructor(@Inject(ModelService) private modelService: ModelService) {
+
+    }
+    promptProject() {
+        let projectID = window.prompt("Please enter the project id");
+        if (projectID) {
+            console.log("loading project: " + projectID);
+            this.modelService.loadProject(projectID);
+        }
+    }
+
+    openProject(projectID: string) {
+        if (projectID) {
+            console.log("loading project: " + projectID);
+            this.modelService.loadProject(projectID);
+        }
+    }
 }

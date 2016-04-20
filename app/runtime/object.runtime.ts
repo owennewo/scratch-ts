@@ -1,3 +1,5 @@
+import {SpriteRuntime} from "./sprite.runtime";
+import {StageRuntime} from "./stage.runtime";
 import {CostumeModel} from "../model/costume.model";
 export abstract class ObjectRuntime {
 
@@ -26,7 +28,9 @@ export abstract class ObjectRuntime {
                 id: this.type() + "-" + costume.name
             });
         } else {
-          this.svg.clear();
+          if (this instanceof SpriteRuntime) {
+            this.svg.clear();
+          }
         }
 
         let spriteDef = Snap.select("#def-" + costume.md5.split("\.")[0]);
@@ -42,7 +46,14 @@ export abstract class ObjectRuntime {
                   });
                   defGroup.append(loadedFragment);
                   defGroup.toDefs();
-                  this.svg.append(defGroup.use());
+                  if (this instanceof StageRuntime) {
+                      defGroup.transform("translate(-240, -180)");
+                      this.svg.prepend(defGroup.use());
+                  } else {
+                      this.svg.append(defGroup.use());
+                  }
+
+
                   setTimeout(() => {
                       // zero timeout will allow the svg to be placed and it should have bbox dimensions
                       this.redraw();

@@ -123,6 +123,13 @@ export class Graphics {
         if (strokeGroup) strokeGroup.remove();
     }
 
+    clearAll() {
+        this.checkPaperReady();
+        if (this.paper) {
+            this.paper.clear();
+        }
+    }
+
     makeDraggable(group: Snap.Element) {
       let move = function(dx, dy, mouseX, mouseY) {
 

@@ -204,6 +204,9 @@ export class StageRuntime extends ObjectRuntime {
 
     initStage() {
       console.log("Display initial stage");
+      Graphics.StagePane.clearAll();
+      // not sure why, but need to reset after clearAll otherwise svg.parent() is null
+      this.svg = Snap("#svg-stage");
       this.stage.showCostume(this.stage.currentCostumeIndex);
 
       this.stage.children.forEach(sprite => {

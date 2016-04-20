@@ -16,7 +16,7 @@ import {Component, Inject} from "angular2/core";
               <button type="button" class="btn btn-default" (click)="stop()">Stop</button>
             </div>
           </div>
-          <svg id="svg-stage" class="svg-stage" viewBox="-240 -160 480 320"></svg>
+          <svg id="svg-stage" class="svg-stage" viewBox="-240 -180 480 360"></svg>
         </div>
 
   `,
