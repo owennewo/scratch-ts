@@ -1,3 +1,5 @@
+import {StageModel} from "../model/stage.model";
+import {LocalStorageService} from "../services/local.storage.service";
 import {ModelService} from "../services/model.service";
 import {Component, Inject} from "angular2/core";
 
@@ -61,9 +63,12 @@ import {Component, Inject} from "angular2/core";
   `]
 })
 export class MenuBarComponent {
-    recentProjects: string[] = ["97867080", "97763211"];
+    recentProjects: string[] = LocalStorageService.getRecentProjects();
     constructor(@Inject(ModelService) private modelService: ModelService) {
-
+        modelService.onProjectLoaded.subscribe(data => {
+            let stage = <StageModel> data;
+            LocalStorageService.addRecentProject(stage.id);
+        });
     }
     promptProject() {
         let projectID = window.prompt("Please enter the project id");

@@ -116,6 +116,11 @@ export class Graphics {
             style: "stroke: " + color.hex + "; stroke-width:" + width
         });
         strokeGroup.append(path);
+        let stageBackground = Snap.select("#stage-background");
+        if (stageBackground) {
+            strokeGroup.insertAfter(stageBackground);
+        }
+
     }
 
     clearStrokes() {

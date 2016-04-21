@@ -32,7 +32,7 @@ export class ModelService {
 
       // var scratch: Scratch = new Scratch();
       let projectIO: ProjectIOService = new ProjectIOService();
-      let project = projectIO.readProject(json);
+      let project = projectIO.readProject(json, projectId);
 
       this.onProjectLoaded.emit(project);
 

@@ -22,20 +22,10 @@ export abstract class ObjectRuntime {
 
     public showCostume(costume: CostumeModel) {
         let backgroundUrl = "http://cdn.assets.scratch.mit.edu/internalapi/asset/" + costume.md5 + "/get/";
-        if (!this.svg) {
-            this.svg = this.paper.group();
-            this.svg.attr({
-                id: this.type() + "-" + costume.name
-            });
-        } else {
-          if (this instanceof SpriteRuntime) {
-            this.svg.clear();
-          }
-        }
 
         let spriteDef = Snap.select("#def-" + costume.md5.split("\.")[0]);
         if (spriteDef) {
-            this.svg.append(spriteDef.use());
+            this.placeCostume(costume, <Snap.Element> spriteDef.use());
             this.redraw();
         } else {
             if (costume.md5.endsWith("svg")) {
@@ -46,13 +36,8 @@ export abstract class ObjectRuntime {
                   });
                   defGroup.append(loadedFragment);
                   defGroup.toDefs();
-                  if (this instanceof StageRuntime) {
-                      defGroup.transform("translate(-240, -180)");
-                      this.svg.prepend(defGroup.use());
-                  } else {
-                      this.svg.append(defGroup.use());
-                  }
 
+                  this.placeCostume(costume, defGroup.use());
 
                   setTimeout(() => {
                       // zero timeout will allow the svg to be placed and it should have bbox dimensions
@@ -65,9 +50,11 @@ export abstract class ObjectRuntime {
               defGroup.attr({
                   id: "def-" + costume.md5.split("\.")[0]
               });
+
+
               defGroup.append(image);
               defGroup.toDefs();
-              this.svg.append(defGroup.use());
+              this.placeCostume(costume, defGroup.use());
               setTimeout(() => {
                   // zero timeout will allow the svg to be placed and it should have bbox dimensions
                   this.redraw();
@@ -76,5 +63,7 @@ export abstract class ObjectRuntime {
 
         }
       }
+
+      abstract placeCostume(costume: CostumeModel, obj: Snap.Element);
 
 }

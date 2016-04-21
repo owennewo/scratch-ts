@@ -61,6 +61,9 @@ export class ScriptLayoutService {
 
       Graphics.ScriptPane.remove("#script-work-area");
       let scriptWorkArea = Graphics.ScriptPane.group("script-work-area", 220, 0);
+      let blockGroup = Snap.select("#script-pane-categories-blocks");
+      if (blockGroup) blockGroup.insertAfter(scriptWorkArea);
+
       scriptWorkArea.data("model", obj);
       obj.scripts.forEach( script => {
         ScriptLayoutService.drawScript(script, scriptWorkArea);

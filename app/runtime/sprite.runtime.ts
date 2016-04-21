@@ -10,7 +10,6 @@ export class SpriteRuntime extends ObjectRuntime {
 
     scaleX: number;
     sprite: SpriteModel;
-    svg: Snap.Element;
     direction: number;
     size: number;
     penIsDown: boolean = false;
@@ -126,6 +125,17 @@ export class SpriteRuntime extends ObjectRuntime {
         let box2 = other.svg.getBBox();
         // this is a rough approximation to check if touching.  Not sure if its good enough, but there is no simple alternative
         return Snap.path.isPointInsideBBox(box1, box2.cx, box2.cy) || Snap.path.isPointInsideBBox(box2, box1.cx, box1.cy);
+    }
+
+    placeCostume(costume: CostumeModel, element: Snap.Element) {
+        if (!this.svg) {
+            this.svg = this.paper.group();
+            this.svg.attr({
+                id: this.type() + "-" + costume.name
+            });
+        }
+        this.svg.clear();
+        this.svg.append(element);
     }
 
 }

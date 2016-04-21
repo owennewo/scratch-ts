@@ -12,6 +12,7 @@ export class StageModel extends ObjectModel {
     children: SpriteModel[];
     info: ProjectInfoModel;  // info
     runtime: StageRuntime;
+    id: string;
 
     constructor() {
       super();

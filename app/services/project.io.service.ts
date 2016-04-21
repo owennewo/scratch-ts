@@ -11,7 +11,7 @@ import {BlockIOService} from "./block.io.service";
 
 export class ProjectIOService {
 
-    readProject(jsonStage: any): StageModel {
+    readProject(jsonStage: any, projectID: string): StageModel {
 
         let stage: StageModel = new StageModel();
 
@@ -22,6 +22,7 @@ export class ProjectIOService {
 
         stage.children = this.readSprites(jsonStage.children, stage);
         stage.info = this.readProjectInfo(jsonStage.info);
+        stage.id = projectID;
 
         return stage;
     }

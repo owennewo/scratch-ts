@@ -156,6 +156,16 @@ export class StageRuntime extends ObjectRuntime {
         this.currentDoObject = null;
     }
 
+    placeCostume(costume: CostumeModel, element: Snap.Element) {
+        // element.transform("translate(-240, -180)");
+        let background = this.svg.select("#stage-background");
+        if (background) background.remove();
+        background = this.paper.group();
+        background.attr({ id: "stage-background" });
+        background.append(element);
+        this.svg.prepend(background);
+    }
+
     // showCostume(costume: CostumeModel) {
     //   let backgroundUrl = "http://cdn.assets.scratch.mit.edu/internalapi/asset/" + costume.md5 + "/get/";
     //
