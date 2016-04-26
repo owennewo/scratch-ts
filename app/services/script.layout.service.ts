@@ -16,10 +16,21 @@ export class ScriptLayoutService {
     static drawObject(obj: ObjectModel) {
       Graphics.ScriptPane.onDragOverCallback = function(draggedElement: Snap.Element, targetElement: Snap.Element) {
 
-          this.overModel = ScriptLayoutService.findModel(targetElement);
-          console.log("overModel:" + this.overModel.code);
+          let group = ScriptLayoutService.findElement(draggedElement, "g");
+
+          let x = group.node.getBoundingClientRect().left;
+          let cy = group.node.getBoundingClientRect().top + 0.5 * group.node.getBoundingClientRect().height;
+
+          let el = Snap.getElementByPoint(x - 2, cy);
+
+          if (el) {
+              this.overModel = ScriptLayoutService.findModel(el, BlockModel);
+          } else {
+              this.overModel = undefined;
+          }
 
       };
+
 
 
       Graphics.ScriptPane.onDragEndCallback = function(draggedElement: Snap.Element) {
@@ -47,9 +58,15 @@ export class ScriptLayoutService {
                 let newBlock = new BlockModel(spec, spec.defaultArgs);
                 let existingBlock = <BlockModel> this.overModel;
 
-                existingBlock.insertBlock(newBlock);
                 draggedElement.transform("translate(0,0)");
-                ScriptLayoutService.redrawScript(existingBlock.shape.group);
+                if (!existingBlock || !existingBlock.insertBlock) {
+                    console.log ("block was not dropped on valid target:"  + typeof(existingBlock));
+                } else {
+                    existingBlock.insertBlock(newBlock);
+                    ScriptLayoutService.redrawScript(existingBlock.shape.group);
+                }
+
+
 
             } else {
                 console.log("not spec:" + draggedModel);
@@ -106,6 +123,29 @@ export class ScriptLayoutService {
               return <T> ScriptLayoutService.findModel(parent, constr);
           }
     }
+
+    private static findElement(svgElement: Snap.Element, tagname: string): Snap.Element {
+
+          if (!svgElement || svgElement === null) {
+              return null;
+          }
+
+          if (svgElement.node.tagName === tagname) {
+            return svgElement;
+          }
+
+          let parent = svgElement.parent();
+
+          if (!parent || parent === null) {
+              return null;
+          } if ((!parent.node || !parent.node.id)) {
+            // not an instance of Snap.Element
+            return null;
+          } else {
+              return ScriptLayoutService.findElement(parent, tagname);
+          }
+    }
+
 
     static drawScript(script: ScriptModel, scriptWorkArea: Snap.Element) {
         let current = script.firstBlock;

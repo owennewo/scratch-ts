@@ -87,7 +87,7 @@ export class BlockModel extends BlockBaseModel {
     private originalIndex: number;
     // private originalPosition:Point;
 
-    constructor(spec: SpecModel, defaultArgs: any[] = null) {
+    constructor(spec?: SpecModel, defaultArgs: any[] = null) {
         super();
 
         this.spec = spec;
@@ -457,7 +457,7 @@ export class BlockModel extends BlockBaseModel {
     }
 
     fixStackLayout() {
-        console.log("fixing:" + this.spec.label);
+        console.log("fixing stack layout:" + this.spec.label);
     }
 
     insertBlockAbove(b: BlockModel): void {

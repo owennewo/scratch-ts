@@ -50,7 +50,8 @@ export class SoundPrims {
     }
 
     private primPlaySoundUntilDone(b: BlockModel, interp: Interpreter): void {
-      console.log("todo primPlaySoundUntilDone");
+        console.log("todo primPlaySoundUntilDone");
+        interp.doYield();
         // let activeThread: ScratchThread = interp.activeThread;
         // if (activeThread.firstTime) {
         //     let snd: ScratchSound = interp.targetObj().findSound(interp.arg(b, 0));

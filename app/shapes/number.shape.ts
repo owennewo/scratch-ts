@@ -35,7 +35,11 @@ export class NumberShape extends BaseShape {
         let textBox = undefined;
         let cssClass;
         if (this.arg) {
-          argValue = (<BlockArgModel> this.arg).argValue.toString();
+          let blockArg = (<BlockArgModel> this.arg);
+          if (blockArg.argValue) {
+              argValue = (<BlockArgModel> this.arg).argValue.toString();
+          }
+
           let text = Graphics.ScriptPane.drawText(this.x, this.y, argValue.toString(), "blockarg");
           cssClass = "blockarg";
           textBox = text.getBBox();

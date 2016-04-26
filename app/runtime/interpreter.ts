@@ -447,8 +447,9 @@ export class Interpreter {
         this.primTable["wait:elapsed:from:"] = this.primWait;
         this.primTable["doForever"] = function(b: BlockModel, interp: Interpreter): any { interp.startCmdList(b.stack1, true); };
         this.primTable["doRepeat"] = this.primRepeat;
-        this.primTable["broadcast:"] = function(b: BlockModel, interp: Interpreter): any { interp.broadcast(this.arg(b, 0), false); };
-        this.primTable["doBroadcastAndWait"] = function(b: BlockModel, interp: Interpreter): any { interp.broadcast(this.arg(b, 0), true); };
+        this.primTable["broadcast:"] = function(b: BlockModel, interp: Interpreter): any { interp.broadcast(interp.arg(b, 0), false); };
+        this.primTable["doBroadcastAndWait"] = function(b: BlockModel, interp: Interpreter): any { interp.broadcast(interp.arg(b, 0), true); };
+        this.primTable["undefined"] = function(b: BlockModel, interp: Interpreter): any { console.log("doing nothing"); };
         this.primTable["whenIReceive"] = this.primTable["noop"];
         this.primTable["doForeverIf"] = function(b: BlockModel, interp: Interpreter): any { if (interp.arg(b, 0)) interp.startCmdList(b.stack1, true); else interp.yield = true; };
         this.primTable["doForLoop"] = this.primForLoop;
@@ -584,8 +585,8 @@ export class Interpreter {
             let newThreads: any[] = [];
             msg = msg.toLowerCase();
             let findReceivers: Function = function(stack: BlockModel, target: ObjectModel): void {
-                if ((stack.spec.code === "whenIReceive") && (this.stack.args[0].argValue.toLowerCase() === msg)) {
-                    receivers.push([this.stack, this.target]);
+                if ((stack.spec.code === "whenIReceive") && (stack.args[0].argValue.toLowerCase() === msg)) {
+                    receivers.push([stack, this.target]);
                 }
             };
             this.stage.runtime.allStacksAndOwnersDo(findReceivers);
@@ -609,8 +610,8 @@ export class Interpreter {
         let pair: any[];
         if (this.activeThread.firstTime) {
             function findSceneHats(stack: BlockModel, target: ObjectModel): void {
-                if ((stack.spec.code === "whenSceneStarts") && (this.stack.args[0].argValue === sceneName)) {
-                    receivers.push([this.stack, this.target]);
+                if ((stack.spec.code === "whenSceneStarts") && (stack.args[0].argValue === sceneName)) {
+                    receivers.push([stack, this.target]);
                 }
             }
             let receivers: any[] = [];

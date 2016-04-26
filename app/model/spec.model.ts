@@ -175,6 +175,7 @@ export class SpecModel extends VisibleModel {
         SpecModel.add("when I receive %m.broadcast", 1, "h", SpecCategoryModel.EVENTS, "whenIReceive");
         SpecModel.add("broadcast %m.broadcast", 1, " ", SpecCategoryModel.EVENTS, "broadcast:");
         SpecModel.add("broadcast %m.broadcast and wait", 1, " ", SpecCategoryModel.EVENTS, "doBroadcastAndWait");
+        SpecModel.add("undefined", 0, " ", SpecCategoryModel.EVENTS, "undefined");
 
         // control - sprite
         SpecModel.add("wait %n secs", 1, " ", SpecCategoryModel.CONTROL, "wait:elapsed:from:", [1]);

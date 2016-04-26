@@ -161,7 +161,7 @@ export class StageRuntime extends ObjectRuntime {
         let background = this.svg.select("#stage-background");
         if (background) background.remove();
         background = this.paper.group();
-        background.attr({ id: "stage-background" });
+        background.attr({ id: "stage-background", transform: "translate(-240,-180)" });
         background.append(element);
         this.svg.prepend(background);
     }
@@ -220,7 +220,7 @@ export class StageRuntime extends ObjectRuntime {
       this.stage.showCostume(this.stage.currentCostumeIndex);
 
       this.stage.children.forEach(sprite => {
-        sprite.runtime.showCostume(sprite.costumes[sprite.currentCostumeIndex]);
+        sprite.runtime.showCostume(sprite.costumes[sprite.currentCostumeIndex], sprite.visible);
       });
 
       // setInterval(() => {

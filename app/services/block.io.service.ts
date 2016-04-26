@@ -94,9 +94,16 @@ export class BlockIOService {
             cmd.splice(0, 1);
         } else {
             let spec: SpecModel = BlockIOService.specForCmd(cmd, undefinedBlockType);
-            let label: string = spec[0];
-            if (forStage && spec[3] === "whenClicked") label = "when Stage clicked";
-            b = new BlockModel(spec); // TODO, Specs.blockColor(spec[2]), spec[3]);
+            if (!spec) {
+                // something has gone wrong, lets ignore it
+                return undefined;
+                // b = new BlockModel(SpecModel.SPECS.get("noop"));
+            } else {
+                let label: string = spec[0];
+                if (forStage && spec[3] === "whenClicked") label = "when Stage clicked";
+                b = new BlockModel(spec); // TODO, Specs.blockColor(spec[2]), spec[3]);
+            }
+
         }
 
         let args: any[] = BlockIOService.argsForCmd(cmd, b.spec.argCount, b.rightToLeft);
@@ -135,7 +142,8 @@ export class BlockIOService {
         // let extensionSpec:any[] = Scratch.app.extensionManager.specForCmd(op);
         // if (extensionSpec) return extensionSpec;
         debugger;
-        throw new Error("unknown spec:" + specCode);
+        console.error("unknown spec:" + specCode);
+        return;
         // let spec: string = "undefined";
         // for (let i: number = 1; i < cmd.length; i++) spec += " %n"; // add placeholder arg slots
         // return [spec, undefinedBlockType, 0, op]; // no match found

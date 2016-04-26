@@ -20,24 +20,34 @@ export abstract class ObjectRuntime {
       this.volume = volume;
     }
 
-    public showCostume(costume: CostumeModel) {
+    public showCostume(costume: CostumeModel, visible: boolean = true) {
         let backgroundUrl = "http://cdn.assets.scratch.mit.edu/internalapi/asset/" + costume.md5 + "/get/";
 
-        let spriteDef = Snap.select("#def-" + costume.md5.split("\.")[0]);
+        let defId = "def-" + costume.md5.split("\.")[0];
+
+        let spriteDef = Snap.select("#" + defId);
         if (spriteDef) {
-            this.placeCostume(costume, <Snap.Element> spriteDef.use());
+            let useSvg = <Snap.Element> this.paper.use(defId);
+            if (!visible) {
+                useSvg.addClass("hide");
+            }
+            this.placeCostume(costume, useSvg);
             this.redraw();
         } else {
             if (costume.md5.endsWith("svg")) {
               Snap.load(backgroundUrl, function(loadedFragment) {
                   let defGroup = this.paper.group();
                   defGroup.attr({
-                      id: "def-" + costume.md5.split("\.")[0]
+                      id: defId
                   });
                   defGroup.append(loadedFragment);
-                  defGroup.toDefs();
+                  let def = defGroup.toDefs();
 
-                  this.placeCostume(costume, defGroup.use());
+                  let useSvg = <Snap.Element> this.paper.use(defId);
+                  if (!visible) {
+                      useSvg.addClass("hide");
+                  }
+                  this.placeCostume(costume, useSvg);
 
                   setTimeout(() => {
                       // zero timeout will allow the svg to be placed and it should have bbox dimensions
@@ -45,7 +55,7 @@ export abstract class ObjectRuntime {
                   }, 0);
               }, this);
             } else {
-              let image = this.paper.image(backgroundUrl, -240, -160, 480, 360);
+              let image = this.paper.image(backgroundUrl, 0, 0, costume.centerX, costume.centerY);
               let defGroup = this.paper.group();
               defGroup.attr({
                   id: "def-" + costume.md5.split("\.")[0]
@@ -53,8 +63,12 @@ export abstract class ObjectRuntime {
 
 
               defGroup.append(image);
-              defGroup.toDefs();
-              this.placeCostume(costume, defGroup.use());
+              let def = defGroup.toDefs();
+              let useSvg = <Snap.Element> def.use();
+              if (!visible) {
+                  useSvg.addClass("hide");
+              }
+              this.placeCostume(costume, useSvg);
               setTimeout(() => {
                   // zero timeout will allow the svg to be placed and it should have bbox dimensions
                   this.redraw();

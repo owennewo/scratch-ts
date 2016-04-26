@@ -31,10 +31,10 @@ export class LooksPrims {
         primTable["startScene"] = (b: any, interp: Interpreter): any => { this.startScene(interp, interp.arg(b, 0), false); };
         primTable["startSceneAndWait"] = (b: any, interp: Interpreter): any => { this.startScene(interp, interp.arg(b, 0), true); };
 
-        primTable["say:duration:elapsed:from:"] = function(b: any): any { this.showBubbleAndWait(b, "talk"); };
-        primTable["say:"] = function(b: any): any { this.showBubble(b, "talk"); };
-        primTable["think:duration:elapsed:from:"] = function(b: any): any { this.showBubbleAndWait(b, "think"); };
-        primTable["think:"] = function(b: any): any { this.showBubble(b, "think"); };
+        primTable["say:duration:elapsed:from:"] = (b: any, interp: Interpreter): any => { this.showBubbleAndWait(b, interp, "talk"); };
+        primTable["say:"] = (b: any, interp: Interpreter): any => { this.showBubble(b, interp, "talk"); };
+        primTable["think:duration:elapsed:from:"] = (b: any, interp: Interpreter): any => { this.showBubbleAndWait(b, interp, "think"); };
+        primTable["think:"] = (b: any, interp: Interpreter): any => { this.showBubble(b, interp, "think"); };
 
         primTable["changeGraphicEffect:by:"] = this.primChangeEffect;
         primTable["setGraphicEffect:to:"] = this.primSetEffect;
@@ -231,6 +231,7 @@ export class LooksPrims {
         let s: SpriteModel = interp.targetSprite();
         if (s === null) return;
         s.visible = true;
+        s.runtime.svg.removeClass("hide");
         // if (!interp.stage.isIn3D) s.stagelyFilters();
         s.runtime.updateBubble();
         if (s.visible) interp.redraw();
@@ -240,6 +241,7 @@ export class LooksPrims {
         let s: SpriteModel = interp.targetSprite();
         if ((s === null) || !s.visible) return;
         s.visible = false;
+        s.runtime.svg.addClass("hide");
         // if (!interp.stage.isIn3D) s.stagelyFilters();
         s.runtime.updateBubble();
         interp.redraw();
