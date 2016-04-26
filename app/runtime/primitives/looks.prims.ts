@@ -217,8 +217,10 @@ export class LooksPrims {
     private primSetSize(b:  BlockModel, interp: Interpreter): void {
         let s: SpriteModel = interp.targetSprite();
         if (s === null) return;
-        s.runtime.setSize(interp.numarg(b, 0));
-        if (s.visible) interp.redraw();
+        let size = interp.numarg(b, 0);
+        s.scale = size / 100;
+        // s.runtime.setSize(size);
+        if (s.visible) s.runtime.redraw();
     }
 
     private primSize(b:  BlockModel, interp: Interpreter): number {
@@ -228,12 +230,14 @@ export class LooksPrims {
     }
 
     private primShow(b:  BlockModel, interp: Interpreter): void {
-        let s: SpriteModel = interp.targetSprite();
+        let s = interp.targetSprite();
         if (s === null) return;
         s.visible = true;
         s.runtime.svg.removeClass("hide");
         // if (!interp.stage.isIn3D) s.stagelyFilters();
-        s.runtime.updateBubble();
+        if (s instanceof SpriteModel) {
+            s.runtime.updateBubble();
+        }
         if (s.visible) interp.redraw();
     }
 

@@ -18,7 +18,10 @@ export class SoundPrims {
     public addPrimsTo(primTable: any): void {
         primTable["playSound:"] = this.primPlaySound;
         primTable["doPlaySoundAndWait"] = this.primPlaySoundUntilDone;
-        primTable["stopAllSounds"] = function(b: any): any { this.ScratchSoundPlayer.stopAllSounds(); };
+        primTable["stopAllSounds"] = (b: any): any => {
+            console.log("todo stopAllSounds");
+            // this.ScratchSoundPlayer.stopAllSounds();
+        };
 
         primTable["drum:duration:elapsed:from:"] = this.primPlayDrum; // Scratch 1.4 drum numbers
         primTable["playDrum"] = this.primPlayDrum;
@@ -32,15 +35,15 @@ export class SoundPrims {
         primTable["setVolumeTo:"] = this.primSetVolume;
         primTable["volume"] = this.primVolume;
 
-        primTable["changeTempoBy:"] = function(b: any, interp: Interpreter): any {
-            this.app.stagePane.setTempo(this.app.stagePane.tempoBPM + interp.numarg(this.b, 0));
+        primTable["changeTempoBy:"] = (b: any, interp: Interpreter): any => {
+            this.app.stagePane.setTempo(this.app.stagePane.tempoBPM + interp.numarg(b, 0));
             interp.redraw();
         };
-        primTable["setTempoTo:"] = function(b: any, interp: Interpreter): any {
-            this.app.stagePane.setTempo(interp.numarg(this.b, 0));
+        primTable["setTempoTo:"] = (b: any, interp: Interpreter): any => {
+            this.app.stagePane.setTempo(interp.numarg(b, 0));
             interp.redraw();
         };
-        primTable["tempo"] = function(b: any): any { return this.stage.tempo; };
+        primTable["tempo"] = (b: any): any => { return this.stage.tempo; };
     }
 
     private primPlaySound(b: BlockModel, interp: Interpreter): void {
@@ -50,22 +53,23 @@ export class SoundPrims {
     }
 
     private primPlaySoundUntilDone(b: BlockModel, interp: Interpreter): void {
-        console.log("todo primPlaySoundUntilDone");
-        interp.doYield();
-        // let activeThread: ScratchThread = interp.activeThread;
-        // if (activeThread.firstTime) {
-        //     let snd: ScratchSound = interp.targetObj().findSound(interp.arg(b, 0));
-        //     if (snd == null) return;
-        //     activeThread.tmpObj = SoundPrims.playSound(snd, interp.targetObj());
-        //     activeThread.firstTime = false;
-        // }
+
+        let activeThread: ScratchThread = interp.activeThread;
+        if (activeThread.firstTime) {
+          console.log("todo primPlaySoundUntilDone");
+            // let snd: ScratchSound = interp.targetObj().findSound(interp.arg(b, 0));
+            // if (snd == null) return;
+            // activeThread.tmpObj = SoundPrims.playSound(snd, interp.targetObj());
+            activeThread.firstTime = false;
+        }
         // let player: ScratchSoundPlayer = activeThread.tmpObj;
-        // if ((player == null) || (player.atEnd())) { // finished playing
-        //     activeThread.tmp = 0;
-        //     activeThread.firstTime = true;
-        // } else {
-        //     interp.doYield();
-        // }
+        let player = null;
+        if ((player == null) || (player.atEnd())) { // finished playing
+            activeThread.tmp = 0;
+            activeThread.firstTime = true;
+        } else {
+            interp.doYield();
+        }
     }
 
     private primPlayNote(b: BlockModel, interp: Interpreter): void {

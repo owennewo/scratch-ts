@@ -72,11 +72,10 @@ export class SpriteRuntime extends ObjectRuntime {
             this.lastScale = s.scale;
         }
 
-        // let x = Math.floor(this.sprite.x - (this.lastSpriteBox.w / 2) + ((this.lastSpriteBox.h / 2) * (s.scale - 1)));
-        //
-        // let y = Math.floor(-(this.sprite.y + (this.lastSpriteBox.h / 2)) + ((this.lastSpriteBox.w / 2) * (s.scale - 1)));  // scratch y coordinate system is upside down compared to svg hence the negation
+        let x = Math.floor(this.sprite.x - (this.lastSpriteBox.w / 2) - ((this.lastSpriteBox.h / 2) * (s.scale - 1)));
+        let y = Math.floor(-(this.sprite.y + (this.lastSpriteBox.h / 2)) - ((this.lastSpriteBox.w / 2) * (s.scale - 1)));  // scratch y coordinate system is upside down compared to svg hence the negation
 
-        let trans = "rotate(" + (s.direction - 90) + " " + this.sprite.x + " " + (-this.sprite.y) + ") translate(" + (this.lastSpriteBox.w / 2 * s.scale) + "," + (-this.lastSpriteBox.h / 2 * s.scale) + ") scale(" + s.scale + ")";
+        let trans = "rotate(" + (s.direction - 90) + " " + this.sprite.x + " " + (-this.sprite.y) + ") translate(" + x + "," + y + ") scale(" + s.scale + ")";
         s.runtime.svg.transform(trans);
 
     }

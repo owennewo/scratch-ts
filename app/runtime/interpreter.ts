@@ -83,8 +83,12 @@ export class Interpreter {
         // checkPrims();
     }
 
-    public targetObj(): ObjectModel { return this.stage.runtime.currentDoObject ? this.stage.runtime.currentDoObject : this.activeThread.target; }
-    public targetSprite(): SpriteModel { return <SpriteModel>(this.stage.runtime.currentDoObject ? this.stage.runtime.currentDoObject : this.activeThread.target); }
+    public targetObj(): ObjectModel {
+        return this.stage.runtime.currentDoObject ? this.stage.runtime.currentDoObject : this.activeThread.target;
+    }
+    public targetSprite(): SpriteModel {
+        return <SpriteModel>(this.stage.runtime.currentDoObject ? this.stage.runtime.currentDoObject : this.activeThread.target);
+    }
 
     /* ScratchThreads */
 
@@ -250,7 +254,7 @@ export class Interpreter {
     private stepActiveThread(): void {
         if (!this.activeThread.block) return;
         if (this.activeThread.startDelayCount > 0) { this.activeThread.startDelayCount--; this.doRedraw = true; return; }
-        if (!(this.activeThread.target.isStage || (this.activeThread.target.parent instanceof StageModel))) {
+        if (this.activeThread.target && !(this.activeThread.target.isStage || (this.activeThread.target.parent instanceof StageModel))) {
             // sprite is being dragged
             if (this.stage.runtime.editMode) {
                 // don"t run scripts of a sprite that is being dragged in edit mode, but do update the screen
@@ -447,8 +451,8 @@ export class Interpreter {
         this.primTable["wait:elapsed:from:"] = this.primWait;
         this.primTable["doForever"] = function(b: BlockModel, interp: Interpreter): any { interp.startCmdList(b.stack1, true); };
         this.primTable["doRepeat"] = this.primRepeat;
-        this.primTable["broadcast:"] = function(b: BlockModel, interp: Interpreter): any { interp.broadcast(interp.arg(b, 0), false); };
-        this.primTable["doBroadcastAndWait"] = function(b: BlockModel, interp: Interpreter): any { interp.broadcast(interp.arg(b, 0), true); };
+        this.primTable["broadcast:"] = (b: BlockModel, interp: Interpreter): any => { interp.broadcast(interp.arg(b, 0), false); };
+        this.primTable["doBroadcastAndWait"] = (b: BlockModel, interp: Interpreter): any => { interp.broadcast(interp.arg(b, 0), true); };
         this.primTable["undefined"] = function(b: BlockModel, interp: Interpreter): any { console.log("doing nothing"); };
         this.primTable["whenIReceive"] = this.primTable["noop"];
         this.primTable["doForeverIf"] = function(b: BlockModel, interp: Interpreter): any { if (interp.arg(b, 0)) interp.startCmdList(b.stack1, true); else interp.yield = true; };
@@ -584,9 +588,9 @@ export class Interpreter {
             let receivers: any[] = [];
             let newThreads: any[] = [];
             msg = msg.toLowerCase();
-            let findReceivers: Function = function(stack: BlockModel, target: ObjectModel): void {
+            let findReceivers = (stack: BlockModel, target: ObjectModel) => {
                 if ((stack.spec.code === "whenIReceive") && (stack.args[0].argValue.toLowerCase() === msg)) {
-                    receivers.push([stack, this.target]);
+                    receivers.push([stack, this.targetObj()]);
                 }
             };
             this.stage.runtime.allStacksAndOwnersDo(findReceivers);

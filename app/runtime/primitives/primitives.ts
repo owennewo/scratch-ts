@@ -31,26 +31,26 @@ export class Primitives {
 
         primTable["noop"] = function(b: any, interp: Interpreter): any { };
         // operators
-        primTable["+"] = function(b: any, interp: Interpreter): any { return interp.numarg(this.b, 0) + interp.numarg(this.b, 1); };
-        primTable["-"] = function(b: any, interp: Interpreter): any { return interp.numarg(this.b, 0) - interp.numarg(this.b, 1); };
-        primTable["*"] = function(b: any, interp: Interpreter): any { return interp.numarg(this.b, 0) * interp.numarg(this.b, 1); };
-        primTable["/"] = function(b: any, interp: Interpreter): any { return interp.numarg(this.b, 0) / interp.numarg(this.b, 1); };
+          primTable["+"] = (b: any, interp: Interpreter): any => { return interp.numarg(b, 0) + interp.numarg(b, 1); };
+        primTable["-"] = (b: any, interp: Interpreter): any => { return interp.numarg(b, 0) - interp.numarg(b, 1); };
+        primTable["*"] = (b: any, interp: Interpreter): any => { return interp.numarg(b, 0) * interp.numarg(b, 1); };
+        primTable["/"] = (b: any, interp: Interpreter): any => { return interp.numarg(b, 0) / interp.numarg(b, 1); };
         primTable["randomFrom:to:"] = this.primRandom;
-        primTable["<"] = function(b: any, interp: Interpreter): any { return Primitives.compare(interp.arg(this.b, 0), interp.arg(this.b, 1)) < 0; };
-        primTable["="] = function(b: any, interp: Interpreter): any { return Primitives.compare(interp.arg(this.b, 0), interp.arg(this.b, 1)) === 0; };
-        primTable[">"] = function(b: any, interp: Interpreter): any { return Primitives.compare(interp.arg(this.b, 0), interp.arg(this.b, 1)) > 0; };
-        primTable["&"] = function(b: any, interp: Interpreter): any { return interp.arg(this.b, 0) && interp.arg(this.b, 1); };
-        primTable["|"] = function(b: any, interp: Interpreter): any { return interp.arg(this.b, 0) || interp.arg(this.b, 1); };
-        primTable["not"] = function(b: any, interp: Interpreter): any { return !interp.arg(this.b, 0); };
-        primTable["abs"] = function(b: any, interp: Interpreter): any { return Math.abs(interp.numarg(this.b, 0)); };
-        primTable["sqrt"] = function(b: any, interp: Interpreter): any { return Math.sqrt(interp.numarg(this.b, 0)); };
+        primTable["<"] = (b: any, interp: Interpreter): any => { return Primitives.compare(interp.arg(b, 0), interp.arg(b, 1)) < 0; };
+        primTable["="] = (b: any, interp: Interpreter): any => { return Primitives.compare(interp.arg(b, 0), interp.arg(b, 1)) === 0; };
+        primTable[">"] = (b: any, interp: Interpreter): any => { return Primitives.compare(interp.arg(b, 0), interp.arg(b, 1)) > 0; };
+        primTable["&"] = (b: any, interp: Interpreter): any => { return interp.arg(b, 0) && interp.arg(b, 1); };
+        primTable["|"] = (b: any, interp: Interpreter): any => { return interp.arg(b, 0) || interp.arg(b, 1); };
+        primTable["not"] = (b: any, interp: Interpreter): any => { return !interp.arg(b, 0); };
+        primTable["abs"] = (b: any, interp: Interpreter): any => { return Math.abs(interp.numarg(b, 0)); };
+        primTable["sqrt"] = (b: any, interp: Interpreter): any => { return Math.sqrt(interp.numarg(b, 0)); };
 
-        primTable["concatenate:with:"] = function(b: any, interp: Interpreter): any { return ("" + interp.arg(this.b, 0) + interp.arg(this.b, 1)).substr(0, 10240); };
+        primTable["concatenate:with:"] = (b: any, interp: Interpreter): any => { return ("" + interp.arg(b, 0) + interp.arg(b, 1)).substr(0, 10240); };
         primTable["letter:of:"] = this.primLetterOf;
-        primTable["stringLength:"] = function(b: any, interp: Interpreter): any { return String(interp.arg(this.b, 0)).length; };
+        primTable["stringLength:"] = (b: any, interp: Interpreter): any => { return String(interp.arg(b, 0)).length; };
 
         primTable["%"] = this.primModulo;
-        primTable["rounded"] = function(b: any, interp: Interpreter): any { return Math.round(interp.numarg(this.b, 0)); };
+        primTable["rounded"] = (b: any, interp: Interpreter): any => { return Math.round(interp.numarg(b, 0)); };
         primTable["computeFunction:of:"] = this.primMathFunction;
 
         // clone
@@ -60,9 +60,9 @@ export class Primitives {
 
         primTable["NOOP"] = primTable["noop"];
         // testing (for development)
-        primTable["COUNT"] = function(b: any, interp: Interpreter): any { return this.counter; };
-        primTable["INCR_COUNT"] = function(b: any, interp: Interpreter): any { this.counter++; };
-        primTable["CLR_COUNT"] = function(b: any, interp: Interpreter): any { this.counter = 0; };
+        primTable["COUNT"] = (b: any, interp: Interpreter): any => { return this.counter; };
+        primTable["INCR_COUNT"] = (b: any, interp: Interpreter): any => { this.counter++; };
+        primTable["CLR_COUNT"] = (b: any, interp: Interpreter): any => { this.counter = 0; };
 
         new LooksPrims().addPrimsTo(primTable);
         new MotionAndPenPrims().addPrimsTo(primTable);
