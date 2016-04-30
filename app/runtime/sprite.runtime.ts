@@ -1,3 +1,4 @@
+import {TalkBubble} from "../utils/talk.bubble";
 import {StageRuntime} from "./stage.runtime";
 import {StageModel} from "../model/stage.model";
 import {SpriteModel} from "../model/sprite.model";
@@ -33,10 +34,20 @@ export class SpriteRuntime extends ObjectRuntime {
     }
 
     showBubble(text: string, type: string, block: BlockModel) {
+        if (!this.bubble) {
+            this.bubble = new TalkBubble(this.sprite, text, "say", "say");
+        }
+        this.bubbleSource = block;
+        // this.bubble
         console.log("todo: Sprite runtime show bubble");
     }
 
     hideBubble() {
+        let bubbleSvg = Snap.select("#bubble-" + this.sprite.name);
+        if (bubbleSvg) {
+            bubbleSvg.remove();
+            this.bubble = undefined;
+        }
         console.log("todo: SpriteRuntime hasBubbles");
     }
 

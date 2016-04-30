@@ -590,7 +590,7 @@ export class Interpreter {
             msg = msg.toLowerCase();
             let findReceivers = (stack: BlockModel, target: ObjectModel) => {
                 if ((stack.spec.code === "whenIReceive") && (stack.args[0].argValue.toLowerCase() === msg)) {
-                    receivers.push([stack, this.targetObj()]);
+                    receivers.push([stack, target]);
                 }
             };
             this.stage.runtime.allStacksAndOwnersDo(findReceivers);

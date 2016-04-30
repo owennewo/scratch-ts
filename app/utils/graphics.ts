@@ -77,6 +77,17 @@ export class Graphics {
         return r;
     }
 
+    drawEllipse(x: number, y: number, rx: number, ry: number, lineWidth: number, categoryClass?: string): Snap.Element {
+
+        let e = this.paper.ellipse(x, y, rx, ry);
+
+        if (categoryClass) {
+            e.addClass(categoryClass);
+        }
+
+        return e;
+    }
+
     drawDropDown(x: number, y: number, width: number, height: number, rx: number, ry: number, text: string): Snap.Element {
 
         // let r = this.paper.rect(x, y, width, height, rx, ry);
