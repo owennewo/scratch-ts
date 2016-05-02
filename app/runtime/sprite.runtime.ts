@@ -23,6 +23,7 @@ export class SpriteRuntime extends ObjectRuntime {
     bubbleSource: any;
     lastScale: number;
     lastSpriteBox: Snap.BBox;
+    instrument: number = 1;
 
     constructor(sprite: SpriteModel, stage: StageRuntime) {
         super(stage.paper);

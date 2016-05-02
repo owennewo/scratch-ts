@@ -1,6 +1,5 @@
 import {VisibleModel} from "../model/visible.model";
 import {BlockBaseModel} from "../model/block.base.model";
-import {ScriptLayout} from "../ui/script.layout";
 import {BlockArgModel} from "../model/blockarg.model";
 import {BlockModel} from "../model/block.model";
 import {PathBuilder} from "../utils/path.builder";

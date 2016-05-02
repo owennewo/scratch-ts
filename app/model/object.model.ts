@@ -28,4 +28,11 @@ export class ObjectModel {
         return -1;
     }
 
+    soundNamed(name): SoundModel {
+        if (this.sounds[name]) {
+            return this.sounds[name];
+        }
+        return null;
+    };
+
 }

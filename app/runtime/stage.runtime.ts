@@ -1,3 +1,4 @@
+import {SoundRuntime} from "./sound.runtime";
 import {Graphics} from "../utils/graphics";
 import {ScratchTime} from "./scratch.time";
 import {CostumeModel} from "../model/costume.model";
@@ -28,6 +29,13 @@ export class StageRuntime extends ObjectRuntime {
     lastAnswer: string = "todo";
 
     interp: Interpreter;
+
+    audioContext: AudioContext;
+    audioGain: GainNode;
+
+    notesPlaying: Array<AudioNode> = [];
+    audioPlaying: Array<SoundRuntime> = [];
+
     private motionDetector: VideoMotionPrims;
     private stage: StageModel;
     private timerBase: number;

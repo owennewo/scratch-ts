@@ -1,3 +1,4 @@
+import {SoundRuntime} from "../runtime/sound.runtime";
 export class SoundModel {
     id: number; // soundID
     name: string;  // soundName
@@ -5,4 +6,6 @@ export class SoundModel {
     sampleCount: number;
     rate: number;
     format: string;
+
+    runtime: SoundRuntime;
 }

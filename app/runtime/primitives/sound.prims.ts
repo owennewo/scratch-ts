@@ -1,3 +1,5 @@
+import {SoundModel} from "../../model/sound.model";
+import {SoundBank} from "../../sound/sound.bank";
 import {StageModel} from "../../model/stage.model";
 import {ObjectModel} from "../../model/object.model";
 import {ScratchThread} from "../scratch.thread";
@@ -36,54 +38,146 @@ export class SoundPrims {
         primTable["volume"] = this.primVolume;
 
         primTable["changeTempoBy:"] = (b: any, interp: Interpreter): any => {
-            this.app.stagePane.setTempo(this.app.stagePane.tempoBPM + interp.numarg(b, 0));
+            interp.stage.tempo = interp.stage.tempo + interp.numarg(b, 0);
             interp.redraw();
         };
         primTable["setTempoTo:"] = (b: any, interp: Interpreter): any => {
-            this.app.stagePane.setTempo(interp.numarg(b, 0));
+            interp.stage.tempo = interp.numarg(b, 0);
             interp.redraw();
         };
-        primTable["tempo"] = (b: any): any => { return this.stage.tempo; };
+        primTable["tempo"] = (b: any, interp: Interpreter): any => { return interp.stage.tempo; };
     }
 
+
+    private playSound(interp: Interpreter, snd: SoundModel): AudioNode {
+        let runtime = interp.stage.runtime;
+        if (snd.runtime.source) {
+            // If this particular sound is already playing, stop it.
+            snd.runtime.source.disconnect();
+            snd.runtime.source = null;
+        }
+
+        snd.runtime.source = runtime.audioContext.createBufferSource();
+        snd.runtime.source.buffer = snd.runtime.buffer;
+        snd.runtime.source.connect(runtime.audioGain);
+
+        // Track the sound's completion state
+        snd.runtime.source.done = false;
+        snd.runtime.source.finished = function() {
+            // Remove from the active audio list and disconnect the source from
+            // the sound dictionary.
+            let i = runtime.audioPlaying.indexOf(snd.runtime);
+            if (i > -1 && runtime.audioPlaying[i].source != null) {
+                runtime.audioPlaying[i].source.done = true;
+                runtime.audioPlaying[i].source = null;
+                runtime.audioPlaying.splice(i, 1);
+            }
+        };
+        window.setTimeout(snd.runtime.source.finished, snd.runtime.buffer.duration * 1000);
+        // Add the global list of playing sounds and start playing.
+        runtime.audioPlaying.push(snd.runtime);
+        snd.runtime.source.start();
+        return snd.runtime.source;
+    };
+
+    private playDrum(interp: Interpreter, drum: number, isMidi: boolean, secs: number, client: ObjectModel) {
+        let runtime = interp.stage.runtime;
+        let player = SoundBank.getDrumPlayer(drum, isMidi, secs);
+        // player.client = client;
+        player.setDuration(secs);
+        let source = runtime.audioContext.createScriptProcessor(4096, 1, 1);
+        source.onaudioprocess = function(e) { player.writeSampleData(e); };
+        source.soundPlayer = player;
+        source.connect(runtime.audioGain);
+        runtime.notesPlaying.push(source);
+        source.finished = function() {
+            let i = runtime.notesPlaying.indexOf(source);
+            if (i > -1 && runtime.notesPlaying[i] != null) {
+                runtime.notesPlaying.splice(i, 1);
+            }
+        };
+        window.setTimeout(source.finished, secs * 1000);
+        return player;
+    };
+
+    private playNote(interp: Interpreter, instrument, midiKey, secs, client) {
+        let player = SoundBank.getNotePlayer(instrument, midiKey);
+        // player.client = client;
+        player.setNoteAndDuration(midiKey, secs);
+        let runtime = interp.stage.runtime;
+        let source = runtime.audioContext.createScriptProcessor(4096, 1, 1);
+        source.onaudioprocess = function(e) { player.writeSampleData(e); };
+        source.connect(runtime.audioGain);
+        runtime.notesPlaying.push(source);
+        source.finished = function() {
+            let i = runtime.notesPlaying.indexOf(source);
+            if (i > -1 && runtime.notesPlaying[i] != null) {
+                runtime.notesPlaying.splice(i, 1);
+            }
+        };
+        window.setTimeout(source.finished, secs * 1000);
+        return player;
+    }
+
+    private stopAllSounds(interp: Interpreter) {
+      let runtime = interp.stage.runtime;
+        let oldAudio = runtime.audioPlaying;
+        runtime.audioPlaying = [];
+        for (let s = 0; s < oldAudio.length; s++) {
+            if (oldAudio[s].source) {
+                oldAudio[s].source.disconnect();
+                oldAudio[s].source.finished();
+            }
+        }
+
+        let oldNotes = runtime.notesPlaying;
+        runtime.notesPlaying = [];
+        for (let s = 0; s < oldNotes.length; s++) {
+            if (oldNotes[s]) {
+                oldNotes[s].disconnect();
+                oldNotes[s].finished();
+            }
+        }
+    };
+
+
     private primPlaySound(b: BlockModel, interp: Interpreter): void {
-      console.log("primPlaySound");
-        // let snd: ScratchSound = interp.targetObj().findSound(interp.arg(b, 0));
-        // if (snd != null) SoundPrims.playSound(snd, interp.targetObj());
+        let s = interp.targetSprite();
+        if (s == null) return;
+        let snd = s.soundNamed(interp.arg(b, 0));
+        if (snd != null) this.playSound(interp, snd);
     }
 
     private primPlaySoundUntilDone(b: BlockModel, interp: Interpreter): void {
 
-        let activeThread: ScratchThread = interp.activeThread;
+        let activeThread = interp.activeThread;
         if (activeThread.firstTime) {
-          console.log("todo primPlaySoundUntilDone");
-            // let snd: ScratchSound = interp.targetObj().findSound(interp.arg(b, 0));
-            // if (snd == null) return;
-            // activeThread.tmpObj = SoundPrims.playSound(snd, interp.targetObj());
+            let snd = interp.targetSprite().soundNamed(interp.arg(b, 0));
+            if (snd == null) return;
+            activeThread.tmpObj = this.playSound(interp, snd);
             activeThread.firstTime = false;
         }
-        // let player: ScratchSoundPlayer = activeThread.tmpObj;
-        let player = null;
-        if ((player == null) || (player.atEnd())) { // finished playing
-            activeThread.tmp = 0;
+        let player = activeThread.tmpObj;
+        if (player == null || player.done || player.playbackState === 3) {
+            activeThread.tmpObj = null;
             activeThread.firstTime = true;
         } else {
             interp.doYield();
         }
+
     }
 
     private primPlayNote(b: BlockModel, interp: Interpreter): void {
-      console.log("todo primPlayNote");
-        // let s: ObjectModel = interp.targetObj();
-        // if (s == null) return;
-        // if (interp.activeThread.firstTime) {
-        //     let key: number = interp.numarg(b, 0);
-        //     let secs: number = SoundPrims.beatsToSeconds(interp.numarg(b, 1));
-        //     interp.activeThread.tmpObj = SoundPrims.playNote(s.instrument, key, secs, s);
-        //     interp.startTimer(secs);
-        // } else {
-        //     interp.checkTimer();
-        // }
+      let s = interp.targetSprite();
+      if (s == null) return;
+      if (interp.activeThread.firstTime) {
+        let key = interp.numarg(b, 0);
+        let secs = SoundPrims.beatsToSeconds(interp, interp.numarg(b, 1));
+        this.playNote(interp, s.runtime.instrument, key, secs, s);
+        interp.startTimer(secs);
+      } else {
+          interp.checkTimer();
+      }
     }
 
     private primPlayDrum(b: BlockModel, interp: Interpreter): void {
@@ -93,39 +187,11 @@ export class SoundPrims {
             let drum: number = Math.round(interp.numarg(b, 0));
             let isMIDI: boolean = (b.spec.code === "drum:duration:elapsed:from:");
             let secs: number = SoundPrims.beatsToSeconds(interp, interp.numarg(b, 1));
-            SoundPrims.playDrum(drum, isMIDI, 10, s); // always play entire drum sample
+            this.playDrum(interp, drum, isMIDI, 10, s); // always play entire drum sample
             interp.startTimer(secs);
         } else {
             interp.checkTimer();
         }
-    }
-
-    private static playSound(s: any /* ScratchSound */, client: ObjectModel): any { // ScratchSoundPlayer {
-        console.log("todo playSound");
-        // let player: ScratchSoundPlayer = s.sndplayer();
-        // player.client = client;
-        // player.startPlaying();
-        // return player;
-    }
-
-    private static playDrum(drum: number, isMIDI: boolean, secs: number, client: ObjectModel): any { // ScratchSoundPlayer {
-      console.log("todo playDrum");
-        // let player: NotePlayer = SoundBank.getDrumPlayer(drum, isMIDI, secs);
-        // if (player == null) return null;
-        // player.client = client;
-        // player.setDuration(secs);
-        // player.startPlaying();
-        // return player;
-    }
-
-    private static playNote(instrument: number, midiKey: number, secs: number, client: ObjectModel): any { // ScratchSoundPlayer {
-      console.log("todo playNote");
-        // let player: NotePlayer = SoundBank.getNotePlayer(instrument, midiKey);
-        // if (player == null) return null;
-        // player.client = client;
-        // player.setNoteAndDuration(midiKey, secs);
-        // player.startPlaying();
-        // return player;
     }
 
     private primPlayRest(b: BlockModel, interp: Interpreter): void {
@@ -146,13 +212,13 @@ export class SoundPrims {
     private primSetInstrument(b: BlockModel, interp: Interpreter): void {
         // Set Scratch 2.0 instrument.
         console.log("todo primSetInstrument");
-        // let instr: number = interp.numarg(b, 0) - 1;
-        // if (b.spec.code === "midiInstrument:") {
-        //     // map old to new instrument number
-        //     instr = SoundPrims.instrumentMap[instr] - 1; // maps to -1 if out of range
-        // }
-        // instr = Math.max(0, Math.min(instr, SoundBank.instrumentNames.length - 1));
-        // if (interp.targetObj()) interp.targetObj().instrument = instr;
+        let instr: number = interp.numarg(b, 0) - 1;
+        if (b.spec.code === "midiInstrument:") {
+            // map old to new instrument number
+            instr = this.instrumentMap[instr] - 1; // maps to -1 if out of range
+        }
+        instr = Math.max(0, Math.min(instr, SoundBank.instruments.length - 1));
+        if (interp.targetObj()) interp.targetSprite().runtime.instrument = instr;
     }
 
     private primChangeVolume(b: BlockModel, interp: Interpreter): void {
