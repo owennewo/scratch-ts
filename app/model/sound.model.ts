@@ -1,3 +1,4 @@
+import {StageModel} from "./stage.model";
 import {SoundRuntime} from "../runtime/sound.runtime";
 export class SoundModel {
     id: number; // soundID
@@ -6,6 +7,11 @@ export class SoundModel {
     sampleCount: number;
     rate: number;
     format: string;
+    stage: StageModel;
 
-    runtime: SoundRuntime;
+    runtime: SoundRuntime = new SoundRuntime(this);
+
+    constructor(stage: StageModel) {
+        this.stage = stage;
+    }
 }

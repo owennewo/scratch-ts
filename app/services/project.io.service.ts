@@ -15,7 +15,7 @@ export class ProjectIOService {
 
         let stage: StageModel = new StageModel();
 
-        this.readObject(stage, jsonStage);
+        this.readObject(stage, stage, jsonStage);
         stage.tempo = jsonStage.tempoBPM;
         stage.videoAlpha = jsonStage.videoAlpha;
 
@@ -27,10 +27,10 @@ export class ProjectIOService {
         return stage;
     }
 
-    readObject(object: ObjectModel, jsonProject: any) {
+    readObject(stage: StageModel, object: ObjectModel, jsonProject: any) {
         object.name = jsonProject.objName;
         object.scripts = this.readScripts(jsonProject.scripts);
-        object.sounds = this.readSounds(jsonProject.sounds);
+        object.sounds = this.readSounds(jsonProject.sounds, stage);
         object.costumes = this.readCostumes(jsonProject.costumes);
         object.currentCostumeIndex = jsonProject.currentCostumeIndex;
     }
@@ -45,7 +45,7 @@ export class ProjectIOService {
           }
 
             let sprite: SpriteModel = new SpriteModel(stage);
-            this.readObject(sprite, jsonSprite);
+            this.readObject(stage, sprite, jsonSprite);
             sprite.x = jsonSprite.scratchX;
             sprite.y = jsonSprite.scratchY;
             sprite.scale = jsonSprite.scale;
@@ -81,11 +81,11 @@ export class ProjectIOService {
 
 
     /** SOUND READ */
-    readSounds(jsonSounds): SoundModel[] {
+    readSounds(jsonSounds, stage: StageModel): SoundModel[] {
         let sounds: SoundModel[] = [];
         if (!jsonSounds) return sounds;
         for (let jsonSound of jsonSounds) {
-            let sound: SoundModel = new SoundModel();
+            let sound: SoundModel = new SoundModel(stage);
             sound.id = jsonSound.soundID;
             sound.name = jsonSound.soundName;
             sound.md5 = jsonSound.md5;

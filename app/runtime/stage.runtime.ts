@@ -48,6 +48,16 @@ export class StageRuntime extends ObjectRuntime {
         this.stage = stage;
         this.interp = new Interpreter(stage);
 
+        if (window.AudioContext) {
+            this.audioContext = new AudioContext();
+            this.audioGain = this.audioContext.createGain();
+        } else {
+            this.audioContext = new webkitAudioContext();
+            this.audioGain = this.audioContext.createGainNode();
+        }
+
+        this.audioGain.connect(this.audioContext.destination);
+
         this.paper.mousedown(() => {
             this.mouseDownCount++;
             console.log("mouseDownCount:" + this.mouseDownCount);

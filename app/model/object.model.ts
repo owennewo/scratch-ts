@@ -29,8 +29,8 @@ export class ObjectModel {
     }
 
     soundNamed(name): SoundModel {
-        if (this.sounds[name]) {
-            return this.sounds[name];
+        for (let sound of this.sounds) {
+            if (sound.name === name) return sound;
         }
         return null;
     };

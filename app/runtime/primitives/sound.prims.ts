@@ -18,7 +18,7 @@ export class SoundPrims {
     }
 
     public addPrimsTo(primTable: any): void {
-        primTable["playSound:"] = this.primPlaySound;
+        primTable["playSound:"] = (b: any, interp: Interpreter) => { this.primPlaySound(b, interp); };
         primTable["doPlaySoundAndWait"] = this.primPlaySoundUntilDone;
         primTable["stopAllSounds"] = (b: any): any => {
             console.log("todo stopAllSounds");
@@ -58,6 +58,11 @@ export class SoundPrims {
         }
 
         snd.runtime.source = runtime.audioContext.createBufferSource();
+        if (!snd.runtime.buffer) {
+            snd.runtime.load();
+            console.log("todo: fix sound so it works first time (early load)")
+            return;
+        }
         snd.runtime.source.buffer = snd.runtime.buffer;
         snd.runtime.source.connect(runtime.audioGain);
 

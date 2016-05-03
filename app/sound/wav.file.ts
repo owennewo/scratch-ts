@@ -11,8 +11,9 @@ export class WAVFile {
 
         let data = new OffsetBuffer(waveData);
 
+        let wavHeader = data.readString(4);
         // read WAVE File Header
-        if (data.readString(4) !== "RIFF") { console.log("WAVFile:  bad file header"); return; }
+        if (wavHeader !== "RIFF") { console.log("WAVFile:  bad file header"); return; }
         let totalSize = data.readInt();
         if (data.getLength() !== (totalSize + 8)) console.log("WAVFile: bad RIFF size; ignoring");
         if (data.readString(4) !== "WAVE") { console.log("WAVFile: not a WAVE file"); return; }
