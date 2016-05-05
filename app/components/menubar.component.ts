@@ -25,7 +25,7 @@ import {Component, Inject} from "angular2/core";
                   <li><a href="#" (click)="promptProject()">Open project</a></li>
                   <li role="separator" class="divider"></li>
                   <li class="dropdown-header">Recent projects</li>
-                  <li *ngFor="#project of recentProjects"><a href="#" (click)="openProject(project)">{{project}}</a></li>
+                  <li *ngFor="#key of recentProjectKeys"><a href="#" (click)="openProject(key)">{{key + " (" + recentProjects[key].title + ")" }}</a></li>
                   <li role="separator" class="divider"></li>
                   <li><a href="#">Revert</a></li>
                 </ul>
@@ -63,13 +63,19 @@ import {Component, Inject} from "angular2/core";
   `]
 })
 export class MenuBarComponent {
-    recentProjects: string[] = LocalStorageService.getRecentProjects();
+    recentProjects;
+    recentProjectKeys;
     constructor(@Inject(ModelService) private modelService: ModelService) {
+        this.recentProjects = LocalStorageService.getRecentProjects();
+        this.recentProjectKeys = Object.keys(this.recentProjects);
         modelService.onProjectLoaded.subscribe(data => {
             let stage = <StageModel> data;
-            LocalStorageService.addRecentProject(stage.id);
+            let title = "private";
+            if (stage.detail) title = stage.detail.title;
+            LocalStorageService.addRecentProject(stage.id, title);
         });
     }
+
     promptProject() {
         let projectID = window.prompt("Please enter the project id");
         if (projectID) {
@@ -78,10 +84,10 @@ export class MenuBarComponent {
         }
     }
 
-    openProject(projectID: string) {
-        if (projectID) {
-            console.log("loading project: " + projectID);
-            this.modelService.loadProject(projectID);
+    openProject(projectId: any) {
+        if (projectId) {
+            console.log("loading project: " + projectId + ":" + this.recentProjects[projectId]);
+            this.modelService.loadProject(projectId);
         }
     }
 }

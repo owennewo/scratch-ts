@@ -1,3 +1,4 @@
+import {ProjectDetailModel} from "./project.detail.model";
 import {StageRuntime} from "../runtime/stage.runtime";
 import {SpriteModel} from "./sprite.model";
 import {ObjectModel} from "./object.model";
@@ -13,6 +14,7 @@ export class StageModel extends ObjectModel {
     info: ProjectInfoModel;  // info
     runtime: StageRuntime;
     id: string;
+    detail: ProjectDetailModel;
 
     constructor() {
       super();

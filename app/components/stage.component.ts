@@ -39,6 +39,16 @@ export class StageComponent {
   constructor(@Inject(ModelService) private modelService: ModelService) {
     modelService.onProjectLoaded.subscribe(data => {
       this.stage = <StageModel> data;
+
+      let title;
+      if (this.stage.detail) {
+          title = this.stage.detail.title;
+      } else {
+          title = "not unshared, no title";
+      }
+      console.log("loaded project '" + this.stage.id + "' with title '" + title + "'");
+      document.getElementById("project-name").value = title;
+
       console.log("StageComponent is starting threads");
       this.stage.runtime.initStage();
     });

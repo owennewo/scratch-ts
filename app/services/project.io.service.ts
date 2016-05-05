@@ -1,6 +1,7 @@
 import {StageModel, ProjectInfoModel} from "../model/stage.model";
 import {ObjectModel} from "../model/object.model";
 import {SpriteModel} from "../model/sprite.model";
+import {ProjectDetailModel} from "../model/project.detail.model";
 import {ScriptModel} from "../model/script.model";
 import {SoundModel} from "../model/sound.model";
 import {CostumeModel} from "../model/costume.model";
@@ -10,6 +11,30 @@ import {Graphics} from "../utils/graphics";
 import {BlockIOService} from "./block.io.service";
 
 export class ProjectIOService {
+
+
+    readProjectDetail(jsonInfo: any): ProjectDetailModel {
+
+        let detail = new ProjectDetailModel();
+
+        detail.creator.username = jsonInfo.creator.username;
+        detail.creator.userprofile.bio = jsonInfo.creator.userprofile.bio;
+        detail.creator.userprofile.status = jsonInfo.creator.userprofile.status;
+        detail.creator.userprofile.country = jsonInfo.creator.userprofile.country;
+        detail.dateTimeShared = jsonInfo.datetime_shared;
+        detail.description = jsonInfo.description;
+        detail.favoriteCount = jsonInfo.favorite_count;
+        detail.id = jsonInfo.id;
+        detail.loveCount = jsonInfo.love_count;
+        detail.resourceUri = jsonInfo.resource_uri;
+        detail.thumbnail = jsonInfo.thumbnail;
+        detail.title = jsonInfo.title;
+        detail.viewCount = jsonInfo.view_count;
+
+        console.log("todo display project info:" + detail.title);
+        return detail;
+
+    }
 
     readProject(jsonStage: any, projectID: string): StageModel {
 
