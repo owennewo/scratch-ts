@@ -1,5 +1,5 @@
-*.js
-*.js.map
+#*.js
+#*.js.map
 *.swp
 node_modules/
 *remote-profile/
