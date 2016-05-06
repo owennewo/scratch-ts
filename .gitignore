@@ -1,6 +1,6 @@
 #*.js
 #*.js.map
 *.swp
-node_modules/
+#node_modules/
 *remote-profile/
 npm-debug.log
