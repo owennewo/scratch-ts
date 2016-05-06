@@ -1,6 +1,6 @@
 import {ScriptLayoutService} from "../services/script.layout.service";
 import {BlockBaseModel} from "./block.base.model";
-import {Primitives} from "../runtime/primitives/primitives";
+import {Primitives} from "../primitives/primitives";
 import {DoubleStackShape} from "../shapes/double.stack.shape";
 import {StackShape} from "../shapes/stack.shape";
 import {Shape} from "../shapes/shape";

@@ -1,5 +1,5 @@
 import {SpecModel} from "../model/spec.model";
-import {Primitives} from "./primitives/primitives";
+import {Primitives} from "../primitives/primitives";
 import {StageModel} from "../model/stage.model";
 import {ObjectModel} from "../model/object.model";
 import {Scratch} from "./scratch";

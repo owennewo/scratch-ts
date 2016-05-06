@@ -2,7 +2,6 @@ import {VisibleModel} from "../model/visible.model";
 import {BlockBaseModel} from "../model/block.base.model";
 import {BlockArgModel} from "../model/blockarg.model";
 import {BlockModel} from "../model/block.model";
-import {PathBuilder} from "../utils/path.builder";
 import {Shape} from "./shape";
 import {Graphics} from "../utils/graphics";
 import {SpecCategoryModel} from "../model/spec.category.model";

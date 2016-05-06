@@ -1,11 +1,11 @@
-import {SoundModel} from "../../model/sound.model";
-import {SoundBank} from "../../sound/sound.bank";
-import {StageModel} from "../../model/stage.model";
-import {ObjectModel} from "../../model/object.model";
-import {ScratchThread} from "../scratch.thread";
-import {BlockModel} from "../../model/block.model";
-import {Interpreter} from "../interpreter";
-import {Scratch} from "../scratch";
+import {SoundModel} from "../model/sound.model";
+import {SoundBank} from "../sound/sound.bank";
+import {StageModel} from "../model/stage.model";
+import {ObjectModel} from "../model/object.model";
+import {ScratchThread} from "../runtime/scratch.thread";
+import {BlockModel} from "../model/block.model";
+import {Interpreter} from "../runtime/interpreter";
+import {Scratch} from "../runtime/scratch";
 // SoundPrimitives.as
 // John Maloney, June 2010
 //
@@ -60,7 +60,7 @@ export class SoundPrims {
         snd.runtime.source = runtime.audioContext.createBufferSource();
         if (!snd.runtime.buffer) {
             snd.runtime.load();
-            console.log("todo: fix sound so it works first time (early load)")
+            console.log("todo: fix sound so it works first time (early load)");
             return;
         }
         snd.runtime.source.buffer = snd.runtime.buffer;

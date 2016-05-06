@@ -1,6 +1,5 @@
 import {BlockBaseModel} from "../model/block.base.model";
 import {BlockArgModel} from "../model/blockarg.model";
-import {PathBuilder} from "../utils/path.builder";
 import {BaseShape} from "./base.shape";
 import {Graphics} from "../utils/graphics";
 import {SpecCategoryModel} from "../model/spec.category.model";

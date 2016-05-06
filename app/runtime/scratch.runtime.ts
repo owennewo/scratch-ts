@@ -4,9 +4,7 @@ import {ListWatcher} from "./list.watcher";
 import {CostumeModel} from "../model/costume.model";
 import {BlockModel} from "../model/block.model";
 import {SpecOperation} from "../model/spec.model";
-import {Log} from "../logging/Log";
 import {StageModel} from "../model/stage.model";
-import {LogLevel} from "../logging/LogLevel";
 import {ScratchTime} from "./scratch.time";
 import {ObjectModel} from "../model/object.model";
 import {VideoMotionPrims} from "./primitives/video.motion.prims";
@@ -64,7 +62,7 @@ export class ScratchRuntime {
                 count = 1;
                 this.videoSounds = [];
                 this.videoFrames = [];
-                if (this.fullEditor) Log.track("Editor video started", { projectID: this.app.projectID });
+                if (this.fullEditor) console.log("Editor video started", { projectID: this.app.projectID });
                 else Log.track("Project video started", { projectID: this.app.projectID });
             }
             else if (tR >= 2.5) {

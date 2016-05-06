@@ -1,5 +1,4 @@
 import {StringUtils} from "../utils/stringutils";
-import {LogLevel} from "../logging/LogLevel";
 
 export class Translator {
 

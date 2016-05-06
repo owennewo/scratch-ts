@@ -1,10 +1,10 @@
-import {StageModel} from "../../model/stage.model";
-import {ListWatcher} from "../list.watcher";
+import {StageModel} from "../model/stage.model";
+import {ListWatcher} from "../runtime/list.watcher";
 import {Primitives} from "./primitives";
-import {Scratch} from "../scratch";
-import {Interpreter} from "../interpreter";
-import {BlockModel} from "../../model/block.model";
-import {SpecOperation} from "../../model/spec.model";
+import {Scratch} from "../runtime/scratch";
+import {Interpreter} from "../runtime/interpreter";
+import {BlockModel} from "../model/block.model";
+import {SpecOperation} from "../model/spec.model";
 // ListPrimitives.as
 // John Maloney, September 2010
 //

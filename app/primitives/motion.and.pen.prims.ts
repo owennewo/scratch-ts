@@ -1,11 +1,11 @@
-import {Graphics} from "../../utils/graphics";
-import {StageModel} from "../../model/stage.model";
-import {Interpreter} from "../interpreter";
-import {Scratch} from "../scratch";
-import {SpriteModel} from "../../model/sprite.model";
-import {BlockModel} from "../../model/block.model";
-import {Rectangle} from "../../shapes/geometry";
-import {Point} from "../../shapes/geometry";
+import {Graphics} from "../utils/graphics";
+import {StageModel} from "../model/stage.model";
+import {Interpreter} from "../runtime/interpreter";
+import {Scratch} from "../runtime/scratch";
+import {SpriteModel} from "../model/sprite.model";
+import {BlockModel} from "../model/block.model";
+import {Rectangle} from "../shapes/geometry";
+import {Point} from "../shapes/geometry";
 
 
 // MotionAndPenPrims.as

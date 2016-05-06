@@ -1,9 +1,9 @@
-import {StageModel} from "../../model/stage.model";
-import {ObjectModel} from "../../model/object.model";
-import {Scratch} from "../scratch";
-import {Interpreter} from "../interpreter";
-import {SpriteModel} from "../../model/sprite.model";
-import {BlockModel} from "../../model/block.model";
+import {StageModel} from "../model/stage.model";
+import {ObjectModel} from "../model/object.model";
+import {Scratch} from "../runtime/scratch";
+import {Interpreter} from "../runtime/interpreter";
+import {SpriteModel} from "../model/sprite.model";
+import {BlockModel} from "../model/block.model";
 // VideoMotionPrims.as
 // Tony Hwang and John Maloney, January 2011
 //

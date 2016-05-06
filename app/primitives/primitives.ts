@@ -1,15 +1,15 @@
-import {StageModel} from "../../model/stage.model";
+import {StageModel} from "../model/stage.model";
 import {ListPrims} from "./list.prims";
 import {SensingPrims} from "./sensing.prims";
 import {VideoMotionPrims} from "./video.motion.prims";
 import {SoundPrims} from "./sound.prims";
 import {MotionAndPenPrims} from "./motion.and.pen.prims";
 import {LooksPrims} from "./looks.prims";
-import {Interpreter} from "../interpreter";
-import {Scratch} from "../scratch";
-import {BlockArgModel} from "../../model/blockarg.model";
-import {SpriteModel} from "../../model/sprite.model";
-import {BlockModel} from "../../model/block.model";
+import {Interpreter} from "../runtime/interpreter";
+import {Scratch} from "../runtime/scratch";
+import {BlockArgModel} from "../model/blockarg.model";
+import {SpriteModel} from "../model/sprite.model";
+import {BlockModel} from "../model/block.model";
 // Primitives.as
 // John Maloney, April 2010
 //

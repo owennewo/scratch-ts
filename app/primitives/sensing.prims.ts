@@ -1,11 +1,11 @@
-import {ObjectModel} from "../../model/object.model";
-import {StageModel} from "../../model/stage.model";
-import {Rectangle} from "../../shapes/geometry";
-import {Point} from "../../shapes/geometry";
-import {Interpreter} from "../interpreter";
-import {Scratch} from "../scratch";
-import {BlockModel} from "../../model/block.model";
-import {SpriteModel} from "../../model/sprite.model";
+import {ObjectModel} from "../model/object.model";
+import {StageModel} from "../model/stage.model";
+import {Rectangle} from "../shapes/geometry";
+import {Point} from "../shapes/geometry";
+import {Interpreter} from "../runtime/interpreter";
+import {Scratch} from "../runtime/scratch";
+import {BlockModel} from "../model/block.model";
+import {SpriteModel} from "../model/sprite.model";
 // SensingPrims.as
 // John Maloney, April 2010
 //
