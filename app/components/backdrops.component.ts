@@ -11,7 +11,7 @@ import {Inject, Component, Input, Output, EventEmitter} from "angular2/core";
 
         <h1>Sprites are us</h1>
         <ul class="backdrops">
-          <li *ngFor="#background of backgrounds"
+          <li *ngFor="let background of backgrounds"
             [class.selected]="background === selectedObject"
             (click)="onSelect(background)">
             <span class="badge">{{background.id}}</span> {{background.name}}

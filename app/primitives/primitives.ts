@@ -6,8 +6,7 @@ import {SoundPrims} from "./sound.prims";
 import {MotionAndPenPrims} from "./motion.and.pen.prims";
 import {LooksPrims} from "./looks.prims";
 import {Interpreter} from "../runtime/interpreter";
-import {Scratch} from "../runtime/scratch";
-import {BlockArgModel} from "../model/blockarg.model";
+import {BlockArgModel} from "../model/block.arg.model";
 import {SpriteModel} from "../model/sprite.model";
 import {BlockModel} from "../model/block.model";
 // Primitives.as

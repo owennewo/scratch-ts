@@ -1,6 +1,6 @@
 import {TextBoxShape} from "./text.box.shape";
 import {BlockBaseModel} from "../model/block.base.model";
-import {BlockArgModel} from "../model/blockarg.model";
+import {BlockArgModel} from "../model/block.arg.model";
 import {Shape} from "./shape";
 import {BooleanShape} from "./boolean.shape";
 import {CommandOutlineShape} from "./command.outline.shape";

@@ -6,8 +6,6 @@ import {BlockModel} from "../model/block.model";
 import {BaseShape} from "../shapes/base.shape";
 import {ReadStream} from "./read.stream";
 import {Geometry} from "../shapes/geometry";
-import {Color} from "../utils/color";
-
 
 export class Graphics {
     static ScriptPane = new Graphics("#svg-script-pane");
@@ -17,9 +15,6 @@ export class Graphics {
     paper: Snap.Paper;
     onDragOverCallback: Function;
     onDragEndCallback: Function;
-    //    color: string;
-    // path: string = "";
-
 
     constructor(id: string) {
         this.id = id;

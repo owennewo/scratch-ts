@@ -1,5 +1,5 @@
 import {BlockBaseModel} from "../model/block.base.model";
-import {BlockArgModel} from "../model/blockarg.model";
+import {BlockArgModel} from "../model/block.arg.model";
 import {Shape} from "./shape";
 import {SpecModel} from "../model/spec.model";
 import {Graphics} from "../utils/graphics";

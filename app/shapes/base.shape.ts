@@ -1,12 +1,12 @@
 import {VisibleModel} from "../model/visible.model";
 import {BlockBaseModel} from "../model/block.base.model";
-import {BlockArgModel} from "../model/blockarg.model";
+import {BlockArgModel} from "../model/block.arg.model";
 import {BlockModel} from "../model/block.model";
 import {Shape} from "./shape";
 import {Graphics} from "../utils/graphics";
 import {SpecCategoryModel} from "../model/spec.category.model";
 import {SpecModel} from "../model/spec.model";
-import {ArgType} from "../model/blockarg.model";
+import {ArgType} from "../model/block.arg.model";
 
 
 export abstract class BaseShape implements Shape {

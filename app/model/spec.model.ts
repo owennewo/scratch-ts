@@ -1,6 +1,6 @@
 import {VisibleModel} from "./visible.model";
 import {ReadStream} from "../utils/read.stream";
-import {BlockArgModel} from "./blockarg.model";
+import {BlockArgModel} from "./block.arg.model";
 import {SpecCategoryModel} from "./spec.category.model";
 import {BlockShapeModel} from "./block.shape.model";
 

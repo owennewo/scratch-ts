@@ -5,4 +5,9 @@ export class CostumeModel {
     resolution: number; // bitmapResolution
     centerX: number; // rotationCenterX
     centerY: number; // rotationCenterY
+    public extension(): string {
+      let lastIndex = this.md5.lastIndexOf(".");
+      let extension = this.md5.substr(lastIndex + 1);
+      return extension;
+    }
 }

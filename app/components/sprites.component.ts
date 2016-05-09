@@ -10,7 +10,7 @@ import {Inject, Component, Input, Output, EventEmitter} from "angular2/core";
 
         <h1>Sprites are us</h1>
         <ul class="sprites">
-          <li *ngFor="#sprite of sprites"
+          <li *ngFor="let sprite of sprites"
             [class.selected]="sprite === selectedObject"
             (click)="onSelect(sprite)">
             <span class="badge">{{sprite.id}}</span> {{sprite.name}}

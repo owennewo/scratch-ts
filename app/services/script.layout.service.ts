@@ -7,7 +7,7 @@ import {ShapeFactory} from "../shapes/shape.factory";
 import {Geometry} from "../shapes/geometry";
 import {StackShape} from "../shapes/stack.shape";
 import {Graphics} from "../utils/graphics";
-import {BlockArgModel} from "../model/blockarg.model";
+import {BlockArgModel} from "../model/block.arg.model";
 import {ScriptModel} from "../model/script.model";
 import {BlockModel} from "../model/block.model";
 

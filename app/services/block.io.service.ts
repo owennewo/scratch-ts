@@ -2,7 +2,7 @@ import {SpecModel} from "../model/spec.model";
 import {SpecCategoryModel} from "../model/spec.category.model";
 import {BlockModel} from "../model/block.model";
 import {SpecOperation} from "../model/spec.model";
-import {BlockArgModel} from "../model/blockarg.model";
+import {BlockArgModel} from "../model/block.arg.model";
 import {Translator} from "../utils/translator";
 
 /**

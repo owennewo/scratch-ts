@@ -5,7 +5,6 @@ import {ObjectModel} from "../model/object.model";
 import {ScratchThread} from "../runtime/scratch.thread";
 import {BlockModel} from "../model/block.model";
 import {Interpreter} from "../runtime/interpreter";
-import {Scratch} from "../runtime/scratch";
 // SoundPrimitives.as
 // John Maloney, June 2010
 //

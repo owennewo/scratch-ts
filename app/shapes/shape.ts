@@ -1,7 +1,7 @@
 import {VisibleModel} from "../model/visible.model";
 import {BlockModel} from "../model/block.model";
 import {BlockBaseModel} from "../model/block.base.model";
-import {BlockArgModel} from "../model/blockarg.model";
+import {BlockArgModel} from "../model/block.arg.model";
 
 export interface Shape {
     h: number;

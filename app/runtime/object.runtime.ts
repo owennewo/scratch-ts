@@ -34,7 +34,7 @@ export abstract class ObjectRuntime {
             this.placeCostume(costume, useSvg);
             this.redraw();
         } else {
-            if (costume.md5.endsWith("svg")) {
+            if (costume.extension() === "svg") {
               Snap.load(backgroundUrl, function(loadedFragment) {
                   let defGroup = this.paper.group();
                   defGroup.attr({

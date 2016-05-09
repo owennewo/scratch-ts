@@ -1,6 +1,5 @@
 import {StageModel} from "../model/stage.model";
 import {ObjectModel} from "../model/object.model";
-import {Scratch} from "../runtime/scratch";
 import {Interpreter} from "../runtime/interpreter";
 import {SpriteModel} from "../model/sprite.model";
 import {BlockModel} from "../model/block.model";

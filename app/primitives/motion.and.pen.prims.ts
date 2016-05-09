@@ -1,7 +1,6 @@
 import {Graphics} from "../utils/graphics";
 import {StageModel} from "../model/stage.model";
 import {Interpreter} from "../runtime/interpreter";
-import {Scratch} from "../runtime/scratch";
 import {SpriteModel} from "../model/sprite.model";
 import {BlockModel} from "../model/block.model";
 import {Rectangle} from "../shapes/geometry";
@@ -300,17 +299,10 @@ export class MotionAndPenPrims {
     }
 
     private static stroke(s: SpriteModel, interp: Interpreter, oldX: number, oldY: number, newX: number, newY: number): void {
-        // console.log("todo stroke");
-        let color = interp.targetObj().runtime.penColor;
-        let width = interp.targetObj().runtime.penWidth;
+
+        let color = interp.targetSprite().runtime.penColor;
+        let width = interp.targetSprite().runtime.penWidth;
         Graphics.StagePane.drawStroke(oldX, oldY, newX, newY, color, width);
-        // let g: Graphics = interp.stage.newPenStrokes.graphics;
-        // let alpha: number = (0xFF & (s.runtime.penColorCache >> 24)) / 0xFF;
-        // if (alpha === 0) alpha = 1;
-        // g.lineStyle(s.runtime.penWidth, 0xFFFFFF & s.runtime.penColorCache, alpha);
-        // g.moveTo(240 + oldX, 180 - oldY);
-        // g.lineTo(240 + newX, 180 - newY);
-        // trace( "pen line( "+oldX+ ",  "+oldY+ ",  "+newX+ ",  "+newY+ ") ");
         interp.stage.runtime.penActivity = true;
     }
 

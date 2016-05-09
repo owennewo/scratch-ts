@@ -1,9 +1,5 @@
 import {ScratchTime} from "./scratch.time";
 import {Translator} from "../utils/translator";
-import {Scratch} from "./scratch";
-
-
-
 
 export class ListWatcher {
 

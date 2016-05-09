@@ -47,7 +47,8 @@ export class StageComponent {
           title = "not unshared, no title";
       }
       console.log("loaded project '" + this.stage.id + "' with title '" + title + "'");
-      document.getElementById("project-name").value = title;
+      let projectNameElement = <HTMLInputElement> document.getElementById("project-name");
+      projectNameElement.value = title;
 
       console.log("StageComponent is starting threads");
       this.stage.runtime.initStage();

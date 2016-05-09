@@ -25,7 +25,7 @@ import {Component, Inject} from "angular2/core";
                   <li><a href="#" (click)="promptProject()">Open project</a></li>
                   <li role="separator" class="divider"></li>
                   <li class="dropdown-header">Recent projects</li>
-                  <li *ngFor="#key of recentProjectKeys"><a href="#" (click)="openProject(key)">{{key + " (" + recentProjects[key].title + ")" }}</a></li>
+                  <li *ngFor="let key of recentProjectKeys"><a href="#" (click)="openProject(key)">{{key + " (" + recentProjects[key].title + ")" }}</a></li>
                   <li role="separator" class="divider"></li>
                   <li><a href="#">Revert</a></li>
                 </ul>

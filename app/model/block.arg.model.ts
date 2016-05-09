@@ -9,7 +9,6 @@ import {SpecModel} from "./spec.model";
 import {BooleanShape} from "../shapes/boolean.shape";
 import {BlockShapeModel} from "./block.shape.model";
 import {BlockModel} from "./block.model";
-import {Color} from "../utils/color";
 import {Graphics} from "../utils/graphics";
 import {Translator} from "../utils/translator";
 
