@@ -180,7 +180,7 @@ export class ScriptLayoutService {
         b.shape.setDraggable(false);
 //      }
       b.shape.drawHeader(b.labelsAndArgs);
-      b.shape.draw(0, 0, true);
+      b.shape.draw(0, 0);
 
       let shapeHeight = b.shape.getGroup().getBBox().h;
       stackHeight += shapeHeight - 3;

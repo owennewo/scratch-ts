@@ -71,7 +71,7 @@ export class SpecLayoutService {
             shape.newGroup(newCategoryBlocks, xPos, yPos, spec);
             shape.setDraggable(true);
             shape.drawHeader(spec.labelsAndArgs);
-            shape.draw(0, 0, true);
+            shape.draw(0, 0);
             let shapeHeight = shape.getGroup().getBBox().h;
             yPos += shapeHeight + 5;
         });

@@ -8,7 +8,6 @@ export class SoundModel {
     rate: number;
     format: string;
     stage: StageModel;
-
     runtime: SoundRuntime = new SoundRuntime(this);
 
     constructor(stage: StageModel) {

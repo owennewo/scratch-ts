@@ -25,6 +25,10 @@ export class NotePlayer extends SoundDecoder {
     private holdEnd;
     private decayRate;
 
+    secs: number;
+    source: ScriptProcessorNode;
+    finished: Function;
+
     constructor(wavFileData: any, originalPitch: number, loopStart: number, loopEnd: number, env?: any) {
         super(wavFileData);
         this.originalPitch = originalPitch || null;
@@ -74,6 +78,7 @@ export class NotePlayer extends SoundDecoder {
 
 
     setNoteAndDuration(midiKey, secs) {
+        this.secs = secs;
         midiKey = Math.max(0, Math.min(midiKey, 127));
         let pitch = 440 * Math.pow(2, (midiKey - 69) / 12); // midi key 69 is A (440 Hz)
         this.stepSize = pitch / (2 * this.originalPitch); // adjust for original sampling rate of 22050
@@ -81,6 +86,7 @@ export class NotePlayer extends SoundDecoder {
     }
 
     setDuration(secs) {
+        this.secs = secs;
         this.samplesSinceStart = 0;
         this.samplesRemaining = 44100 * secs;
         if (!this.isLooped) this.samplesRemaining = Math.min(this.samplesRemaining, this.endOffset / this.stepSize);

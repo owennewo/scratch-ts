@@ -1,3 +1,4 @@
+import {NotePlayer} from "../sound/note.player";
 import {SoundRuntime} from "./sound.runtime";
 import {Graphics} from "../utils/graphics";
 import {ScratchTime} from "./scratch.time";
@@ -6,7 +7,6 @@ import {ScriptModel} from "../model/script.model";
 import {ObjectModel} from "../model/object.model";
 import {BlockModel} from "../model/block.model";
 import {StageModel} from "../model/stage.model";
-import {VideoMotionPrims} from "./primitives/video.motion.prims";
 import {Interpreter} from "./interpreter";
 import {ObjectRuntime} from "./object.runtime";
 import {SpriteModel} from "../model/sprite.model";
@@ -30,13 +30,13 @@ export class StageRuntime extends ObjectRuntime {
 
     interp: Interpreter;
 
-    audioContext: AudioContext;
+    audioContext: any; // AudioContext;
     audioGain: GainNode;
 
-    notesPlaying: Array<AudioNode> = [];
+    notesPlaying: Array<NotePlayer> = [];
     audioPlaying: Array<SoundRuntime> = [];
 
-    private motionDetector: VideoMotionPrims;
+    // private motionDetector: VideoMotionPrims;
     private stage: StageModel;
     private timerBase: number;
     private edgeTriggersEnabled: boolean = false; // initially false, becomes true when project first run
@@ -48,11 +48,13 @@ export class StageRuntime extends ObjectRuntime {
         this.stage = stage;
         this.interp = new Interpreter(stage);
 
-        if (window.AudioContext) {
-            this.audioContext = new AudioContext();
+        let win = <any> window; // treat as 'any' to avoid compilation checks
+
+        if (win.AudioContext) {
+            this.audioContext = new win.AudioContext();
             this.audioGain = this.audioContext.createGain();
         } else {
-            this.audioContext = new webkitAudioContext();
+            this.audioContext = new win.webkitAudioContext();
             this.audioGain = this.audioContext.createGainNode();
         }
 
@@ -79,9 +81,9 @@ export class StageRuntime extends ObjectRuntime {
             let mysvg = this.svg.parent().node;
             let x = Math.floor(((event.layerX - mysvg.offsetLeft) / mysvg.offsetWidth * 480) - 240);
             let y = Math.floor(-(((event.layerY - mysvg.offsetTop) / mysvg.offsetHeight * 320) - 160));
-            window.document.getElementById("x").innerHTML = x;
-            window.document.getElementById("y").innerHTML = y;
-//            console.log(x + ":" + y);
+            window.document.getElementById("x").innerHTML = x.toLocaleString();
+            window.document.getElementById("y").innerHTML = y.toLocaleString();
+
             this.mouseX = x;
             this.mouseY = y;
         });
@@ -151,7 +153,7 @@ export class StageRuntime extends ObjectRuntime {
         }
         // this.clearAskPrompts();
         // this.app.removeLoadProgressBox();
-        this.motionDetector = null;
+      //   this.motionDetector = null;
     }
 
     private clearEdgeTriggeredHats(): void { this.edgeTriggersEnabled = true; this.triggeredHats = []; }

@@ -1,3 +1,4 @@
+import {NotePlayer} from "../sound/note.player";
 import {SoundModel} from "../model/sound.model";
 import {SoundBank} from "../sound/sound.bank";
 import {StageModel} from "../model/stage.model";
@@ -5,12 +6,11 @@ import {ObjectModel} from "../model/object.model";
 import {ScratchThread} from "../runtime/scratch.thread";
 import {BlockModel} from "../model/block.model";
 import {Interpreter} from "../runtime/interpreter";
+
 // SoundPrimitives.as
 // John Maloney, June 2010
 //
 // Sound primitives.
-
-
 export class SoundPrims {
 
     constructor() {
@@ -66,71 +66,70 @@ export class SoundPrims {
         snd.runtime.source.connect(runtime.audioGain);
 
         // Track the sound's completion state
-        snd.runtime.source.done = false;
-        snd.runtime.source.finished = function() {
+        snd.runtime.done = false;
+        snd.runtime.finished = function() {
             // Remove from the active audio list and disconnect the source from
             // the sound dictionary.
             let i = runtime.audioPlaying.indexOf(snd.runtime);
             if (i > -1 && runtime.audioPlaying[i].source != null) {
-                runtime.audioPlaying[i].source.done = true;
+                runtime.audioPlaying[i].done = true;
                 runtime.audioPlaying[i].source = null;
                 runtime.audioPlaying.splice(i, 1);
             }
         };
-        window.setTimeout(snd.runtime.source.finished, snd.runtime.buffer.duration * 1000);
+        window.setTimeout(snd.runtime.finished, snd.runtime.buffer.duration * 1000);
         // Add the global list of playing sounds and start playing.
         runtime.audioPlaying.push(snd.runtime);
         snd.runtime.source.start();
         return snd.runtime.source;
     };
 
-    private playDrum(interp: Interpreter, drum: number, isMidi: boolean, secs: number, client: ObjectModel) {
-        let runtime = interp.stage.runtime;
-        let player = SoundBank.getDrumPlayer(drum, isMidi, secs);
-        // player.client = client;
-        player.setDuration(secs);
-        let source = runtime.audioContext.createScriptProcessor(4096, 1, 1);
-        source.onaudioprocess = function(e) { player.writeSampleData(e); };
-        source.soundPlayer = player;
-        source.connect(runtime.audioGain);
-        runtime.notesPlaying.push(source);
-        source.finished = function() {
-            let i = runtime.notesPlaying.indexOf(source);
-            if (i > -1 && runtime.notesPlaying[i] != null) {
-                runtime.notesPlaying.splice(i, 1);
-            }
-        };
-        window.setTimeout(source.finished, secs * 1000);
-        return player;
-    };
+    // private playDrum(interp: Interpreter, drum: number, isMidi: boolean, secs: number, client: ObjectModel) {
+    //     let runtime = interp.stage.runtime;
+    //     let player = SoundBank.getDrumPlayer(drum, isMidi, secs);
+    //     // player.client = client;
+    //     player.setDuration(secs);
+    //     let source = runtime.audioContext.createScriptProcessor(4096, 1, 1);
+    //     source.onaudioprocess = function(e) { player.writeSampleData(e); };
+    //     source.soundPlayer = player;
+    //     source.connect(runtime.audioGain);
+    //     runtime.notesPlaying.push(source);
+    //     source.finished = function() {
+    //         let i = runtime.notesPlaying.indexOf(source);
+    //         if (i > -1 && runtime.notesPlaying[i] != null) {
+    //             runtime.notesPlaying.splice(i, 1);
+    //         }
+    //     };
+    //     window.setTimeout(source.finished, secs * 1000);
+    //     return player;
+    // };
 
-    private playNote(interp: Interpreter, instrument, midiKey, secs, client) {
-        let player = SoundBank.getNotePlayer(instrument, midiKey);
-        // player.client = client;
-        player.setNoteAndDuration(midiKey, secs);
+    private playNote(interp: Interpreter, player: NotePlayer) {
+
+
         let runtime = interp.stage.runtime;
-        let source = runtime.audioContext.createScriptProcessor(4096, 1, 1);
-        source.onaudioprocess = function(e) { player.writeSampleData(e); };
-        source.connect(runtime.audioGain);
-        runtime.notesPlaying.push(source);
-        source.finished = function() {
-            let i = runtime.notesPlaying.indexOf(source);
+        player.source = runtime.audioContext.createScriptProcessor(4096, 1, 1);
+        player.source.onaudioprocess = function(e) { player.writeSampleData(e); };
+        player.source.connect(runtime.audioGain);
+        runtime.notesPlaying.push(player);
+        player.finished = function() {
+            let i = runtime.notesPlaying.indexOf(player);
             if (i > -1 && runtime.notesPlaying[i] != null) {
                 runtime.notesPlaying.splice(i, 1);
             }
         };
-        window.setTimeout(source.finished, secs * 1000);
+        window.setTimeout(player.finished, player.secs * 1000);
         return player;
     }
 
     private stopAllSounds(interp: Interpreter) {
       let runtime = interp.stage.runtime;
-        let oldAudio = runtime.audioPlaying;
+        let oldPlayers = runtime.audioPlaying;
         runtime.audioPlaying = [];
-        for (let s = 0; s < oldAudio.length; s++) {
-            if (oldAudio[s].source) {
-                oldAudio[s].source.disconnect();
-                oldAudio[s].source.finished();
+        for (let s = 0; s < oldPlayers.length; s++) {
+            if (oldPlayers[s].source) {
+                oldPlayers[s].source.disconnect();
+                oldPlayers[s].finished();
             }
         }
 
@@ -138,7 +137,7 @@ export class SoundPrims {
         runtime.notesPlaying = [];
         for (let s = 0; s < oldNotes.length; s++) {
             if (oldNotes[s]) {
-                oldNotes[s].disconnect();
+                oldNotes[s].source.disconnect();
                 oldNotes[s].finished();
             }
         }
@@ -177,7 +176,8 @@ export class SoundPrims {
       if (interp.activeThread.firstTime) {
         let key = interp.numarg(b, 0);
         let secs = SoundPrims.beatsToSeconds(interp, interp.numarg(b, 1));
-        this.playNote(interp, s.runtime.instrument, key, secs, s);
+        let player = SoundBank.getInstrumentPlayer(s.runtime.instrument, key, secs);
+        this.playNote(interp, player);
         interp.startTimer(secs);
       } else {
           interp.checkTimer();
@@ -189,9 +189,10 @@ export class SoundPrims {
         if (s == null) return;
         if (interp.activeThread.firstTime) {
             let drum: number = Math.round(interp.numarg(b, 0));
-            let isMIDI: boolean = (b.spec.code === "drum:duration:elapsed:from:");
+            let isMidi: boolean = (b.spec.code === "drum:duration:elapsed:from:");
             let secs: number = SoundPrims.beatsToSeconds(interp, interp.numarg(b, 1));
-            this.playDrum(interp, drum, isMIDI, 10, s); // always play entire drum sample
+            let player = SoundBank.getDrumPlayer(drum, isMidi, secs);
+            this.playNote(interp, player); // always play entire drum sample
             interp.startTimer(secs);
         } else {
             interp.checkTimer();

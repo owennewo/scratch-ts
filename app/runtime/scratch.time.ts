@@ -14,7 +14,7 @@ export class ScratchTime {
       if (ScratchTime.lastTimestamp) {
           let delta = timestamp - ScratchTime.lastTimestamp;
           let fps = Math.floor(1000 / delta);
-          window.document.getElementById("fps").innerHTML=fps;
+          window.document.getElementById("fps").innerHTML = fps.toLocaleString();
       }
 
       ScratchTime.lastTimestamp = timestamp;

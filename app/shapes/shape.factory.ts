@@ -1,3 +1,4 @@
+import {BaseShape} from "./base.shape";
 import {TextBoxShape} from "./text.box.shape";
 import {BlockBaseModel} from "../model/block.base.model";
 import {BlockArgModel} from "../model/block.arg.model";
@@ -14,7 +15,7 @@ import {SpecModel} from "../model/spec.model";
 import {SpecCategoryModel} from "../model/spec.category.model";
 
 export class ShapeFactory {
-    static createShape(spec: SpecModel, arg?: BlockBaseModel, group?: Snap.Element): Shape {
+    static createShape(spec: SpecModel, arg?: BlockBaseModel, group?: Snap.Element): BaseShape {
       // if (!args) args = spec.defaultArgs;
         // var id = category.name  + "_" + spec.code.replace(new RegExp(":", "g"), "_");
         switch (spec.shapeType) {
