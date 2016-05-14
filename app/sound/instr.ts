@@ -82,6 +82,21 @@ export class Instr {
         "WoodBlock": "drums/WoodBlock(1)_22k.wav"
     };
 
+    static wav(name: string) {
+      if (Instr.samples[name]) return;
+      let getSound = new XMLHttpRequest();
+      let filename = Instr.wavs[name];
+      let audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      getSound.open("GET", "app/sound/" + filename, true);
+      getSound.responseType = "arraybuffer";
+      getSound.onload = function() {
+          audioCtx.decodeAudioData(getSound.response, function(buffer){
+              Instr.samples[name] = buffer;
+          });
+      };
+      getSound.send();
+    }
+
     public static wavCount = Object.keys(Instr.wavs).length;
 
 }

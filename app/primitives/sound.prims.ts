@@ -24,8 +24,8 @@ export class SoundPrims {
             // this.ScratchSoundPlayer.stopAllSounds();
         };
 
-        primTable["drum:duration:elapsed:from:"] = this.primPlayDrum; // Scratch 1.4 drum numbers
-        primTable["playDrum"] = this.primPlayDrum;
+        primTable["drum:duration:elapsed:from:"] = (b: any, interp: Interpreter) => { this.primPlayDrum(b, interp); }; // Scratch 1.4 drum numbers
+        primTable["playDrum"] = (b: any, interp: Interpreter) => { this.primPlayDrum(b, interp); };
         primTable["rest:elapsed:from:"] = this.primPlayRest;
 
         primTable["noteOn:duration:elapsed:from:"] = this.primPlayNote;

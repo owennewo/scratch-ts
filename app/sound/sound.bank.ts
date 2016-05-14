@@ -217,6 +217,13 @@ export class SoundBank {
         if (drum == null) drum = SoundBank.drums[2];
         let loopStart = -1, loopEnd = -1, env = null;
 
+        Instr.wav(drum.sampleName);
+
+        if (!Instr.samples[drum.sampleName]) {
+            console.log("loaded " + drum.sampleName);
+            return;
+        }
+
         let player = new NotePlayer(Instr.samples[drum.sampleName], SoundBank.pitchForKey(60), loopStart, loopEnd, env);
         player.setNoteAndDuration(60 + drum.pitchAdjust, 0);
         return player;
