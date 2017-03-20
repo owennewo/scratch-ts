@@ -16,8 +16,8 @@ export class SpriteRuntime extends ObjectRuntime {
     penIsDown: boolean = false;
     penColorCache: number;
     penWidth: number = 3;
-    penColor: any = Snap.hsl2rgb(this.penHue * 2, 100, 50);
     penHue: number = 120;
+    penColor: any = Snap.hsl2rgb(this.penHue * 2, 100, 50);
     penShade: number;
     bubble: any;
     bubbleSource: any;

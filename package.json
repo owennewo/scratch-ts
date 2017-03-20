@@ -9,21 +9,32 @@
     "start": "concurrent \"npm run tsc:w\" \"npm run lite\" "
   },
   "dependencies": {
-    "angular2": "~2.0.0-beta.17",
-    "es6-promise": "^3.1.2",
-    "es6-shim": "^0.35.0",
-    "reflect-metadata": "0.1.2",
-    "rxjs": "5.0.0-beta.6",
-    "snapsvg": "^0.4",
-    "systemjs": "^0.19.27",
-    "zone.js": "0.6.12",
-    "bootstrap": "~3.3.6",
-    "jquery": "~2.2"
+    "@angular/common": "~2.4.0",
+    "@angular/compiler": "~2.4.0",
+    "@angular/compiler-cli": "~2.4.0",
+    "@angular/core": "~2.4.0",
+    "@angular/forms": "~2.4.0",
+    "@angular/http": "~2.4.0",
+    "@angular/platform-browser": "~2.4.0",
+    "@angular/platform-browser-dynamic": "~2.4.0",
+    "@angular/platform-server": "~2.4.0",
+    "@angular/router": "~3.4.0",
+    "@angular/upgrade": "~2.4.0",
+    "es6-promise": "^4.1.0",
+    "es6-shim": "^0.35.3",
+    "reflect-metadata": "^0.1.10",
+    "rxjs": "^5.2.0",
+    "snapsvg": "^0.5.1",
+    "systemjs": "^0.20.10",
+    "core-js": "^2.4.1",
+    "zone.js": "^0.7.2",
+    "bootstrap": "^3.3.7",
+    "jquery": "^3.2.1"
   },
   "devDependencies": {
-    "concurrently": "^2.0.0",
-    "jasmine-core": "2.4.1",
-    "lite-server": "^2.2.0",
-    "typescript": "^1.8.10"
+    "concurrently": "^3.4.0",
+    "jasmine-core": "^2.5.2",
+    "lite-server": "^2.3.0",
+    "typescript": "^2.2.1"
   }
 }

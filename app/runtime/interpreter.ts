@@ -371,9 +371,9 @@ export class Interpreter {
     public boolarg(b: BlockModel, i: number): boolean {
         if (b.rightToLeft) { i = b.args.length - i - 1; }
         let o: any = (b.args[i] instanceof BlockArgModel) ? b.args[i].argValue : this.evalCmd(b.args[i]);
-        if (o instanceof Boolean) return o;
+        if (o instanceof Boolean) return o.valueOf();
         if (o instanceof String) {
-            let s: string = o;
+            let s: string = o.toString();
             if ((s === "") || (s === "0") || (s.toLowerCase() === "false")) return false;
             return true; // treat all other strings as true
         }
@@ -519,8 +519,8 @@ export class Interpreter {
                 let n: number = Number(listArg);
                 if (!isNaN(n)) listArg = n;
             }
-            if ((listArg instanceof Number) && !isNaN(listArg)) {
-                let last: number = listArg;
+            if ((listArg instanceof Number) && !isNaN(listArg.valueOf())) {
+                let last: number = listArg.valueOf();
                 if (last >= 1) {
                     list = new Array(last - 1);
                     for (let i: number = 0; i < last; i++) list[i] = i + 1;
@@ -612,15 +612,15 @@ export class Interpreter {
     public startScene(sceneName: string, waitFlag: boolean): void {
         let pair: any[];
         if (this.activeThread.firstTime) {
-            function findSceneHats(stack: BlockModel, target: ObjectModel): void {
-                if ((stack.spec.code === "whenSceneStarts") && (stack.args[0].argValue === sceneName)) {
-                    receivers.push([stack, this.target]);
-                }
-            }
+            
             let receivers: any[] = [];
             this.stage.runtime.showCostumeNamed(sceneName);
             this.redraw();
-            this.stage.runtime.allStacksAndOwnersDo(findSceneHats);
+            this.stage.runtime.allStacksAndOwnersDo((stack, target)=> {
+                if ((stack.spec.code === "whenSceneStarts") && (stack.args[0].argValue === sceneName)) {
+                    receivers.push([stack, target]);
+                }
+            });
             // (re)start all receivers
             let newThreads: any[] = [];
             for (pair of receivers) newThreads.push(this.restartThread(pair[0], pair[1]));

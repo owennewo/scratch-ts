@@ -134,7 +134,7 @@ export class BlockArgModel extends BlockBaseModel {
         this.isArgument = false;
       }
 
-      if (this.type  === ArgType.ColorPicker) {
+      if (this.type.valueOf()  === ArgType.ColorPicker.valueOf()) {
         this.shape.setWidthAndTopHeight(13, 13);
       }
       else {

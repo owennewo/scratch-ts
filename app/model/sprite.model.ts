@@ -26,6 +26,10 @@ export class SpriteModel extends ObjectModel {
         this.rotationStyle = style;
     }
 
+    updateBubble() {
+        console.log("updateBubble");
+    }
+
 
 
 

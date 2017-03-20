@@ -140,8 +140,8 @@ export class Primitives {
         // X !== X is faster than isNaN()
         if (n1 !== n1 || n2 !== n2) {
             // Suffix the strings to avoid properties and methods of the Dictionary class (constructor, hasOwnProperty, etc)
-            if (a1 instanceof String && Primitives.emptyDict[a1]) a1 += "_";
-            if (a2 instanceof String && Primitives.emptyDict[a2]) a2 += "_";
+            if (a1 instanceof String && Primitives.emptyDict[n1]) a1 += "_";
+            if (a2 instanceof String && Primitives.emptyDict[n2]) a2 += "_";
 
             // at least one argument can"t be converted to a number: compare as strings
             let s1: string = Primitives.lcDict[a1];

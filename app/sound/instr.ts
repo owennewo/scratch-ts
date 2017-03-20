@@ -86,7 +86,8 @@ export class Instr {
       if (Instr.samples[name]) return;
       let getSound = new XMLHttpRequest();
       let filename = Instr.wavs[name];
-      let audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      var win: any = window;
+      let audioCtx = new (win.AudioContext || win.webkitAudioContext)();
       getSound.open("GET", "app/sound/" + filename, true);
       getSound.responseType = "arraybuffer";
       getSound.onload = function() {

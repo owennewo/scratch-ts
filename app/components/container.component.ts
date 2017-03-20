@@ -4,7 +4,7 @@ import {SpecLayoutService} from "../services/spec.layout.service";
 import {ObjectModel} from "../model/object.model";
 import {ModelService} from "../services/model.service";
 import {StageModel} from "../model/stage.model";
-import {Component, Inject} from "angular2/core";
+import {Component, Inject} from "@angular/core";
 import {StageComponent} from "./stage.component"  ;
 import {SpritesComponent} from "./sprites.component";
 
@@ -54,8 +54,7 @@ import {SpritesComponent} from "./sprites.component";
    </div>
 
 
-  `,
-  directives: [StageComponent, SpritesComponent, BackdropsComponent]
+  `
 })
 export class ContainerComponent {
 

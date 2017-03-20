@@ -2,7 +2,7 @@ import {SpriteModel} from "../model/sprite.model";
 import {ModelService} from "../services/model.service";
 import {ObjectModel} from "../model/object.model";
 import {StageModel} from "../model/stage.model";
-import {Inject, Component, Input, Output, EventEmitter} from "angular2/core";
+import {Inject, Component, Input, Output, EventEmitter} from "@angular/core";
 
 @Component({
   selector: "section[id=sprites]",

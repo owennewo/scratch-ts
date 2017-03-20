@@ -1,6 +1,6 @@
-import {Component, Inject} from "angular2/core";
-import {MenuBarComponent} from "./components/menubar.component";
-import {ContainerComponent} from "./components/container.component";
+import {Component, Inject} from "@angular/core";
+// import {MenuBarComponent} from "./components/menubar.component";
+// import {ContainerComponent} from "./components/container.component";
 
 import {SpecModel} from "./model/spec.model";
 import {SpecCategoryModel} from "./model/spec.category.model";
@@ -12,8 +12,7 @@ import {Graphics} from "./utils/graphics";
   template: `
     <nav id="menu-bar" class="navbar navbar-inverse navbar-top"></nav>
     <div id="container" class="container-fluid"></div>
-  `,
-  directives: [MenuBarComponent, ContainerComponent]
+  `
 })
 export class AppComponent {
 

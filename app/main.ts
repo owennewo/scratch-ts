@@ -1,7 +1,7 @@
-///<reference path="../node_modules/angular2/typings/browser.d.ts"/>
-import {ModelService} from "./services/model.service";
-import {bootstrap}    from "angular2/platform/browser";
-import {AppComponent} from "./app.component";
-import {HTTP_PROVIDERS} from "angular2/http";
+import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 
-bootstrap(AppComponent, [HTTP_PROVIDERS, ModelService]);
+import { AppModule } from './app.module';
+
+platformBrowserDynamic().bootstrapModule(AppModule)
+  .then(success => console.log(`Bootstrap success`))
+  .catch(error => console.log(error));

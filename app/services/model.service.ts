@@ -5,9 +5,9 @@ import {SpecLayoutService} from "../services/spec.layout.service";
 import {ProjectIOService} from "../services/project.io.service";
 import {StageModel} from "../model/stage.model";
 import {ObjectModel} from "../model/object.model";
-import {Injectable, Inject} from "angular2/core";
-import {Http, Response} from "angular2/http";
-import {EventEmitter} from "angular2/core";
+import {Injectable, Inject} from "@angular/core";
+import {Http, Response} from "@angular/http";
+import {EventEmitter} from "@angular/core";
 
 @Injectable()
 export class ModelService {
